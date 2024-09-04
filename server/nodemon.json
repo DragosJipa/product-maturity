@@ -1,0 +1,7 @@
+{
+    "watch": ["server.js", "src", "config", "routes", "utils"],
+    "ignore": ["responses.json", "logs/*"], 
+    "ext": "js,json", 
+    "exec": "node server.js" 
+  }
+  
