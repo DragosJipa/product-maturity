@@ -139,7 +139,7 @@ const Roadmap = () => {
           >
             <div className="milestone-marker">End</div>
             <div className={`milestone-text center`}>
-              <h3></h3>
+              <h3> </h3>
               {/* Show description only on hover */}
               {hoveredMilestone === 'end' && (
                 <p>The end of the roadmap.</p>
