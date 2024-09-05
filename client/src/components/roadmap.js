@@ -70,7 +70,7 @@ const Roadmap = () => {
             <div className="phase-boundary"></div>
             <div className="milestone-marker">Start</div>
             <div className={`milestone-text center`}>
-              <h3></h3>
+              <h3> </h3>
               {/* Show description only on hover */}
               {hoveredMilestone === 'start' && (
                 <p>The beginning of the roadmap.</p>
