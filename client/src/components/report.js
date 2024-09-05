@@ -28,14 +28,25 @@ function Report() {
             remarkPlugins={[remarkGfm]}
             rehypePlugins={[rehypeRaw]}
             components={{
-              h1: ({ node, ...props }) => <h1 className="text-3xl font-bold mt-6 mb-20" {...props} />,
-              h2: ({ node, ...props }) => (
+              // Ensure headings have content or default text
+              h1: ({ node, children, ...props }) => (
+                <h1 className="text-3xl font-bold mt-6 mb-20" {...props}>
+                  {children || 'Heading 1'} {/* Default text if empty */}
+                </h1>
+              ),
+              h2: ({ node, children, ...props }) => (
                 <>
                   <hr className="my-4" />
-                  <h2 className="text-2xl font-semibold mt-6 mb-3" {...props} />
+                  <h2 className="text-2xl font-semibold mt-6 mb-3" {...props}>
+                    {children || 'Heading 2'} {/* Default text if empty */}
+                  </h2>
                 </>
               ),
-              h3: ({ node, ...props }) => <h3 className="text-xl font-medium mt-4 mb-2" {...props} />,
+              h3: ({ node, children, ...props }) => (
+                <h3 className="text-xl font-medium mt-4 mb-2" {...props}>
+                  {children || 'Heading 3'} {/* Default text if empty */}
+                </h3>
+              ),
               p: ({ node, ...props }) => <p className="mt-2 mb-2" {...props} />,
               ul: ({ node, ...props }) => <ul className="ml-4 list-disc" {...props} />,
               ol: ({ node, ...props }) => <ol className="ml-4 list-decimal" {...props} />,
