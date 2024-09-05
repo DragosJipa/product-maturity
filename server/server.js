@@ -9,7 +9,8 @@ const questionRoutes = require('./routes/questionRoutes'); // Import question ro
 const submitRoutes = require('./routes/submitRoutes'); // Import submit routes
 
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
+
 
 // CORS configuration for development
 app.use(cors({
