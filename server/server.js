@@ -6,11 +6,11 @@ const cors = require('cors');
 const morgan = require('morgan');
 const logger = require('./config/logger'); // Import logger configuration
 const questionRoutes = require('./routes/questionRoutes'); // Import question routes
-const submitRoutes = require('./routes/submitRoutes'); // Import submit routes
+const submitRoutes = require('./routes/submitRoutes.background'); // Import submit routes
+const statusRoutes = require('./routes/statusRoutes'); // Import status routes
 
 const app = express();
-const PORT = process.env.PORT || 3001;
-
+const PORT = process.env.PORT || 3001; // Use Vercel's port or 3001 locally
 
 // CORS configuration for development
 app.use(cors({
@@ -31,8 +31,9 @@ app.use(bodyParser.json());
 // Mount Routes
 app.use('/api/questions', questionRoutes);
 app.use('/api/submit', submitRoutes);
+app.use('/api', statusRoutes); // Correctly mount the status routes under '/api'
 
-// Graceful shutdown function to handle termination signals
+// Graceful shutdown function for local environment (optional for Vercel)
 const gracefulShutdown = () => {
   logger.info('Received termination signal. Shutting down gracefully...');
   server.close(() => {
@@ -46,11 +47,17 @@ const gracefulShutdown = () => {
   }, 10000); // Force shutdown after 10 seconds
 };
 
-// Listen for termination signals (e.g., SIGTERM or SIGINT)
-process.on('SIGTERM', gracefulShutdown);
-process.on('SIGINT', gracefulShutdown);
+// Listen for termination signals (e.g., SIGTERM or SIGINT) only in non-serverless environment
+if (process.env.NODE_ENV !== 'production') {
+  process.on('SIGTERM', gracefulShutdown);
+  process.on('SIGINT', gracefulShutdown);
+}
 
-// Start the server
-const server = app.listen(PORT, '0.0.0.0', () => {
-  logger.info(`Server is running on http://0.0.0.0:${PORT}`);
-});
+// Start the server (only if not on Vercel's serverless functions)
+if (process.env.NODE_ENV !== 'production') {
+  const server = app.listen(PORT, '0.0.0.0', () => {
+    logger.info(`Server is running on http://0.0.0.0:${PORT}`);
+  });
+}
+
+module.exports = app; // Export the app for Vercel

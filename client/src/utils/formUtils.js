@@ -1,6 +1,14 @@
 // client/src/utils/formUtils.js
-
+import { useContext, useCallback } from 'react';
 import axios from 'axios';
+import { AssessmentContext } from '../context/assessmentContext';
+import { useNavigate } from 'react-router-dom';
+
+
+
+// Determine the base URL dynamically
+const baseURL = process.env.NODE_ENV === 'development' ? 'http://localhost:3001' : '';
+
 
 // Enhanced dummy responses for open-ended questions with more detailed and elaborated content
 const openEndedDummyResponses = {
@@ -55,28 +63,94 @@ export const populateDummyResponses = (questions) => {
   return dummyData; // Return the dummy data to be set in the form state
 };
 
-// Function to submit form data
-export const submitFormData = async (formData, setIsSubmitted, setAssessmentData) => {
-  if (typeof formData !== 'object' || formData === null) {
-    alert('Invalid form data. Please review your responses.');
-    return;
-  }
+// Custom hook to check processing status
+export const useCheckProcessingStatus = () => {
+  const { setAssessmentData } = useContext(AssessmentContext); // Access context
+  const navigate = useNavigate(); // React router navigate
 
-  try {
-    const response = await axios.post('http://localhost:3001/api/submit', formData);
-    console.log('Success:', response.data);
+  const checkProcessingStatus = useCallback(async (taskId) => {
+    if (!taskId) {
+      console.error('Task ID is undefined, cannot check status.');
+      return;
+    }
 
-    // Update the context with both interpretation and detailedReport
-    setAssessmentData({ 
-      interpretation: response.data.interpretation, 
-      detailedReport: response.data.detailedReport, 
-      responses: formData 
-    });
+    try {
+      const response = await axios.get(`${baseURL}/api/result-status/${taskId}`);
+      const status = response.data.status;
 
-    setIsSubmitted(true);
-  } catch (error) {
-    console.error('Error:', error);
-    alert('There was an issue submitting your responses. Please try again later.');
-  }
+      console.log('Processing status is:', status);
+
+      if (status === 'completed') {
+        // Update context with completed data
+        setAssessmentData((prevData) => {
+          const updatedData = {
+            ...prevData,
+            interpretation: response.data.result, // Store result in context
+            status: 'completed', // Store status in context
+          };
+
+          console.log('Updated assessmentData after completion:', updatedData);
+          return updatedData;
+        });
+
+        // Redirect to summary after completion
+        console.log('Task completed, redirecting to /summary');
+        navigate('/summary');
+      } else if (status === 'processing') {
+        setTimeout(() => checkProcessingStatus(taskId), 5000); // Poll every 5 seconds
+      } else {
+        console.error('Unexpected status:', response.data.message);
+      }
+    } catch (error) {
+      console.error('Error checking processing status:', error);
+    }
+  }, [setAssessmentData, navigate]);
+
+  return { checkProcessingStatus }; // Return the function to be used in components
 };
 
+// Custom hook to submit form data and manage the context
+export const useSubmitFormData = () => {
+  const { setAssessmentData } = useContext(AssessmentContext); // Access context directly
+  const { checkProcessingStatus } = useCheckProcessingStatus(); // Use the checkProcessingStatus hook
+
+  const submitFormData = async (formData, setIsSubmitted) => {
+    if (typeof formData !== 'object' || formData === null) {
+      alert('Invalid form data. Please review your responses.');
+      return;
+    }
+
+    try {
+      const response = await axios.post(`${baseURL}/api/submit`, formData);
+      console.log('Processing started:', response.data);
+
+      const taskId = response.data.taskId;
+      console.log('Received Task ID from server:', taskId);
+
+      if (!taskId) {
+        console.error('No taskId returned from server.');
+        return;
+      }
+
+      // Store the task ID in the app context immediately after receiving it from the server
+      setAssessmentData((prevData) => {
+        const updatedData = {
+          ...(prevData || {}),
+          taskId: taskId,
+        };
+        console.log('Updated assessmentData after taskId is written:', updatedData);
+        return updatedData;
+      });
+
+      setIsSubmitted(true); // Mark form as submitted
+
+      // Start polling for status using the hook
+      checkProcessingStatus(taskId);
+    } catch (error) {
+      console.error('Error submitting form data:', error);
+      alert('There was an issue submitting your responses. Please try again later.');
+    }
+  };
+
+  return { submitFormData }; // Return the function to be used in components
+};

@@ -8,7 +8,7 @@ import { AssessmentContext } from '../context/assessmentContext';
 function Report() {
   const { assessmentData } = useContext(AssessmentContext);
 
-  if (!assessmentData || !assessmentData.detailedReport) {
+  if (!assessmentData || !assessmentData.interpretation.detailedReport) {
     return (
       <div className="min-h-screen bg-gradient-to-r from-green-50 to-green-100 flex flex-col items-center justify-center p-4">
         <div className="bg-white p-8 shadow-md rounded-md max-w-3xl w-full mb-16">
@@ -59,7 +59,7 @@ function Report() {
               td: ({ node, ...props }) => <td className="px-4 py-2 border border-gray-300" {...props} />,
             }}
           >
-            {assessmentData.detailedReport}
+            {assessmentData.interpretation.detailedReport}
           </ReactMarkdown>
         </div>
       </div>

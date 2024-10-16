@@ -220,8 +220,8 @@ function generateJsonPrompt(detailedReport) {
 Based on the following detailed report, produce a structured JSON output that includes the following information. The response should be pure JSON format, without any additional text, formatting, or comments.
 
 {
-  "summary": "A very short summary of the product maturity. It should state the level and some key points, without details about company, industry, submitter role",
-  "maturity_level": "Overall maturity level (1-5) extracted from the report.",
+  "summary": "A very short summary of the product maturity. It should state the level and some key points, without details about company, industry, submitter role. Like in this example: 'According to the information provided, the product maturity level is medium to low, with evolving product management practices, some formal processes, and areas for improvement in technology adoption and collaboration.'",
+  "maturity_level": "Overall maturity level (1-5) extracted from the report. Should be a single number.",
   "dimension_score": {
     "Strategy": "Score for the Strategy dimension (1-5).",
     "Processes": "Score for the Processes dimension (1-5).",
