@@ -1,10 +1,10 @@
-import react from 'react';
 import './landingPage.css';
 
 const GenerateQuestions = ({ questions, currentQuestionIndex, insideCurrentQuestionIndex, formData, handleInputChange }) => {
     console.log('GenerateQuestions:', questions, currentQuestionIndex, insideCurrentQuestionIndex, formData);
     const isDropdown = questions?.type === 'select';
     const isRadio = questions?.type === 'radio';
+    const isOpenEnded = questions?.type === 'open-ended';
 
     const cornerCases = {
         organizationType: "type of organization",
@@ -58,7 +58,8 @@ const GenerateQuestions = ({ questions, currentQuestionIndex, insideCurrentQuest
 
     return (
         <div>
-            <div className="w-full max-w-4xl pt-60 md:pt-72 lg:pt-80 xl:pt-96 pt-w415 pt-w400 pt-h80 px-1">
+
+            <div className="w-full max-w-4xl pt-[10vh] md:pt-[20vh] lg:pt-[30vh]">  {/* pt-w415 pt-w400  */}
                 <p className="font-ibm-plex-mono text-5xl font-normal leading-[62.4px] tracking-[0.75px] text-left text-gray-100 mb-4">
                     <div>
                         {renderQuestionText(questions?.question, questions?.id)}
@@ -128,6 +129,21 @@ const GenerateQuestions = ({ questions, currentQuestionIndex, insideCurrentQuest
                             </label>
                         ))}
                     </div>
+                )}
+
+                {isOpenEnded && (
+                    <>
+                        <textarea
+                            id={questions?.id}
+                            name={questions?.id}
+                            value={formData[questions?.id] || ''}
+                            onChange={(e) => handleInputChange(questions?.id, e.target.value)}
+                            className="w-full border border-borderTextAreaBG rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-400 bg-textAreaBG font-ibm-plex-mono text-base font-light text-left text-white"
+                            rows="3"
+                            placeholder="Enter your response here..."
+                            aria-describedby={`${questions?.id}-desc`}
+                        />
+                    </>
                 )}
             </div>
         </div>

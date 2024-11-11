@@ -12,6 +12,8 @@ module.exports = {
         radioBG: '#404040',
         customBG: '#262626',
         selectBG: '#1c1c1c',
+        textAreaBG: '#161616',
+        borderTextAreaBG: '#474747',
       }
     },
   },

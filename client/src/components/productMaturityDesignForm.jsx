@@ -106,9 +106,9 @@ const ProductMaturityAssessment = () => {
 
 
     const handlePrevious = () => {
-        console.log('Previous question', currentQuestionIndex);
         if (currentQuestionIndex === 0 && insideCurrentQuestionIndex === 0) {
             backToStart();
+            return;
         }
 
         if (insideCurrentQuestionIndex > 0) {
@@ -139,7 +139,7 @@ const ProductMaturityAssessment = () => {
 
     if (questions.length === 0) {
         return (
-            <div className="flex items-center justify-center h-screen text-xl font-semibold text-gray-600">
+            <div className="flex items-center justify-center h-screen text-xl font-semibold text-gray-300 bg-customBG">
                 Loading questions...
             </div>
         );
@@ -147,9 +147,6 @@ const ProductMaturityAssessment = () => {
 
     const currentSection = questions[currentQuestionIndex].questions[insideCurrentQuestionIndex];
     console.log('Current Section:', currentSection);
-    const isGeneral = questions[currentQuestionIndex].type === "general";
-    const isDimension = questions[currentQuestionIndex].type === "dimension";
-    const isOpenEnded = questions[currentQuestionIndex].type === "open-ended";
 
     return (
         <div className="flex flex-col items-start justify-start h-screen bg-customBG text-white p-4 px-32">
@@ -189,34 +186,33 @@ const ProductMaturityAssessment = () => {
                 handleInputChange={handleInputChange}
             />
 
-            {/* {isGeneral && (
-                <GeneralQuestions
-                    questions={currentSection.questions}
-                    formData={formData}
-                    handleInputChange={handleInputChange}
-                />
-            )}
-            {isDimension && (
-                <DimensionQuestions
-                    questions={currentSection.questions}
-                    formData={formData}
-                    handleInputChange={handleInputChange}
-                />
-            )}
-            {isOpenEnded && (
-                <OpenEndedQuestions
-                    questions={currentSection.questions}
-                    formData={formData}
-                    handleInputChange={handleInputChange}
-                />
-            )} */}
-
             {/* Bottom progress indicator */}
-            <div className="w-full max-w-5xl flex justify-between items-center pt-96">
-                {/* Dots at the start */}
+            <div className="w-full max-w-5xl flex justify-between items-center pt-[clamp(2rem,10vh,6rem)]">
+                {/* Dynamic Dots */}
                 <div className="flex space-x-2">
-                    <span className="w-2 h-2 bg-white rounded-full"></span>
-                    <span className="w-2 h-2 bg-gray-600 rounded-full"></span>
+                    {[...Array(questions[currentQuestionIndex].questions.length)].map((_, index) => (
+                        <button
+                            key={index}
+                            onClick={() => {
+                                // If clicking forward
+                                if (index > insideCurrentQuestionIndex) {
+                                    for (let i = insideCurrentQuestionIndex; i < index; i++) {
+                                        handleNext();
+                                    }
+                                }
+                                // If clicking backward
+                                else if (index < insideCurrentQuestionIndex) {
+                                    for (let i = insideCurrentQuestionIndex; i > index; i--) {
+                                        handlePrevious();
+                                    }
+                                }
+                            }}
+                            className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${index === insideCurrentQuestionIndex
+                                ? 'w-8 bg-white' // Elongated white dot for selected
+                                : 'w-2 bg-gray-600 hover:bg-gray-400' // Regular circular dot for others with hover state
+                                }`}
+                        ></button>
+                    ))}
                 </div>
 
                 {/* Button at the end */}
