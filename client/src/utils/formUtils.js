@@ -42,7 +42,8 @@ export const populateDummyResponses = (questions) => {
   questions.forEach((section) => {
     // Iterate through each question within the section
     section.questions.forEach((question) => {
-      if (question.options && question.options.length > 0) {
+      // sometimes the question.options[].value or .label are defined but have empty string... make sure to check for that in the first if
+      if (question.options && question.options.length > 0 && question.options[0].value !== '') {
         // If options are present, it's a radio or select type; pick a random option
         const randomOption = question.options[Math.floor(Math.random() * question.options.length)];
         dummyData[question.id] = randomOption.value;

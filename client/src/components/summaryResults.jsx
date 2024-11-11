@@ -5,7 +5,7 @@ import MaturityLevelHeatMap from './maturityLevelHeatMap';
 import BottomNavigation from './navigation';
 import { AssessmentContext } from '../context/assessmentContext';
 
-function SummaryResults() {
+const SummaryResults = () => {
   const { assessmentData } = useContext(AssessmentContext);
 
   // Check if assessment data is available
@@ -23,9 +23,9 @@ function SummaryResults() {
     <div className="flex flex-col items-center justify-center min-h-screen p-8 text-lg font-medium bg-gray-100">
       <div className="bg-white p-8 shadow-md rounded-md max-w-3xl w-full mb-16">
         {/* Maturity Level Heat Map */}
-        <MaturityLevelHeatMap 
-          maturityLevel={interpretation.maturity_level} 
-          dimensionScores={interpretation.dimension_score} 
+        <MaturityLevelHeatMap
+          maturityLevel={interpretation.maturity_level}
+          dimensionScores={interpretation.dimension_score}
         />
 
         {/* Display the Summary */}
@@ -52,7 +52,7 @@ function SummaryResults() {
           </div>
         </div>
 
-      
+
       </div>
 
       {/* Bottom Navigation */}
