@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, lazy } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { populateDummyResponses } from '../utils/formUtils';
 import { useCheckProcessingStatus } from '../utils/formUtils';
@@ -8,6 +8,7 @@ import './productMaturity.css';
 import './landingPage.css'
 import { useNavigate } from 'react-router-dom';
 import GenerateQuestions from './generateQuestions';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const ProductMaturityAssessment = () => {
     const navigate = useNavigate();
@@ -15,7 +16,7 @@ const ProductMaturityAssessment = () => {
     const backToStart = () => {
         navigate('/');
     };
-
+    const [lastAction, setLastAction] = useState('forward');
     const [questions, setQuestions] = useState([]);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [insideCurrentQuestionIndex, setInsideCurrentQuestionIndex] = useState(0);
@@ -25,9 +26,48 @@ const ProductMaturityAssessment = () => {
     const { assessmentData, setAssessmentData } = useContext(AssessmentContext); // Use context to get and set assessment data
     const [isSubmitted, setIsSubmitted] = useState(false); // Keep track of whether the form is submitted
     const { checkProcessingStatus } = useCheckProcessingStatus(); // Use the new hook
+    const [animationKey, setAnimationKey] = useState(`${currentQuestionIndex}-${insideCurrentQuestionIndex}-${lastAction}`);
+    const [visibleSection, setVisibleSection] = useState(null);
+    // Add isAnimating state to track animation status
+    const [isAnimating, setIsAnimating] = useState(false);
+
+    useEffect(() => {
+        setAnimationKey(`${currentQuestionIndex}-${insideCurrentQuestionIndex}-${lastAction}`);
+    }, [lastAction, currentQuestionIndex, insideCurrentQuestionIndex]);
+
+    const currentSection = questions.length > 0
+        ? questions[currentQuestionIndex]?.questions[insideCurrentQuestionIndex]
+        : null;
+
+    useEffect(() => {
+        // Update the visible section when currentSection changes
+        if (!isAnimating) {  // Only update when not animating
+            setVisibleSection(currentSection);
+        }
+    }, [currentSection]);
+
+
     // Dynamically determine the base URL
     const baseURL = process.env.NODE_ENV === 'development' ? 'http://localhost:3001' : '';
 
+    const getSectionTitle = (index) => {
+        switch (index) {
+            case 0:
+                return "1. Contextual Information";
+            case 1:
+                return "2. Product Strategy and Vision";
+            case 2:
+                return "3. Product Development Processes and Agile Adoption";
+            case 3:
+                return "4. Technology and Innovation";
+            case 4:
+                return "5. Company Culture and Leadership";
+            case 5:
+                return "6. Open Questions";
+            default:
+                return "";
+        }
+    };
     useEffect(() => {
         axios.get(`${baseURL}/api/questions`)
             .then(response => {
@@ -68,10 +108,14 @@ const ProductMaturityAssessment = () => {
             }]);
         }
     };
+    const handleDotClick = (index) => {
+        setInsideCurrentQuestionIndex(index);
+    }
 
     const handleNext = () => {
+        setLastAction('forward');
         const isLastInnerQuestion = questions[currentQuestionIndex].questions.length - 1 === insideCurrentQuestionIndex;
-        const isLastMainQuestion = currentQuestionIndex >= questions.length - 1;
+        const isLastMainQuestion = currentQuestionIndex >= questions.length - 1 && isLastInnerQuestion;
 
         if (!isLastMainQuestion) {
             if (isLastInnerQuestion) {
@@ -106,6 +150,7 @@ const ProductMaturityAssessment = () => {
 
 
     const handlePrevious = () => {
+        setLastAction('backward');
         if (currentQuestionIndex === 0 && insideCurrentQuestionIndex === 0) {
             backToStart();
             return;
@@ -145,15 +190,12 @@ const ProductMaturityAssessment = () => {
         );
     }
 
-    const currentSection = questions[currentQuestionIndex].questions[insideCurrentQuestionIndex];
-    console.log('Current Section:', currentSection);
-
     return (
-        <div className="flex flex-col items-start justify-start h-screen bg-customBG text-white p-4 px-32">
+        <div className="flex flex-col items-start justify-start h-screen bg-customBG text-white p-4 px-32 overflow-hidden">
             {/* Top navigation */}
             <div className="w-full max-w-md mt-8 mb-8">
                 <div className="text-xs text-gray-400 flex items-center space-x-2">
-                    <button className="w-[32px] h-[32px] flex items-center justify-center" onClick={handlePrevious}>
+                    <button className="w-[32px] h-[32px] flex items-center justify-center -mt-4" onClick={handlePrevious}>
                         <svg
                             width="13.63"
                             height="24"
@@ -173,18 +215,54 @@ const ProductMaturityAssessment = () => {
                         >
                             Product Maturity Assessment
                         </span>
-                        <h1 className="text-2xl font-semibold gradient-text">1. Contextual Information</h1>
+                        <h1 className="text-2xl font-semibold gradient-text mb-4 whitespace-nowrap overflow-hidden text-ellipsis">
+                            {getSectionTitle(currentQuestionIndex)}
+                        </h1>
                     </div>
                 </div>
             </div>
+            {/* Wrap the main content in AnimatePresence */}
+            <AnimatePresence mode="wait" initial={false} onExitComplete={() => {
+                setIsAnimating(false);
+                setVisibleSection(currentSection);  // Update content after exit animation
+            }}
+            >
+                <motion.div
+                    key={animationKey}
+                    initial={{
+                        y: lastAction === 'backward' ? "-100vh" : "100vh",
+                        opacity: 0
+                    }}
+                    animate={{
+                        y: 0,
+                        opacity: 1
+                    }}
+                    exit={{
+                        y: lastAction === 'backward' ? "100vh" : "-100vh",
+                        opacity: 0
+                    }}
+                    transition={{
+                        type: "spring",
+                        bounce: 0.25,
+                        exit: {
+                            type: "tween",
+                            duration: 0.03,
+                            ease: "easeOut"
+                        }
+                    }}
+                    className="w-full h-full"
+                    onAnimationStart={() => setIsAnimating(true)}
+                >
+                    <GenerateQuestions
+                        questions={visibleSection}
+                        formData={formData}
+                        currentQuestionIndex={currentQuestionIndex}
+                        insideCurrentQuestionIndex={insideCurrentQuestionIndex}
+                        handleInputChange={handleInputChange}
+                    />
+                </motion.div>
 
-            <GenerateQuestions
-                questions={currentSection}
-                formData={formData}
-                currentQuestionIndex={currentQuestionIndex}
-                insideCurrentQuestionIndex={insideCurrentQuestionIndex}
-                handleInputChange={handleInputChange}
-            />
+            </AnimatePresence>
 
             {/* Bottom progress indicator */}
             <div className="w-full max-w-5xl flex justify-between items-center pt-[clamp(2rem,10vh,6rem)]">
@@ -194,18 +272,7 @@ const ProductMaturityAssessment = () => {
                         <button
                             key={index}
                             onClick={() => {
-                                // If clicking forward
-                                if (index > insideCurrentQuestionIndex) {
-                                    for (let i = insideCurrentQuestionIndex; i < index; i++) {
-                                        handleNext();
-                                    }
-                                }
-                                // If clicking backward
-                                else if (index < insideCurrentQuestionIndex) {
-                                    for (let i = insideCurrentQuestionIndex; i > index; i--) {
-                                        handlePrevious();
-                                    }
-                                }
+                                handleDotClick(index);
                             }}
                             className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${index === insideCurrentQuestionIndex
                                 ? 'w-8 bg-white' // Elongated white dot for selected
@@ -219,10 +286,10 @@ const ProductMaturityAssessment = () => {
                 <div>
                     <button
                         onClick={handleNext}
-                        className="flex items-center h-12 px-5 text-white font-mono font-normal text-lg leading-snug tracking-wide hover:bg-white hover:text-gray-900 transition-colors duration-300 ease-in-out rounded-lg"
+                        className="flex items-center h-12 px-5 text-white font-mono font-normal text-lg leading-snug tracking-wide rounded-lg group"
                     >
                         Continue
-                        <span className="flex items-center justify-center w-10 h-10 border border-white rounded-lg ml-2">
+                        <span className="flex items-center justify-center w-10 h-10 border border-white rounded-lg ml-2 transform transition-transform duration-300 group-hover:translate-x-1">
                             ➡️
                         </span>
                     </button>

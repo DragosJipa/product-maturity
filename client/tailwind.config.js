@@ -14,6 +14,8 @@ module.exports = {
         selectBG: '#1c1c1c',
         textAreaBG: '#161616',
         borderTextAreaBG: '#474747',
+        gradientModus: 'linear-gradient(90.01deg, #624BED 14.01%, #CE5682 80.31%)',
+        'custom-gradient': 'linear-gradient(90.01deg, #624BED 14.01%, #CE5682 80.31%)',
       }
     },
   },

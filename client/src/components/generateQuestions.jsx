@@ -1,10 +1,12 @@
 import './landingPage.css';
+import TextareaAutosize from 'react-textarea-autosize';
 
 const GenerateQuestions = ({ questions, currentQuestionIndex, insideCurrentQuestionIndex, formData, handleInputChange }) => {
     console.log('GenerateQuestions:', questions, currentQuestionIndex, insideCurrentQuestionIndex, formData);
     const isDropdown = questions?.type === 'select';
     const isRadio = questions?.type === 'radio';
     const isOpenEnded = questions?.type === 'open-ended';
+    const isEmail = questions?.type === 'email';
 
     const cornerCases = {
         organizationType: "type of organization",
@@ -36,6 +38,7 @@ const GenerateQuestions = ({ questions, currentQuestionIndex, insideCurrentQuest
         openEndedQ2: "improvements",
         openEndedQ3: "development success",
         openEndedQ4: "gather and use customer feedback",
+        email: 'Get Your Personalized Product Maturity Report'
     };
 
     function renderQuestionText(question, id) {
@@ -46,15 +49,22 @@ const GenerateQuestions = ({ questions, currentQuestionIndex, insideCurrentQuest
             return (
                 <>
                     {parts[0]}
-                    <span className="gradient-text">{highlightText}</span>
+                    {isEmail ? (<span className="gradient-text text-6xl">{highlightText}</span>
+                    ) : (<span className="gradient-text">{highlightText}</span>
+                    )}
+
                     {parts[1]}
+                    {isEmail && (
+                        <div className="font-ibm-plex-mono text-2xl font-normal text-left text-white pt-[3vh]">
+                            Enter your email below to start the free assessment and receive your customized report.
+                        </div>
+                    )}
                 </>
             );
         } else {
             return question;
         }
     }
-
 
     return (
         <div>
@@ -69,7 +79,7 @@ const GenerateQuestions = ({ questions, currentQuestionIndex, insideCurrentQuest
                 {isDropdown && (
                     <div className="relative w-full mb-6">
                         <select
-                            className="w-full bg-selectBG text-white py-3 px-4 pr-8 rounded appearance-none focus:outline-none focus:ring-2 focus:ring-purple-400 text-2xl font-ibm-plex-mono font-light leading-[41.6px] tracking-[0.75px] text-left"
+                            className="w-full bg-selectBG text-white py-3 px-4 pr-8 rounded appearance-none focus:outline-none focus-gradient text-2xl font-ibm-plex-mono font-light leading-[41.6px] tracking-[0.75px] text-left"
                             defaultValue={questions?.options?.[0]?.value}
                             value={formData[questions?.id || '']}
                             id={questions?.id}
@@ -107,7 +117,8 @@ const GenerateQuestions = ({ questions, currentQuestionIndex, insideCurrentQuest
                         {questions?.options?.map((option, index) => (
                             <label
                                 key={index}
-                                className="flex flex-col items-start cursor-pointer space-x-3 gap-1 mt-4"
+                                className="flex flex-col items-start cursor-pointer space-x-3 gap-1 mt-4 
+                                hover:bg-[#333333] rounded-lg p-2 transition-colors duration-200"
                             >
                                 <span className="flex flex-row items-center space-x-2">
                                     <input
@@ -117,10 +128,18 @@ const GenerateQuestions = ({ questions, currentQuestionIndex, insideCurrentQuest
                                         checked={formData[questions?.id] === option.value}
                                         onChange={() => handleInputChange(questions?.id, option.value)}
                                         aria-checked={formData[questions?.id] === option.value}
-                                        className="appearance-none w-8 h-8 rounded-full border border-black bg-radioBG hover:bg-gray-500 checked:bg-black transition duration-200"
+                                        className="relative appearance-none w-8 h-8 rounded-full border border-black bg-radioBG 
+                                        hover:bg-[#565656] checked:bg-none checked:border-none
+                                        checked:before:content-[''] checked:before:absolute checked:before:inset-0
+                                        checked:before:bg-gradient-to-tr checked:before:from-[#624BED] checked:before:to-[#CE5682] 
+                                        checked:before:rounded-full
+                                        checked:after:content-[''] checked:after:absolute checked:after:top-1/2 checked:after:left-1/2 
+                                        checked:after:-translate-x-1/2 checked:after:-translate-y-1/2
+                                        checked:after:w-4 checked:after:h-4 checked:after:bg-white checked:after:rounded-full
+                                        transition duration-200"
                                     />
-                                    <span className="text-xl font-medium text-gray-100">
-                                        {option.value}
+                                    <span className="text-xl font-medium text-gray-100 -mt-0.5">
+                                        {option.value.charAt(0).toUpperCase() + option.value.slice(1)}
                                     </span>
                                 </span>
                                 <div className="text-sm text-gray-400 pl-7 mrg-2">
@@ -132,18 +151,30 @@ const GenerateQuestions = ({ questions, currentQuestionIndex, insideCurrentQuest
                 )}
 
                 {isOpenEnded && (
-                    <>
-                        <textarea
-                            id={questions?.id}
-                            name={questions?.id}
-                            value={formData[questions?.id] || ''}
-                            onChange={(e) => handleInputChange(questions?.id, e.target.value)}
-                            className="w-full border border-borderTextAreaBG rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-400 bg-textAreaBG font-ibm-plex-mono text-base font-light text-left text-white"
-                            rows="3"
-                            placeholder="Enter your response here..."
-                            aria-describedby={`${questions?.id}-desc`}
-                        />
-                    </>
+                    <TextareaAutosize
+                        id={questions?.id}
+                        name={questions?.id}
+                        value={formData[questions?.id] || ''}
+                        onChange={(e) => handleInputChange(questions?.id, e.target.value)}
+                        className="w-full border border-borderTextAreaBG rounded-lg px-4 py-2 focus:outline-none focus-gradient bg-textAreaBG font-ibm-plex-mono text-base font-light text-left text-white custom-textarea"
+                        minRows={3}
+                        maxRows={10}
+                        placeholder="Enter your response here..."
+                        aria-describedby={`${questions?.id}-desc`}
+                    />
+                )}
+
+                {isEmail && (
+                    <input
+                        type="email"
+                        id={questions?.id}
+                        name={questions?.id}
+                        value={formData[questions?.id] || ''}
+                        onChange={(e) => handleInputChange(questions?.id, e.target.value)}
+                        className="w-full border border-borderTextAreaBG rounded-lg px-4 py-2 focus:outline-none focus-gradient bg-textAreaBG font-ibm-plex-mono text-base font-light text-left text-white"
+                        placeholder="Email Address"
+                        aria-describedby={`${questions?.id}-desc`}
+                    />
                 )}
             </div>
         </div>

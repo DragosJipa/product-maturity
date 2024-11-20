@@ -44,10 +44,10 @@ const LandingPage = () => {
             <div className="hidden lg:flex w-full max-w-[1124px] items-start mx-auto pt-44">
                 <button
                     onClick={handleStart}
-                    className="flex items-center justify-start text-white font-mono font-normal text-lg lg:text-[20px] leading-snug lg:leading-[26px] tracking-wide hover:bg-white hover:text-gray-900 transition-colors duration-300 ease-in-out"
+                    className="flex items-center justify-start text-white font-mono font-normal text-lg lg:text-[20px] leading-snug lg:leading-[26px] tracking-wide group"
                 >
                     Let's go!
-                    <span className="flex items-center justify-center w-10 h-10 lg:w-[64px] lg:h-[64px] border border-white rounded-lg ml-3 lg:ml-5">
+                    <span className="flex items-center justify-center w-10 h-10 lg:w-[64px] lg:h-[64px] border border-white rounded-lg ml-3 lg:ml-5 transform transition-transform duration-300 group-hover:translate-x-1">
                         ➡️
                     </span>
                 </button>
