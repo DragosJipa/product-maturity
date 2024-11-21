@@ -5,7 +5,7 @@ import rehypeRaw from 'rehype-raw';
 import BottomNavigation from './navigation';
 import { AssessmentContext } from '../context/assessmentContext';
 
-function Report() {
+const Report = () => {
   const { assessmentData } = useContext(AssessmentContext);
 
   if (!assessmentData || !assessmentData.interpretation.detailedReport) {

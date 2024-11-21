@@ -10,7 +10,7 @@ import { useCheckProcessingStatus } from '../utils/formUtils';
 import { AssessmentContext } from '../context/assessmentContext'; // Import AssessmentContext
 import LoadingSpinner from './loadingSpinner';
 
-function ProductMaturityForm() {
+const ProductMaturityForm = () => {
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [formData, setFormData] = useState({});
@@ -27,7 +27,7 @@ function ProductMaturityForm() {
     axios.get(`${baseURL}/api/questions`)
       .then(response => {
         setQuestions(response.data);
-
+        console.log('Questions:', response.data);
         // Check if there is existing data in the context
         if (assessmentData && assessmentData.responses) {
           setFormData(assessmentData.responses);
@@ -55,6 +55,13 @@ function ProductMaturityForm() {
       ...formData,
       [questionId]: value,
     });
+    if (window._hsq) {
+      console.log('window._hsq:', window._hsq);
+      window._hsq.push(['trackEvent', {
+        id: questionId,
+        value: value,
+      }]);
+    }
   };
 
   const handleNext = () => {
@@ -70,7 +77,7 @@ function ProductMaturityForm() {
             responses: formData, // Store the form responses in context
             taskId: response.data.taskId, // Save the taskId from the server
           });
-  
+
           // Remove setLoading(false) here since we still need to wait for the processing status
           // Polling for processing status now
           const taskId = response.data.taskId;
@@ -83,7 +90,7 @@ function ProductMaturityForm() {
         });
     }
   };
-  
+
 
   const handlePrevious = () => {
     if (currentQuestionIndex > 0) {
@@ -186,4 +193,4 @@ function ProductMaturityForm() {
   );
 }
 
-export default ProductMaturityForm;
+export default ProductMaturityForm; 

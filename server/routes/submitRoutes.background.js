@@ -4,6 +4,7 @@ const logger = require('../config/logger'); // Import logger
 const { generateDetailedReport, generateJsonFromReport } = require('../utils/openAIHelpers'); // Import OpenAI helpers
 const { validateFormData, saveFormData } = require('../utils/dataHelpers'); // Import data helpers
 const { setTaskStatus, getTaskStatus } = require('../utils/statusHelpers'); // Import status helpers
+const { createOrUpdateCompanyAndContact } = require('../integrations/hubspotUtils');
 
 const router = express.Router();
 
@@ -12,8 +13,7 @@ router.post('/', async (req, res) => {
   const formData = req.body;
   const taskId = `task-${Date.now()}`; // Generate a unique task ID
 
-  console.log('Task ID generated:', taskId);  // Log the task ID
-
+  // console.log('Task ID generated:', taskId);  // Log the task ID
   if (!validateFormData(formData)) {
     logger.warn('Invalid form submission attempt.');
     return res.status(400).json({ error: 'Invalid form submission' });
@@ -22,8 +22,16 @@ router.post('/', async (req, res) => {
   logger.info(`Received form submission: ${JSON.stringify(formData)}`);
 
   try {
-    // Save form responses
     saveFormData(formData);
+
+    if (formData.email) {
+      try {
+        const hubspotResult = await createOrUpdateCompanyAndContact(formData);
+        console.log('HubSpot records created/updated:', hubspotResult);
+      } catch (error) {
+        logger.error(`Error creating HubSpot records: ${error.message}`);
+      }
+    }
   } catch (error) {
     logger.error(`Error saving form data: ${error.message}`);
     return res.status(500).json({ error: 'Failed to save form data' });
@@ -55,7 +63,7 @@ router.post('/', async (req, res) => {
       const finalResult = {
         ...jsonResponse,
         detailedReport: detailedReport, // Include detailed report in final output
-    };
+      };
 
       // Update the status to 'completed' and store the result
       setTaskStatus(taskId, 'completed', finalResult);

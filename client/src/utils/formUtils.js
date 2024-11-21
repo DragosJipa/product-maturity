@@ -32,6 +32,11 @@ const openEndedDummyResponses = {
     "Customer feedback is primarily collected via NPS surveys and support tickets. We also have a customer advisory board that meets quarterly to provide feedback on new features and future plans. The feedback is documented and tracked using our project management tools, ensuring transparency and accountability in how it influences product decisions.",
     "We use a combination of automated feedback collection through in-app surveys and direct outreach programs to gather customer insights. Additionally, we have a beta testing group that provides continuous feedback on upcoming features. This feedback is crucial in refining our development priorities and ensuring we meet our users' needs effectively."
   ],
+  "email": [
+    "random-email@yahoo.com",
+    "random-email@gmail.com",
+    "random-email@outlook.com",
+  ]
 };
 
 // Function to populate dummy responses
@@ -42,13 +47,17 @@ export const populateDummyResponses = (questions) => {
   questions.forEach((section) => {
     // Iterate through each question within the section
     section.questions.forEach((question) => {
-      if (question.options && question.options.length > 0) {
+      // sometimes the question.options[].value or .label are defined but have empty string... make sure to check for that in the first if
+      if (question.options && question.options.length > 0 && question.options[0].value !== '') {
         // If options are present, it's a radio or select type; pick a random option
         const randomOption = question.options[Math.floor(Math.random() * question.options.length)];
         dummyData[question.id] = randomOption.value;
-      } else if (question.type === 'text' || question.type === 'email') {
+      } else if (question.type === 'text') {
         // For text or email input, use a generic dummy response
         dummyData[question.id] = 'Dummy Response';
+      } else if (question.type === 'email' && openEndedDummyResponses[question.id]) {
+        const randomResponse = openEndedDummyResponses[question.id][Math.floor(Math.random() * openEndedDummyResponses[question.id].length)];
+        dummyData[question.id] = randomResponse;
       } else if (section.type === 'open-ended' && openEndedDummyResponses[question.id]) {
         // For open-ended questions, pick a random response from pre-generated ones
         const randomResponse = openEndedDummyResponses[question.id][Math.floor(Math.random() * openEndedDummyResponses[question.id].length)];

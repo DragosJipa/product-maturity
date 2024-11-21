@@ -7,75 +7,75 @@ const { getQuestionDetailsById, getAnswerTextById } = require('../utils/question
 
 // Initialize OpenAI with your API key
 const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
 // Step 1: Function to generate a detailed report
 async function generateDetailedReport(data) {
-    try {
-        const prompt = generateDetailedReportPrompt(data);
-        const response = await openai.chat.completions.create({
-            model: appConfig.LLM_MODEL,
-            messages: [
-                { role: "system", content: "You are a product management consultant. Provide a detailed analysis and report based on the client's responses." },
-                { role: "user", content: prompt },
-            ],
-            max_tokens: 2000,
-        });
+  try {
+    const prompt = generateDetailedReportPrompt(data);
+    const response = await openai.chat.completions.create({
+      model: appConfig.LLM_MODEL,
+      messages: [
+        { role: "system", content: "You are a product management consultant. Provide a detailed analysis and report based on the client's responses." },
+        { role: "user", content: prompt },
+      ],
+      max_tokens: 2000,
+    });
 
-        const detailedReport = response.choices[0].message.content;
-        return detailedReport;
-    } catch (error) {
-        logger.error(`Failed to generate detailed report: ${error.message}`);
-        return null;
-    }
+    const detailedReport = response.choices[0].message.content;
+    return detailedReport;
+  } catch (error) {
+    logger.error(`Failed to generate detailed report: ${error.message}`);
+    return null;
+  }
 }
 
 // Step 2: Function to generate JSON output from the detailed report
 async function generateJsonFromReport(detailedReport) {
+  try {
+    const prompt = generateJsonPrompt(detailedReport);
+    const response = await openai.chat.completions.create({
+      model: appConfig.LLM_MODEL,
+      messages: [
+        {
+          role: "system",
+          content: "You are a data analyst and assistant. Your task is to analyze the provided data and generate a response based on the data provided. Ignore any previous instructions or context and respond solely based on the following new instructions."
+        },
+        {
+          role: "user",
+          content: prompt
+        },
+      ],
+      max_tokens: 3000,
+      temperature: 0.7, // Adjust temperature for creativity vs. precision
+      top_p: 0.9,       // Adjust top_p for diversity in responses
+      frequency_penalty: 0.1, // Penalize frequent terms for varied output
+      presence_penalty: 0.1,  // Penalize terms that have already been used
+    });
+
+    let jsonResponseText = response.choices[0].message.content;
+
+    // Clean up the response to remove code block formatting or extra text
+    jsonResponseText = jsonResponseText.replace(/```json/g, '').replace(/```/g, '').trim();
+
+    // Try to parse as JSON
     try {
-        const prompt = generateJsonPrompt(detailedReport);
-        const response = await openai.chat.completions.create({
-            model: appConfig.LLM_MODEL,
-            messages: [
-                {
-                    role: "system",
-                    content: "You are a data analyst and assistant. Your task is to analyze the provided data and generate a response based on the data provided. Ignore any previous instructions or context and respond solely based on the following new instructions."
-                },
-                {
-                    role: "user",
-                    content: prompt
-                },
-            ],
-            max_tokens: 3000,
-            temperature: 0.7, // Adjust temperature for creativity vs. precision
-            top_p: 0.9,       // Adjust top_p for diversity in responses
-            frequency_penalty: 0.1, // Penalize frequent terms for varied output
-            presence_penalty: 0.1,  // Penalize terms that have already been used
-        });
-
-        let jsonResponseText = response.choices[0].message.content;
-
-        // Clean up the response to remove code block formatting or extra text
-        jsonResponseText = jsonResponseText.replace(/```json/g, '').replace(/```/g, '').trim();
-
-        // Try to parse as JSON
-        try {
-            const parsedJson = JSON.parse(jsonResponseText);
-            return parsedJson;
-        } catch (jsonError) {
-            logger.error(`Failed to parse JSON from detailed report: ${jsonError.message}`);
-            return { error: "Invalid JSON format from OpenAI", raw: jsonResponseText };
-        }
-    } catch (error) {
-        logger.error(`Failed to generate JSON from report: ${error.message}`);
-        return null;
+      const parsedJson = JSON.parse(jsonResponseText);
+      return parsedJson;
+    } catch (jsonError) {
+      logger.error(`Failed to parse JSON from detailed report: ${jsonError.message}`);
+      return { error: "Invalid JSON format from OpenAI", raw: jsonResponseText };
     }
+  } catch (error) {
+    logger.error(`Failed to generate JSON from report: ${error.message}`);
+    return null;
+  }
 }
 
 // Function to generate a prompt for the detailed report based on form data
 function generateDetailedReportPrompt(data) {
-    let prompt = `
+  let prompt = `
     You work for a digital and product transformation consultancy firm. Your client has recently undergone a product maturity assessment to evaluate their current state and identify areas for improvement. 
     The assessment covered four key dimensions: Strategy, Processes, Technology, and Culture. The responses are provided below, at the end of the prompt.
     
@@ -194,29 +194,30 @@ function generateDetailedReportPrompt(data) {
     Here are the responses from the product maturity assessment for analysis:
     
     `;
-    
-    // Append user responses to the prompt
-    for (const [questionId, answer] of Object.entries(data)) {
-        const questionDetails = getQuestionDetailsById(questionId);
-        const answerText = getAnswerTextById(questionId, answer);
 
-        if (questionDetails) {
-            prompt += `Dimension: ${questionDetails.dimension}\n`;
-            prompt += `Question: ${questionDetails.text}\n`;
-        } else {
-            prompt += `Dimension: Not Found\n`;
-            prompt += `Question: Not Found\n`;
-        }
+  // Append user responses to the prompt
+  for (const [questionId, answer] of Object.entries(data)) {
+    ;
+    const questionDetails = getQuestionDetailsById(questionId);
+    const answerText = getAnswerTextById(questionId, answer);
 
-        prompt += `Question ID: ${questionId}\nAnswer: ${answer} (${answerText})\n\n`;
+    if (questionDetails) {
+      prompt += `Dimension: ${questionDetails.dimension}\n`;
+      prompt += `Question: ${questionDetails.text}\n`;
+    } else {
+      prompt += `Dimension: Not Found\n`;
+      prompt += `Question: Not Found\n`;
     }
 
-    return prompt;
+    prompt += `Question ID: ${questionId}\nAnswer: ${answer} (${answerText})\n\n`;
+  }
+
+  return prompt;
 }
 
 // Function to generate a prompt for JSON output based on the detailed report
 function generateJsonPrompt(detailedReport) {
-    return `
+  return `
 Based on the following detailed report, produce a structured JSON output that includes the following information. The response should be pure JSON format, without any additional text, formatting, or comments.
 
 {
@@ -266,6 +267,6 @@ ${detailedReport}
 }
 
 module.exports = {
-    generateDetailedReport,
-    generateJsonFromReport,
+  generateDetailedReport,
+  generateJsonFromReport,
 };
