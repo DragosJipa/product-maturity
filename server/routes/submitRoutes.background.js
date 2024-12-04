@@ -44,38 +44,38 @@ router.post('/', async (req, res) => {
   res.status(202).json({ message: 'Your form has been submitted and is being processed. You will be notified once processing is complete.', taskId });
 
   // Perform async processing in background
-  (async () => {
-    try {
-      // Step 1: Generate detailed report
-      const detailedReport = await generateDetailedReport(formData);
-      if (!detailedReport) {
-        throw new Error('Failed to generate detailed report.');
-      }
-      logger.info(`Generated Detailed Report: \n ${detailedReport}`);
+  // (async () => {
+  //   try {
+  //     // Step 1: Generate detailed report
+  //     const detailedReport = await generateDetailedReport(formData);
+  //     if (!detailedReport) {
+  //       throw new Error('Failed to generate detailed report.');
+  //     }
+  //     logger.info(`Generated Detailed Report: \n ${detailedReport}`);
 
-      // Step 2: Generate JSON output from the detailed report
-      const jsonResponse = await generateJsonFromReport(detailedReport);
-      if (!jsonResponse) {
-        throw new Error('Failed to generate JSON from the detailed report.');
-      }
-      logger.info(`Generated JSON Response: \n ${JSON.stringify(jsonResponse, null, 2)}`);
+  //     // Step 2: Generate JSON output from the detailed report
+  //     const jsonResponse = await generateJsonFromReport(detailedReport);
+  //     if (!jsonResponse) {
+  //       throw new Error('Failed to generate JSON from the detailed report.');
+  //     }
+  //     logger.info(`Generated JSON Response: \n ${JSON.stringify(jsonResponse, null, 2)}`);
 
-      const finalResult = {
-        ...jsonResponse,
-        detailedReport: detailedReport, // Include detailed report in final output
-      };
+  //     const finalResult = {
+  //       ...jsonResponse,
+  //       detailedReport: detailedReport, // Include detailed report in final output
+  //     };
 
-      // Update the status to 'completed' and store the result
-      setTaskStatus(taskId, 'completed', finalResult);
+  //     // Update the status to 'completed' and store the result
+  //     setTaskStatus(taskId, 'completed', finalResult);
 
-      // log TaskID and its status
-      logger.info(`Task ID: ${taskId} - Status: ${getTaskStatus(taskId).status}`);
+  //     // log TaskID and its status
+  //     logger.info(`Task ID: ${taskId} - Status: ${getTaskStatus(taskId).status}`);
 
-    } catch (error) {
-      logger.error(`Error processing with OpenAI in background: ${error.message}`);
-      setTaskStatus(taskId, 'failed'); // Update status to 'failed' if there's an error
-    }
-  })();
+  //   } catch (error) {
+  //     logger.error(`Error processing with OpenAI in background: ${error.message}`);
+  //     setTaskStatus(taskId, 'failed'); // Update status to 'failed' if there's an error
+  //   }
+  // })();
 });
 
 module.exports = router;

@@ -1,0 +1,70 @@
+{
+    "maturity_level": {
+        "level": 2,
+        "status": "Defined",
+        "description": "The organization has defined processes for managing information security.",
+        "strategy": {
+            "level": 2,
+            "label": "repeatable"
+        },
+        "processes": {
+            "level": 1.8,
+            "label": "initial"
+        },
+        "technology": {
+            "level": 2,
+            "label": "repeatable"
+        },
+        "culture": {
+            "level": 2.5,
+            "label": "initial"
+        }
+    },
+    "detailed_analysis": {
+        "strengths": [
+            "The organization has a defined information security policy.",
+            "The organization has a defined information security management system.",
+            "The organization has defined processes for managing information security."
+        ],
+        "weaknesses": [
+            "The organization has not defined roles and responsibilities for information security.",
+            "The organization has not defined information security objectives.",
+            "The organization has not defined information security metrics."
+        ],
+        "areas_for_improvement": [
+            "Define roles and responsibilities for information security.",
+            "Define information security objectives.",
+            "Define information security metrics."
+        ]
+    },
+    "risks": {
+        "description": "The current state reflects a foundational level of maturity, with areas that require development to progress towards a more defined, managed level.",
+        "recommendations": [
+            {
+                "type": "strategy",
+                "description": "Clearly define and communicate the product strategy across the organization.",
+                "action": "Conduct quarterly strategy reviews to ensure alignment and make adjustments as needed."
+            },
+            {
+                "type": "processes",
+                "description": "Establish repeatable processes for managing information security.",
+                "action": "Develop and document processes for managing information security, including roles and responsibilities, objectives, and metrics."
+            },
+            {
+                "type": "technology",
+                "description": "Implement technology solutions to support information security management.",
+                "action": "Implement technology solutions to support information security management, such as security information and event management (SIEM) systems."
+            },
+            {
+                "type": "culture",
+                "description": "Foster a culture of information security awareness and accountability.",
+                "action": "Promote information security awareness and accountability through training, communication, and recognition programs."
+            }
+        ],
+        "risks": [
+            "Inadequate strategic alignment may lead to conflicting priorities and hinder overall progress.",
+            "Resistance to change and a lack of empowerment can stifle innovation and impact team morale."
+        ]
+    },
+    "roadmap": {}
+}

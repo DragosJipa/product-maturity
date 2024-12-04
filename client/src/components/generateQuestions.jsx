@@ -2,7 +2,6 @@ import './landingPage.css';
 import TextareaAutosize from 'react-textarea-autosize';
 
 const GenerateQuestions = ({ questions, currentQuestionIndex, insideCurrentQuestionIndex, formData, handleInputChange }) => {
-    console.log('GenerateQuestions:', questions, currentQuestionIndex, insideCurrentQuestionIndex, formData);
     const isDropdown = questions?.type === 'select';
     const isRadio = questions?.type === 'radio';
     const isOpenEnded = questions?.type === 'open-ended';
