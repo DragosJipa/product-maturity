@@ -14,21 +14,22 @@ const ProductMaturityAssessment = () => {
     const navigate = useNavigate();
 
     const backToStart = () => {
-        navigate('/');
+        navigate('/start');
     };
     const [lastAction, setLastAction] = useState('forward');
     const [questions, setQuestions] = useState([]);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [insideCurrentQuestionIndex, setInsideCurrentQuestionIndex] = useState(0);
     const [formData, setFormData] = useState({});
+    const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const { assessmentData, setAssessmentData } = useContext(AssessmentContext); // Use context to get and set assessment data
-    const [isSubmitted, setIsSubmitted] = useState(false); // Keep track of whether the form is submitted
-    const { checkProcessingStatus } = useCheckProcessingStatus(); // Use the new hook
+    const { assessmentData, setAssessmentData } = useContext(AssessmentContext);
+    const [isSubmitted, setIsSubmitted] = useState(false);
+    const { checkProcessingStatus } = useCheckProcessingStatus();
     const [animationKey, setAnimationKey] = useState(`${currentQuestionIndex}-${insideCurrentQuestionIndex}-${lastAction}`);
     const [visibleSection, setVisibleSection] = useState(null);
-    // Add isAnimating state to track animation status
+
     const [isAnimating, setIsAnimating] = useState(false);
 
     useEffect(() => {
@@ -40,14 +41,12 @@ const ProductMaturityAssessment = () => {
         : null;
 
     useEffect(() => {
-        // Update the visible section when currentSection changes
-        if (!isAnimating) {  // Only update when not animating
+        if (!isAnimating) {
             setVisibleSection(currentSection);
         }
     }, [currentSection]);
 
 
-    // Dynamically determine the base URL
     const baseURL = process.env.NODE_ENV === 'development' ? 'http://localhost:3001' : '';
 
     const getSectionTitle = (index) => {
@@ -73,11 +72,10 @@ const ProductMaturityAssessment = () => {
             .then(response => {
                 setQuestions(response.data);
                 console.log('Questions:', response.data);
-                // Check if there is existing data in the context
                 if (assessmentData && assessmentData.responses) {
                     setFormData(assessmentData.responses);
                 } else {
-                    setFormData({}); // Reset form data to empty if no existing data
+                    setFormData({});
                 }
             })
             .catch(error => {
@@ -90,16 +88,22 @@ const ProductMaturityAssessment = () => {
         if (isSubmitted) {
             const taskId = assessmentData?.taskId;
             if (taskId) {
-                checkProcessingStatus(taskId); // Use the hook to check processing status
+                checkProcessingStatus(taskId);
             }
         }
     }, [isSubmitted, assessmentData, checkProcessingStatus]);
+
 
     const handleInputChange = (questionId, value) => {
         setFormData({
             ...formData,
             [questionId]: value,
         });
+        if (questionId === 'email') {
+            const newErrors = { ...errors };
+            delete newErrors[questionId];
+            setErrors(newErrors);
+        }
         if (window._hsq) {
             console.log('window._hsq:', window._hsq);
             window._hsq.push(['trackEvent', {
@@ -112,44 +116,50 @@ const ProductMaturityAssessment = () => {
         setInsideCurrentQuestionIndex(index);
     }
 
-    const handleNext = () => {
-        setLastAction('forward');
-        const isLastInnerQuestion = questions[currentQuestionIndex].questions.length - 1 === insideCurrentQuestionIndex;
-        const isLastMainQuestion = currentQuestionIndex >= questions.length - 1 && isLastInnerQuestion;
-
-        if (!isLastMainQuestion) {
-            if (isLastInnerQuestion) {
-                setCurrentQuestionIndex(currentQuestionIndex + 1);
-                setInsideCurrentQuestionIndex(0);
-            } else {
-                setInsideCurrentQuestionIndex(insideCurrentQuestionIndex + 1);
-            }
+    const handleNext = (e) => {
+        e.preventDefault();
+        if (!formData.email) {
+            setErrors({ ...errors, email: 'Email is required.' });
+        } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(formData.email)) {
+            setErrors({ ...errors, email: 'Please enter a valid email address.' });
         } else {
-            setLoading(true);  // Keep loading until backend confirms submission
-            axios.post(`${baseURL}/api/submit`, formData)
-                .then(response => {
-                    setIsSubmitted(true);
-                    setAssessmentData({
-                        ...assessmentData,
-                        responses: formData, // Store the form responses in context
-                        taskId: response.data.taskId, // Save the taskId from the server
-                    });
+            setLastAction('forward');
+            const isLastInnerQuestion = questions[currentQuestionIndex].questions.length - 1 === insideCurrentQuestionIndex;
+            const isLastMainQuestion = currentQuestionIndex >= questions.length - 1 && isLastInnerQuestion;
 
-                    // Remove setLoading(false) here since we still need to wait for the processing status
-                    // Polling for processing status now
-                    const taskId = response.data.taskId;
-                    checkProcessingStatus(taskId);  // This will handle the state updates
-                })
-                .catch(error => {
-                    console.error('Submission error:', error);
-                    setError('Failed to submit responses. Please try again later.');
-                    setLoading(false); // Stop spinner in case of error
-                });
+            if (!isLastMainQuestion) {
+                if (isLastInnerQuestion) {
+                    setCurrentQuestionIndex(currentQuestionIndex + 1);
+                    setInsideCurrentQuestionIndex(0);
+                } else {
+                    setInsideCurrentQuestionIndex(insideCurrentQuestionIndex + 1);
+                }
+            } else {
+                setLoading(true);
+                axios.post(`${baseURL}/api/submit`, formData)
+                    .then(response => {
+                        setIsSubmitted(true);
+                        setAssessmentData({
+                            ...assessmentData,
+                            responses: formData,
+                            taskId: response.data.taskId,
+                        });
+
+                        const taskId = response.data.taskId;
+                        checkProcessingStatus(taskId);
+                    })
+                    .catch(error => {
+                        console.error('Submission error:', error);
+                        setError('Failed to submit responses. Please try again later.');
+                        setLoading(false);
+                    });
+            }
         }
     };
 
 
-    const handlePrevious = () => {
+    const handlePrevious = (e) => {
+        e.preventDefault();
         setLastAction('backward');
         if (currentQuestionIndex === 0 && insideCurrentQuestionIndex === 0) {
             backToStart();
@@ -191,9 +201,9 @@ const ProductMaturityAssessment = () => {
     }
 
     return (
-        <div className="flex flex-col items-start justify-start h-screen bg-customBG text-white p-4 px-32 overflow-hidden">
+        <div className="flex flex-col items-start justify-start h-screen bg-customBG text-white p-4 sm:px-14 md:px-20 lg:px-32 overflow-hidden">
             {/* Top navigation */}
-            <div className="w-full max-w-md mt-8 mb-8">
+            <div className="w-full max-w-lg mt-8 mb-8">
                 <div className="text-xs text-gray-400 flex items-center space-x-2">
                     <button className="w-[32px] h-[32px] flex items-center justify-center -mt-4" onClick={handlePrevious}>
                         <svg
@@ -215,7 +225,7 @@ const ProductMaturityAssessment = () => {
                         >
                             Product Maturity Assessment
                         </span>
-                        <h1 className="text-2xl font-semibold gradient-text mb-4 whitespace-nowrap overflow-hidden text-ellipsis">
+                        <h1 className="font-ibm-plex-mono mobile-s:text-lg sm:text-2xl font-semibold gradient-text mb-4 whitespace-normal break-words overflow-hidden text-ellipsis w-full">
                             {getSectionTitle(currentQuestionIndex)}
                         </h1>
                     </div>
@@ -256,9 +266,8 @@ const ProductMaturityAssessment = () => {
                     <GenerateQuestions
                         questions={visibleSection}
                         formData={formData}
-                        currentQuestionIndex={currentQuestionIndex}
-                        insideCurrentQuestionIndex={insideCurrentQuestionIndex}
                         handleInputChange={handleInputChange}
+                        errors={errors}
                     />
                 </motion.div>
 
@@ -275,8 +284,8 @@ const ProductMaturityAssessment = () => {
                                 handleDotClick(index);
                             }}
                             className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${index === insideCurrentQuestionIndex
-                                ? 'w-8 bg-white' // Elongated white dot for selected
-                                : 'w-2 bg-gray-600 hover:bg-gray-400' // Regular circular dot for others with hover state
+                                ? 'w-8 bg-white'
+                                : 'w-2 bg-gray-600 hover:bg-gray-400'
                                 }`}
                         ></button>
                     ))}
@@ -288,7 +297,7 @@ const ProductMaturityAssessment = () => {
                         onClick={handleNext}
                         className="flex items-center h-12 px-5 text-white font-mono font-normal text-lg leading-snug tracking-wide rounded-lg group"
                     >
-                        Continue
+                        {currentQuestionIndex === questions.length - 1 && insideCurrentQuestionIndex === questions[currentQuestionIndex].questions.length - 1 ? 'Submit' : 'Continue'}
                         <span className="flex items-center justify-center w-10 h-10 border border-white rounded-lg ml-2 transform transition-transform duration-300 group-hover:translate-x-1">
                             ➡️
                         </span>

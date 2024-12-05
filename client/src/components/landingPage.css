@@ -53,6 +53,15 @@
     width: fit-content;
 }
 
+.gradient-color-text-2 {
+    background: linear-gradient(90deg, #FFFFFF, #FFFFFF),
+        linear-gradient(88.02deg, rgba(98, 75, 237, 0.4) 0.23%, rgba(206, 86, 130, 0.4) 46.03%);
+    background-size: 100% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    width: fit-content;
+}
+
 .gradient-bg {
     background: linear-gradient(87.9deg, rgba(98, 75, 237, 1) -1.8%, rgba(206, 86, 130, 1) 69.61%);
 }

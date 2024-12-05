@@ -1,7 +1,7 @@
 import './landingPage.css';
 import TextareaAutosize from 'react-textarea-autosize';
 
-const GenerateQuestions = ({ questions, currentQuestionIndex, insideCurrentQuestionIndex, formData, handleInputChange }) => {
+const GenerateQuestions = ({ questions, formData, handleInputChange, errors }) => {
     const isDropdown = questions?.type === 'select';
     const isRadio = questions?.type === 'radio';
     const isOpenEnded = questions?.type === 'open-ended';
@@ -41,24 +41,24 @@ const GenerateQuestions = ({ questions, currentQuestionIndex, insideCurrentQuest
     };
 
     function renderQuestionText(question, id) {
-        const highlightText = cornerCases[id] || id; // Use the corner case text if available, otherwise use id
+        const highlightText = cornerCases[id] || id;
 
         if (question?.includes(highlightText)) {
             const parts = question.split(highlightText);
             return (
-                <>
+                <div className='mobile-s:text-2xl md:text-4xl base:text-4xl xl:text-6xl'>
                     {parts[0]}
-                    {isEmail ? (<span className="gradient-text text-6xl">{highlightText}</span>
+                    {isEmail ? (<span className="gradient-text mobile-s:text-4xl lg:text-6xl">{highlightText}</span>
                     ) : (<span className="gradient-text">{highlightText}</span>
                     )}
 
                     {parts[1]}
                     {isEmail && (
-                        <div className="font-ibm-plex-mono text-2xl font-normal text-left text-white pt-[3vh]">
+                        <div className="font-ibm-plex-mono mobile-s:text-xl text-2xl font-normal text-left text-white pt-[3vh]">
                             Enter your email below to start the free assessment and receive your customized report.
                         </div>
                     )}
-                </>
+                </div>
             );
         } else {
             return question;
@@ -67,8 +67,7 @@ const GenerateQuestions = ({ questions, currentQuestionIndex, insideCurrentQuest
 
     return (
         <div>
-
-            <div className="w-full max-w-4xl pt-[10vh] md:pt-[20vh] lg:pt-[30vh]">  {/* pt-w415 pt-w400  */}
+            <div className={`w-full max-w-4xl ${isRadio ? 'pt-0 sm:pt-[20vh] 3xl:pt-[20vh]' : 'mobile-s:pt-[10vh] 3xl:pt-[20vh]'}`}>
                 <p className="font-ibm-plex-mono text-5xl font-normal leading-[62.4px] tracking-[0.75px] text-left text-gray-100 mb-4">
                     <div>
                         {renderQuestionText(questions?.question, questions?.id)}
@@ -78,7 +77,7 @@ const GenerateQuestions = ({ questions, currentQuestionIndex, insideCurrentQuest
                 {isDropdown && (
                     <div className="relative w-full mb-6">
                         <select
-                            className="w-full bg-selectBG text-white py-3 px-4 pr-8 rounded appearance-none focus:outline-none focus-gradient text-2xl font-ibm-plex-mono font-light leading-[41.6px] tracking-[0.75px] text-left"
+                            className="w-full bg-selectBG text-white py-3 px-4 pr-8 rounded appearance-none focus:outline-none focus-gradient sm:text-2xl font-ibm-plex-mono font-light leading-[41.6px] tracking-[0.75px] text-left"
                             defaultValue={questions?.options?.[0]?.value}
                             value={formData[questions?.id || '']}
                             id={questions?.id}
@@ -112,7 +111,7 @@ const GenerateQuestions = ({ questions, currentQuestionIndex, insideCurrentQuest
 
 
                 {isRadio && (
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {questions?.options?.map((option, index) => (
                             <label
                                 key={index}
@@ -137,11 +136,11 @@ const GenerateQuestions = ({ questions, currentQuestionIndex, insideCurrentQuest
                                         checked:after:w-4 checked:after:h-4 checked:after:bg-white checked:after:rounded-full
                                         transition duration-200"
                                     />
-                                    <span className="text-xl font-medium text-gray-100 -mt-0.5">
+                                    <span className="mobile-s:text-base md:text-xl font-medium text-gray-100 -mt-0.5">
                                         {option.value.charAt(0).toUpperCase() + option.value.slice(1)}
                                     </span>
                                 </span>
-                                <div className="text-sm text-gray-400 pl-7 mrg-2">
+                                <div className="mobile-s:text-sm md:text-sm text-gray-400 pl-7 mrg-2">
                                     {option.label}
                                 </div>
                             </label>
@@ -164,16 +163,22 @@ const GenerateQuestions = ({ questions, currentQuestionIndex, insideCurrentQuest
                 )}
 
                 {isEmail && (
-                    <input
-                        type="email"
-                        id={questions?.id}
-                        name={questions?.id}
-                        value={formData[questions?.id] || ''}
-                        onChange={(e) => handleInputChange(questions?.id, e.target.value)}
-                        className="w-full border border-borderTextAreaBG rounded-lg px-4 py-2 focus:outline-none focus-gradient bg-textAreaBG font-ibm-plex-mono text-base font-light text-left text-white"
-                        placeholder="Email Address"
-                        aria-describedby={`${questions?.id}-desc`}
-                    />
+                    <div className="w-full">
+                        <input
+                            type="email"
+                            id={questions?.id}
+                            name={questions?.id}
+                            value={formData[questions?.id] || ''}
+                            onChange={(e) => handleInputChange(questions?.id, e.target.value)}
+                            className={`w-full border ${errors[questions?.id] ? 'border-errorRed rounded-none' : 'border-borderTextAreaBG rounded-lg'} px-4 py-2 focus:outline-none focus-gradient bg-textAreaBG font-ibm-plex-mono text-base font-light text-left text-white`}
+                            placeholder="Email Address"
+                            aria-describedby={`${questions?.id}-desc`}
+                            required
+                        />
+                        {errors[questions?.id] && (
+                            <p className="text-errorRed text-xl mt-5 p-2 font-ibm-plex-mono bg-errorBG inline-block">{errors[questions?.id]}</p>
+                        )}
+                    </div>
                 )}
             </div>
         </div>

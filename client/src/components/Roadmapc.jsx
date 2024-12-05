@@ -103,7 +103,7 @@ const Roadmapc = () => {
         <>
             <div className="flex items-center gap-4 pr-32 pl-32">
                 <span className='text-left block text-8xl font-bold gradient-color-text font-ibm-plex-mono'>
-                    Transformative Journey Roadmap
+                    Transformative Journey <br /> Roadmap
                 </span>
                 <div className="flex gap-2 place-self-end">
                     <button className="w-24 h-16 sm:w-16 sm:h-16 rounded-full bg-[#ffffff10] flex items-center justify-center">

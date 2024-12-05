@@ -6,7 +6,7 @@ import './landingPage.css';
 import { motion, AnimatePresence } from 'framer-motion';
 import Roadmapc from './Roadmapc';
 import StarBackground from './StarBackground';
-
+import { moduscreate } from '../utils/icons';
 const Dashboard = () => {
     const [activeTab, setActiveTab] = useState('maturityLevel');
     const downloadIcon = (
@@ -53,7 +53,8 @@ const Dashboard = () => {
             </div>
             <div className="relative z-10">
                 <header className="flex items-center justify-between px-6 py-4 bg-selectBG shadow-md border-b border-[#FFFFFF33]">
-                    <h1 className="text-2xl font-bold">MODUS</h1>
+
+                    {moduscreate}
 
                     <nav className="relative">
                         <ul className="flex">
