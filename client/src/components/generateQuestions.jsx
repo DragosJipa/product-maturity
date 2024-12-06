@@ -46,7 +46,7 @@ const GenerateQuestions = ({ questions, formData, handleInputChange, errors }) =
         if (question?.includes(highlightText)) {
             const parts = question.split(highlightText);
             return (
-                <div className='mobile-s:text-2xl md:text-4xl base:text-4xl xl:text-6xl'>
+                <div className='mobile-s:text-2xl md:text-4xl base:text-4xl 3xl:text-6xl'>
                     {parts[0]}
                     {isEmail ? (<span className="gradient-text mobile-s:text-4xl lg:text-6xl">{highlightText}</span>
                     ) : (<span className="gradient-text">{highlightText}</span>
@@ -67,7 +67,7 @@ const GenerateQuestions = ({ questions, formData, handleInputChange, errors }) =
 
     return (
         <div>
-            <div className={`w-full max-w-4xl ${isRadio ? 'pt-0 sm:pt-[20vh] 3xl:pt-[20vh]' : 'mobile-s:pt-[10vh] 3xl:pt-[20vh]'}`}>
+            <div className={`w-full max-w-4xl ${isRadio ? 'pt-0 sm:pt-[20vh] xl:pt-[5vh] 3xl:pt-[20vh]' : 'mobile-s:pt-[10vh] 3xl:pt-[20vh]'}`}>
                 <p className="font-ibm-plex-mono text-5xl font-normal leading-[62.4px] tracking-[0.75px] text-left text-gray-100 mb-4">
                     <div>
                         {renderQuestionText(questions?.question, questions?.id)}

@@ -261,5 +261,20 @@
 
 .scrollbar-hide::-webkit-scrollbar {
     display: none;
-    /* Chrome, Safari and Opera */
+}
+
+.planet-container {
+    position: absolute;
+    bottom: 0%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 1200px;
+}
+
+
+@media (max-width: 768px) {
+    .planet-container {
+        max-width: 100%;
+    }
 }

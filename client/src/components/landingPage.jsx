@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import StarBackground from './StarBackground';
 import './landingPage.css';
 import Step from './Step';
 import {
     handDrawnUnnderlines, step1, step2, step3, step4, step5, step6,
-    handDrawnAccents, handDrownArrow, planet, planet2, planet3 as lines,
+    handDrawnAccents, handDrownArrow,
     github, youtube, x, linkedin, facebook, modus, moduscreate,
 } from '../utils/icons';
 
@@ -52,46 +52,48 @@ const stepsData = [
 ];
 
 const LandingPage = () => {
+    const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth > 1200);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsLargeScreen(window.innerWidth > 1200);
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
     const navigate = useNavigate();
     return (
         <div className='bg-selectBG min-h-screen'>
-            <div className="text-white p-8 bg-selectBG min-h-screen">
+            <div className="text-white p-8 bg-selectBG min-h-screen z-10">
                 <div className="absolute inset-0 z-0">
                     <StarBackground />
                 </div>
 
-                <div className="absolute " style={{ bottom: '-66.4rem', left: '35rem' }}>
-                    <div className="absolute inset-0">
-                        {planet2}
-                    </div>
-                    <div className="absolute inset-0 overflow-hidden">
-                        <div className="absolute inset-0 mask-image">
-                            {lines}
-                        </div>
-                    </div>
-                </div>
-
-                <main className='relative overflow-hidden flex flex-col items-center justify-center px-80 font-ibm-plex-mono text-gray-200'>
+                <main className='relative overflow-hidden flex flex-col items-center justify-center 3xl:px-80 font-ibm-plex-mono text-gray-200'>
                     <span className='px-72 w-full flex justify-start py-20'>
                         {moduscreate}
                     </span>
                     <div className='px-72'>
-                        <span className='text-left text-8xl font-bold gradient-color-text font-ibm-plex-mono'>
+                        <span className='text-left xl:text-6xl 2xl:text-7xl 3xl:text-8xl font-bold gradient-color-text font-ibm-plex-mono'>
                             Accelerate Product Growth with AI-Powered Insights
                         </span>
-                        <p className='text-left text-3xl font-ibm-plex-mono pt-14 pr-60'>
+                        <p className='text-left text-xl xl:text-2xl 3xl:text-3xl font-ibm-plex-mono pt-14 pr-60'>
                             Feeling stuck in your product's journey? Unsure of the next steps to drive growth and innovation?
                         </p>
 
                         <div className='flex justify-between pt-14'>
                             <div className='w-1/2'>
-                                <p className='text-left text-2xl font-ibm-plex-mono mb-10'>
+                                <p className='text-left lg:text-2xl 3xl:text-2xl font-ibm-plex-mono mb-10'>
                                     Our AI-powered product maturity assessment analyzes your product strategy, processes, technology, and culture to identify areas for improvement. Receive a customized roadmap with actionable recommendations to optimize your product development lifecycle.
                                 </p>
                                 <div className="flex justify-start">
                                     <button
                                         onClick={() => navigate('/start')}
-                                        className="inline-flex items-center gap-2 font-ibm-plex-mono text-white rounded-full px-6 py-2 text-2xl font-medium transition-all bg-gradient-to-r from-[#624BED] to-[#CE5682]">
+                                        className="inline-flex items-center gap-2 font-ibm-plex-mono text-white rounded-full px-6 py-2 3xl:text-2xl font-medium transition-all bg-gradient-to-r from-[#624BED] to-[#CE5682]">
                                         Take the Free Assessment
                                     </button>
                                 </div>
@@ -122,12 +124,16 @@ const LandingPage = () => {
                                     <Step key={index} title={step.title} icon={step.icon} text={step.text} />
                                 ))}
                             </div>
-                            <div className='absolute -mt-10' style={{ right: '42rem' }}>
-                                {handDrownArrow}
-                            </div>
-                            <div className='absolute -mt-10' style={{ right: '42rem' }}>
-                                {handDrawnAccents}
-                            </div>
+                            {isLargeScreen && (
+                                <div className='relative'>
+                                    <div className='absolute -mt-10' style={{ left: '95%' }}>
+                                        {handDrownArrow}
+                                    </div>
+                                    <div className='absolute -mt-10' style={{ left: '115%' }}>
+                                        {handDrawnAccents}
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         <div className="mt-24 text-center">
@@ -147,7 +153,7 @@ const LandingPage = () => {
                                 ))}
                             </div>
                         </div>
-                        <div className="mt-44 text-center">
+                        <div className="mt-44 mb-20 text-center">
                             <div className="flex justify-center">
                                 <p className='gradient-color-text font-ibm-plex-mono text-xl font-semibold'>
                                     How Modus Can Help
@@ -172,10 +178,13 @@ const LandingPage = () => {
                         </div>
                     </div>
                 </main>
-
             </div>
-
-            <footer className="mt-[65px] font-ibm-plex-mono">
+            <div className="relative">
+                <div className="planet-container relative">
+                    <img src="/planet.svg" alt="planet" />
+                </div>
+            </div>
+            <footer className="font-ibm-plex-mono relative z-10">
                 <div className="bg-[#161616] px-8 py-12">
                     <div className="max-w-7xl mx-auto grid grid-cols-2 large:grid-cols-5 gap-8">
                         <div>
