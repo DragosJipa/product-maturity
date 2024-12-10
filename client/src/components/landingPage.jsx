@@ -1,72 +1,285 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import StarBackground from './StarBackground';
 import './landingPage.css';
+import Step from './Step';
+import {
+    handDrawnUnnderlines, step1, step2, step3, step4, step5, step6,
+    handDrawnAccents, handDrownArrow,
+    github, youtube, x, linkedin, facebook, modus, moduscreate,
+} from '../utils/icons';
+
+const stepsData = [
+    {
+        title: "Step 1",
+        icon: (
+            step1
+        ),
+        text: "Answer a few key questions about your product."
+    },
+    {
+        title: "Step 2",
+        icon: (
+            step2
+        ),
+        text: "Our AI algorithms analyze your responses to determine your product's maturity level."
+    },
+    {
+        title: "Step 3",
+        icon: (
+            step3
+        ),
+        text: "Get a personalized report with targeted recommendations and strategies for improvement."
+    },
+    {
+        icon: (
+            step4
+        ),
+        text: "Modus Create experts can help you implement the recommendations from your assessment."
+    },
+    {
+        icon: (
+            step5
+        ),
+        text: 'We provide guidance on strategy, process optimization, technology upgrades, and cultural transformation.'
+    },
+    {
+        icon: (
+            step6
+        ),
+        text: 'Our team can help you build a roadmap for success and achieve your product goals faster.'
+    }
+];
 
 const LandingPage = () => {
+    const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth > 1200);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsLargeScreen(window.innerWidth > 1200);
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
     const navigate = useNavigate();
-
-    const handleStart = () => {
-        navigate('/assessment');
-    };
-
     return (
-        <div className="relative flex flex-col min-h-screen bg-customBG text-white px-4">
-            <div className="flex items-center justify-between w-full p-4 lg:hidden">
-                <button className="text-white text-2xl font-bold">
-                    <span className="border border-white rounded-xl pt-0.5 pl-2 pr-2 pb-2">☰</span>
-                </button>
-                <h1 className="text-left lg:hidden w-full font-mono text-lg tracking-wide ml-2 mt-2">
-                    Product{' '}
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 font-bold">
-                        Maturity
-                    </span>{' '}
-                    Assessment
-                </h1>
-            </div>
-            {/* Main Content Container */}
-            <div className="flex flex-col items-start justify-start flex-grow w-full max-w-4xl mx-auto lg:max-w-[1124px] lg:max-h-[500px] gap-10 lg:gap-[124px] pt-60 md:pt-72 lg:pt-80 xl:pt-96 pt-w415 pt-w400 pt-h80 px-1">
-                {/* Heading and Description */}
-                <div className="w-full max-w-full flex flex-col gap-4 lg:gap-10">
-                    <h1 className="hidden lg:block font-mono font-normal text-2xl lg:text-3xl xl:text-[36px] leading-tight lg:leading-snug xl:leading-[46.8px] tracking-wide">
-                        Product Maturity Assessment
-                    </h1>
-                    <p className="font-mono font-light text-3xl lg:text-4xl xl:text-[48px] leading-tight lg:leading-snug xl:leading-[62.4px] tracking-wide">
-                        Let’s embark on a journey to uncover your{' '}
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 font-bold">
-                            product’s full potential!
-                        </span>{' '}
-                        🚀
-                    </p>
+        <div className='bg-selectBG min-h-screen'>
+            <div className="text-white mobile-s:p-4 mobile-l:p-8 mobile-s:pb-0 mobile-l:pb-0 bg-selectBG min-h-screen z-10">
+                <div className="absolute inset-0 z-0">
+                    <StarBackground />
                 </div>
-            </div>
 
-            {/* Desktop version of the button in content flow */}
-            <div className="hidden lg:flex w-full max-w-[1124px] items-start mx-auto pt-44">
-                <button
-                    onClick={handleStart}
-                    className="flex items-center justify-start text-white font-mono font-normal text-lg lg:text-[20px] leading-snug lg:leading-[26px] tracking-wide group"
-                >
-                    Let's go!
-                    <span className="flex items-center justify-center w-10 h-10 lg:w-[64px] lg:h-[64px] border border-white rounded-lg ml-3 lg:ml-5 transform transition-transform duration-300 group-hover:translate-x-1">
-                        ➡️
+                <main className='relative overflow-hidden flex flex-col items-center justify-center 3xl:px-80 font-ibm-plex-mono text-gray-200'>
+                    <span className='px-72 w-full flex justify-start py-20'>
+                        {moduscreate}
                     </span>
-                </button>
-            </div>
+                    <div className='px-72'>
+                        <span className='text-left xl:text-6xl 2xl:text-7xl 3xl:text-8xl font-bold gradient-color-text font-ibm-plex-mono'>
+                            Accelerate Product Growth with AI-Powered Insights
+                        </span>
+                        <p className='text-left text-xl xl:text-2xl 3xl:text-3xl font-ibm-plex-mono pt-14 pr-60'>
+                            Feeling stuck in your product's journey? Unsure of the next steps to drive growth and innovation?
+                        </p>
 
-            {/* Mobile Button Positioned Bottom-Right */}
-            <div className="lg:hidden fixed bottom-4 right-4">
-                <button
-                    onClick={handleStart}
-                    className="flex items-center h-12 px-5 text-white font-mono font-normal text-lg leading-snug tracking-wide hover:bg-white hover:text-gray-900 transition-colors duration-300 ease-in-out rounded-lg"
-                >
-                    Let's go!
-                    <span className="flex items-center justify-center w-10 h-10 border border-white rounded-lg ml-2">
-                        ➡️
-                    </span>
-                </button>
+                        <div className='flex justify-between pt-14'>
+                            <div className='w-1/2'>
+                                <p className='text-left lg:text-2xl 3xl:text-2xl font-ibm-plex-mono mb-10'>
+                                    Our AI-powered product maturity assessment analyzes your product strategy, processes, technology, and culture to identify areas for improvement. Receive a customized roadmap with actionable recommendations to optimize your product development lifecycle.
+                                </p>
+                                <div className="flex justify-start">
+                                    <button
+                                        onClick={() => navigate('/start')}
+                                        className="inline-flex items-center gap-2 font-ibm-plex-mono text-white rounded-full px-6 py-2 3xl:text-2xl font-medium transition-all bg-gradient-to-r from-[#624BED] to-[#CE5682]">
+                                        Take the Free Assessment
+                                    </button>
+                                </div>
+                            </div>
+                            <div className='w-1/2'>
+                                <div className='w-100 h-80 bg-blackBox rounded-2xl'></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="max-w-3xl mx-auto">
+                        <div className="mt-16">
+                            <div className="flex justify-center">
+                                <p className='gradient-color-text font-ibm-plex-mono text-xl font-semibold'>
+                                    How it works
+                                </p>
+                            </div>
+                            <h2 className="text-4xl font-bold text-center mb-12 mt-6" style={{ lineHeight: '62.4px', letterSpacing: -0.75 }}>
+                                Get Your Product Maturity <br />
+                                <div className="inline-flex flex-col items-center">
+                                    Score in Minutes
+                                    <span className="relative inline-flex flex-col items-center">
+                                        <span className="absolute pl-40">{handDrawnUnnderlines}</span>
+                                    </span>
+                                </div>
+                            </h2>
+                            <div className="grid grid-cols-1 large:grid-cols-3 gap-8">
+                                {stepsData.slice(0, 3).map((step, index) => (
+                                    <Step key={index} title={step.title} icon={step.icon} text={step.text} />
+                                ))}
+                            </div>
+                            {isLargeScreen && (
+                                <div className='relative'>
+                                    <div className='absolute -mt-10' style={{ left: '95%' }}>
+                                        {handDrownArrow}
+                                    </div>
+                                    <div className='absolute -mt-10' style={{ left: '115%' }}>
+                                        {handDrawnAccents}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="mt-24 text-center">
+                            <div className="flex justify-center">
+                                <p className='gradient-color-text font-ibm-plex-mono text-xl font-semibold'>
+                                    How Modus Can Help
+                                </p>
+                            </div>
+
+                            <h2 className="text-4xl font-bold text-center mb-12 mt-6" style={{ lineHeight: '62.4px', letterSpacing: -0.75 }}>
+                                Partner with Modus Create to <br />
+                                Achieve Product Excellence
+                            </h2>
+                            <div className="grid grid-cols-1 large:grid-cols-3 gap-8">
+                                {stepsData.slice(3, 6).map((step, index) => (
+                                    <Step key={index} icon={step.icon} text={step.text} />
+                                ))}
+                            </div>
+                        </div>
+                        <div className="mt-44 mini:mb-20 mb-10 text-center">
+                            <div className='content-container'>
+                                <div className="flex justify-center">
+                                    <p className='gradient-color-text font-ibm-plex-mono text-xl font-semibold'>
+                                        How Modus Can Help
+                                    </p>
+                                </div>
+                                <h2 className="mobile-s:text-3xl sm:text-4xl font-bold text-center mobile-l:mb-2 sm:mb-12 mt-6" style={{ lineHeight: '52.4px', letterSpacing: -0.75 }}>
+                                    Ready to Take Action?
+                                </h2>
+                                <div className="flex flex-col mini:flex-row justify-center gap-4 w-full">
+                                    <button
+                                        onClick={() => navigate('/start')}
+                                        className="md:inline-flex items-center gap-2 font-ibm-plex-mono text-white rounded-full px-6 py-2 mobile-s:text-sm mobile-m:text-base mobile-l:text-xl font-medium transition-all bg-gradient-to-r from-[#624BED] to-[#CE5682]">
+                                        Take the Free Assessment
+                                    </button>
+                                    <button
+                                        className="border border-white hover:border-white text-white px-6 py-3 mobile-s:text-sm mobile-m:text-base rounded-full transition duration-300"
+                                    >
+                                        Talk to an Expert
+                                    </button>
+                                </div>
+                            </div>
+                            <img src="/planet.svg" alt="planet" className="planet-image"
+                            />
+                        </div>
+                    </div>
+                </main>
             </div>
+            {/* <div className="relative">
+                <div className="planet-container relative">
+                </div>
+            </div> */}
+            <footer className="font-ibm-plex-mono relative z-10">
+                <div className="bg-[#161616] px-8 py-12">
+                    <div className="max-w-7xl mx-auto grid grid-cols-2 large:grid-cols-5 gap-8">
+                        <div>
+                            <h4 className="font-semibold mb-4 gradient-color-text-2">What We Do</h4>
+                            <ul className="space-y-2 text-sm text-gray-400">
+                                <li>Digital Strategy</li>
+                                <li>Platform & Cloud</li>
+                                <li>Product Development</li>
+                                <li>Digital Operations</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h4 className="text-white font-semibold mb-4 gradient-color-text-2">Our Partners</h4>
+                            <ul className="space-y-2 text-sm text-gray-400">
+                                <li>Atlassian</li>
+                                <li>AWS</li>
+                                <li>GitLab</li>
+                                <li>Ionic</li>
+                                <li>Other Partners</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h4 className="text-white font-semibold mb-4 gradient-color-text-2">Who We Are</h4>
+                            <ul className="space-y-2 text-sm text-gray-400">
+                                <li>Our Story</li>
+                                <li>Careers</li>
+                                <li>Open Source</li>
+                                <li>Our Work</li>
+                                <li>Contact Us</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h4 className="text-white font-semibold mb-4 gradient-color-text-2">Our Resources</h4>
+                            <ul className="space-y-2 text-sm text-gray-400">
+                                <li>Blog</li>
+                                <li>Innovation Podcast</li>
+                                <li>Guides & Playbooks</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h4 className="text-white font-semibold mb-4 gradient-color-text-2">Get Weekly Digital Transformation Insights</h4>
+                            <div className="space-y-4">
+                                <input
+                                    type="email"
+                                    placeholder="Email Address"
+                                    className="w-full px-4 py-2 bg-[#232323] rounded-md text-white text-sm border border-gray-700 focus:outline-none focus-gradient"
+                                />
+                                <button className="px-6 py-2 bg-gradient-to-r from-[#624BED] to-[#CE5682] text-white rounded-full text-sm hover:opacity-90 transition duration-300">
+                                    Stay Informed
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="bg-[#121212] px-8 py-6">
+                    <div className="max-w-7xl mx-auto flex flex-col large:flex-row justify-between items-center space-y-4 large:space-y-0">
+                        <div className="flex items-center space-x-6">
+                            {modus}
+
+                            <span className="text-sm text-gray-400">© 2023 Modus Create, LLC</span>
+                        </div>
+
+                        <div className="flex items-center space-x-6 text-sm text-gray-400">
+                            <a href="#" className="hover:text-white">Privacy Policy</a>
+                            <a href="#" className="hover:text-white">Sitemap</a>
+                            <div className="flex items-center space-x-4">
+                                <a href="#" className="hover:text-white">
+                                    {github}
+                                </a>
+                                <a href="#" className="hover:text-white">
+                                    {youtube}
+                                </a>
+                                <a href="#" className="hover:text-white">
+                                    {x}
+                                </a>
+                                <a href="#" className="hover:text-white">
+                                    {linkedin}
+                                </a>
+                                <a href="#" className="hover:text-white">
+                                    {facebook}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
         </div>
     );
-}
+};
 
 export default LandingPage;
