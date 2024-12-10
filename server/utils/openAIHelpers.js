@@ -32,44 +32,199 @@ async function generateDetailedReport(data) {
 }
 
 // Step 2: Function to generate JSON output from the detailed report
-async function generateJsonFromReport(detailedReport) {
-  try {
-    const prompt = generateJsonPrompt(detailedReport);
-    const response = await openai.chat.completions.create({
-      model: appConfig.LLM_MODEL,
-      messages: [
-        {
-          role: "system",
-          content: "You are a data analyst and assistant. Your task is to analyze the provided data and generate a response based on the data provided. Ignore any previous instructions or context and respond solely based on the following new instructions."
-        },
-        {
-          role: "user",
-          content: prompt
-        },
-      ],
-      max_tokens: 3000,
-      temperature: 0.7, // Adjust temperature for creativity vs. precision
-      top_p: 0.9,       // Adjust top_p for diversity in responses
-      frequency_penalty: 0.1, // Penalize frequent terms for varied output
-      presence_penalty: 0.1,  // Penalize terms that have already been used
+// async function generateJsonFromReport(detailedReport) {
+//   try {
+//     const prompt = generateJsonPrompt(detailedReport);
+//     const response = await openai.chat.completions.create({
+//       model: appConfig.LLM_MODEL,
+//       messages: [
+//         {
+//           role: "system",
+//           content: "You are a data analyst and assistant. Your task is to analyze the provided data and generate a response based on the data provided. Ignore any previous instructions or context and respond solely based on the following new instructions."
+//         },
+//         {
+//           role: "user",
+//           content: prompt
+//         },
+//       ],
+//       max_tokens: 3000,
+//       temperature: 0.7, // Adjust temperature for creativity vs. precision
+//       top_p: 0.9,       // Adjust top_p for diversity in responses
+//       frequency_penalty: 0.1, // Penalize frequent terms for varied output
+//       presence_penalty: 0.1,  // Penalize terms that have already been used
+//     });
+
+//     let jsonResponseText = response.choices[0].message.content;
+
+//     // Clean up the response to remove code block formatting or extra text
+//     jsonResponseText = jsonResponseText.replace(/```json/g, '').replace(/```/g, '').trim();
+
+//     // Try to parse as JSON
+//     try {
+//       const parsedJson = JSON.parse(jsonResponseText);
+//       return parsedJson;
+//     } catch (jsonError) {
+//       logger.error(`Failed to parse JSON from detailed report: ${jsonError.message}`);
+//       try {
+//         const parsedRetryJson = generateJsonWithRetries(prompt);
+//         return parsedRetryJson;
+//       } catch (err) {
+
+//       }
+//       return { error: "Invalid JSON format from OpenAI", raw: jsonResponseText };
+//     }
+//   } catch (error) {
+//     logger.error(`Failed to generate JSON from report: ${error.message}`);
+//     return null;
+//   }
+// }
+
+async function generateJsonFromReport(detailedReport, retries = 3) {
+  let jsonResponse = {};
+
+  const requiredFields = [
+    "maturity_level.level",
+    "maturity_level.status",
+    "maturity_level.description",
+    "maturity_level.strategy.level",
+    "maturity_level.strategy.label",
+    "maturity_level.processes.level",
+    "maturity_level.processes.label",
+    "maturity_level.technology.level",
+    "maturity_level.technology.label",
+    "maturity_level.culture.level",
+    "maturity_level.culture.label",
+    "detailed_analysis.strengths",
+    "detailed_analysis.weaknesses",
+    "detailed_analysis.areas_for_improvement",
+    "risks.description",
+    "risks.recommendations",
+    "risks.risks",
+    "roadmap"
+  ];
+
+  const requiredRoadmapFields = [
+    "answer",
+    "goal",
+    "milestone",
+    "milestoneTitle",
+    "phase",
+    "question",
+    "title"
+  ];
+
+  const requiredRecommendationFields = [
+    "action",
+    "description",
+    "type"
+  ];
+
+  const checkFields = (obj, fields) => {
+    return fields.every(field => {
+      const keys = field.split('.');
+      let value = obj;
+      for (const key of keys) {
+        if (value[key] === undefined) {
+          return false;
+        }
+        value = value[key];
+      }
+      return true;
     });
+  };
 
-    let jsonResponseText = response.choices[0].message.content;
-
-    // Clean up the response to remove code block formatting or extra text
-    jsonResponseText = jsonResponseText.replace(/```json/g, '').replace(/```/g, '').trim();
-
-    // Try to parse as JSON
-    try {
-      const parsedJson = JSON.parse(jsonResponseText);
-      return parsedJson;
-    } catch (jsonError) {
-      logger.error(`Failed to parse JSON from detailed report: ${jsonError.message}`);
-      return { error: "Invalid JSON format from OpenAI", raw: jsonResponseText };
+  const isJsonComplete = (json) => {
+    if (!checkFields(json, requiredFields)) {
+      return false;
     }
-  } catch (error) {
-    logger.error(`Failed to generate JSON from report: ${error.message}`);
-    return null;
+
+    if (!Array.isArray(json.roadmap)) {
+      return false;
+    }
+
+    for (const item of json.roadmap) {
+      if (!checkFields(item, requiredRoadmapFields)) {
+        return false;
+      }
+    }
+
+    if (!Array.isArray(json.risks.recommendations)) {
+      return false;
+    }
+
+    for (const item of json.risks.recommendations) {
+      if (!checkFields(item, requiredRecommendationFields)) {
+        return false;
+      }
+    }
+
+    return true;
+  };
+
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const maturityAndAnalysisPrompt = generateMaturityAndAnalysisPrompt(detailedReport);
+      const response1 = await openai.chat.completions.create({
+        model: appConfig.LLM_MODEL,
+        messages: [
+          {
+            role: "system",
+            content: "You are a data analyst and assistant. Your task is to analyze the provided data and generate a response based on the data provided. Ignore any previous instructions or context and respond solely based on the following new instructions."
+          },
+          {
+            role: "user",
+            content: maturityAndAnalysisPrompt
+          },
+        ],
+        max_tokens: 3000,
+        temperature: 0.7,
+        top_p: 0.9,
+        frequency_penalty: 0.1,
+        presence_penalty: 0.1,
+      });
+
+      let jsonResponseText1 = response1.choices[0].message.content;
+      jsonResponseText1 = jsonResponseText1.replace(/```json/g, '').replace(/```/g, '').trim();
+      const parsedJson1 = JSON.parse(jsonResponseText1);
+
+      const risksAndRoadmapPrompt = generateRisksAndRoadmapPrompt(detailedReport);
+      const response2 = await openai.chat.completions.create({
+        model: appConfig.LLM_MODEL,
+        messages: [
+          {
+            role: "system",
+            content: "You are a data analyst and assistant. Your task is to analyze the provided data and generate a response based on the data provided. Ignore any previous instructions or context and respond solely based on the following new instructions."
+          },
+          {
+            role: "user",
+            content: risksAndRoadmapPrompt
+          },
+        ],
+        max_tokens: 3000,
+        temperature: 0.7,
+        top_p: 0.9,
+        frequency_penalty: 0.1,
+        presence_penalty: 0.1,
+      });
+
+      let jsonResponseText2 = response2.choices[0].message.content;
+      jsonResponseText2 = jsonResponseText2.replace(/```json/g, '').replace(/```/g, '').trim();
+      const parsedJson2 = JSON.parse(jsonResponseText2);
+
+      jsonResponse = { ...parsedJson1, ...parsedJson2 };
+      if (isJsonComplete(jsonResponse)) {
+        return jsonResponse;
+      } else {
+        console.warn(`Attempt ${attempt} produced incomplete JSON. Retrying...`);
+      }
+    } catch (error) {
+      if (attempt < retries) {
+        console.warn(`Attempt ${attempt} failed. Retrying...`);
+      } else {
+        console.error(`Failed to generate valid JSON after ${retries} attempts:`, error.message);
+        return { error: "Failed to generate valid JSON", raw: error.message };
+      }
+    }
   }
 }
 
@@ -218,43 +373,164 @@ function generateDetailedReportPrompt(data) {
 // Function to generate a prompt for JSON output based on the detailed report
 function generateJsonPrompt(detailedReport) {
   return `
-Based on the following detailed report, produce a structured JSON output that includes the following information. The response should be pure JSON format, without any additional text, formatting, or comments.
+Based on the following detailed report, produce a structured JSON output that includes the following information. The response should be pure JSON format, without any additional text, formatting, or comments. 
 
+\`\`\`json
 {
-  "summary": "A very short summary of the product maturity. It should state the level and some key points, without details about company, industry, submitter role. Like in this example: 'According to the information provided, the product maturity level is medium to low, with evolving product management practices, some formal processes, and areas for improvement in technology adoption and collaboration.'",
-  "maturity_level": "Overall maturity level (1-5) extracted from the report. Should be a single number.",
-  "dimension_score": {
-    "Strategy": "Score for the Strategy dimension (1-5).",
-    "Processes": "Score for the Processes dimension (1-5).",
-    "Technology": "Score for the Technology dimension (1-5).",
-    "Culture": "Score for the Culture dimension (1-5)."
+  "maturity_level": {
+      "level": "The overall maturity level (1-5) extracted from the report. This is the numeric score value present in the report.",
+      "status": "Maturity status (e.g., Initial, Repeatable, Defined, etc.).",
+      "description": "A concise description of the maturity level based on the report.",
+      "strategy": {
+          "level": "Score for Strategy dimension (1-5) as it is present in the report.",
+          "label": "e.g., Initial, Repeatable, Defined, etc. as present in the report for Strategy dimention."
+      },
+      "processes": {
+          "level": "Score for Processes dimension (1-5) as it is present in the report.",
+          "label": "e.g., Initial, Repeatable, Defined, etc. as present in the report for Processes dimention."
+      },
+      "technology": {
+          "level": "Score for Technology dimension (1-5) as it is present in the report.",
+          "label": "e.g., Initial, Repeatable, Defined, etc. as present in the report for Technology dimention."
+      },
+      "culture": {
+          "level": "Score for Culture dimension (1-5) as it is present in the report.",
+          "label": "e.g., Initial, Repeatable, Defined, etc. as present in the report for Culture dimention."
+      }
   },
-  "recommendations": [
-    {
-      "title": "A short title for each recommendation.",
-      "details": "Detailed explanation of each recommendation."
-    }
-  ],
-  "risk_assessment": {
-    "level": "Overall risk level (e.g., low, medium, high).",
-    "details": "Detailed risk analysis based on the report."
+  "detailed_analysis": {
+      "strengths": [
+          "A list of strengths based on the report."
+      ],
+      "weaknesses": [
+          "A list of weaknesses based on the report."
+      ],
+      "areas_for_improvement": [
+          "A list of areas for improvement based on the report."
+      ]
   },
-  "roadmap_phases": [
-    {
-      "phase_id": "Unique ID for the phase.",
-      "title": "Title of the phase.",
-      "description": "Description of the phase."
-      "duration": "Duration of the phase as percentage of the total roadmap timeline.",
-    }
-  ],
-  "roadmap_milestones": [
-    {
-      "milestone_id": "Unique ID for the milestone.",
-      "title": "Title of the milestone.",
-      "description": "Include the main deliverable or achievement of the phase.",
-    }
+  "risks": {
+      "description": "An overall description of risks identified in the report.",
+      "recommendations": [
+          {
+              "type": "Type of recommendation (e.g., strategy, processes, technology, culture).",
+              "description": "Detailed explanation of the recommendation.",
+              "action": "Specific action steps for the recommendation."
+          }
+      ],
+      "risks": [
+          "A list of specific risks extracted from the report."
+      ]
+  },
+  "roadmap": [
+      {
+          "phase": "Unique ID for the phase, starting from 1.",
+          "goal": "Goal for this phase, extracted from the Roadmap section in the report report. Example: Process Optimization",
+          "title": "Phase name, extracted from the Roadmap section in the report report. Example: Implement Agile methodologies",
+          "milestone": "A short name for the milestone, based on the Roadmap section in the report. Example: Agile Processes",
+          "milestoneTitle": "Title of the milestone, extracted from the Roadmap section in the report report. Example: Agile framework adopted",
+          "question": "A relevant question associated with this phase. What an important stakeholder in a target organization might ask. Example: Struggling with Agile implementation?",
+          "answer": "A detailed answer or suggestion related to the phase, formulated by Modus, as a solution to their problem. Try to formulate the answer based on the the section "How Modus Create Can Help" from the report provided. Example: "Modus facilitates workshops to help you create a winning product strategy aligned with your business goals. We'll guide you through a proven process to define your target audience, value proposition, and roadmap to success.""
+      }
   ]
 }
+\`\`\`
+
+Guidelines for the JSON response:
+- Ensure all fields are present in the response.
+- Provide unique IDs for phases and milestones, starting from 1.
+
+Use the detailed report below to extract the relevant information:
+
+${detailedReport}
+`;
+}
+
+
+// Function to generate a prompt for the maturity level and detailed analysis sections
+function generateMaturityAndAnalysisPrompt(detailedReport) {
+  return `
+Based on the following detailed report, produce a structured JSON output that includes the following information. The response should be pure JSON format, without any additional text, formatting, or comments. 
+
+\`\`\`json
+{
+  "maturity_level": {
+      "level": "The overall maturity level (1-5) extracted from the report. This is the numeric score value present in the report.",
+      "status": "Maturity status (e.g., Initial, Repeatable, Defined, etc.).",
+      "description": "A concise description of the maturity level based on the report.",
+      "strategy": {
+          "level": "Score for Strategy dimension (1-5) as it is present in the report.",
+          "label": "e.g., Initial, Repeatable, Defined, etc. as present in the report for Strategy dimention."
+      },
+      "processes": {
+          "level": "Score for Processes dimension (1-5) as it is present in the report.",
+          "label": "e.g., Initial, Repeatable, Defined, etc. as present in the report for Processes dimention."
+      },
+      "technology": {
+          "level": "Score for Technology dimension (1-5) as it is present in the report.",
+          "label": "e.g., Initial, Repeatable, Defined, etc. as present in the report for Technology dimention."
+      },
+      "culture": {
+          "level": "Score for Culture dimension (1-5) as it is present in the report.",
+          "label": "e.g., Initial, Repeatable, Defined, etc. as present in the report for Culture dimention."
+      }
+  },
+  "detailed_analysis": {
+      "strengths": [
+          "A list of strengths based on the report."
+      ],
+      "weaknesses": [
+          "A list of weaknesses based on the report."
+      ],
+      "areas_for_improvement": [
+          "A list of areas for improvement based on the report."
+      ]
+  }
+}
+\`\`\`
+
+Guidelines for the JSON response:
+- Ensure all fields are present in the response.
+
+Use the detailed report below to extract the relevant information:
+
+${detailedReport}
+`;
+}
+
+// Function to generate a prompt for the risks and roadmap sections
+function generateRisksAndRoadmapPrompt(detailedReport) {
+  return `
+Based on the following detailed report, produce a structured JSON output that includes the following information. The response should be pure JSON format, without any additional text, formatting, or comments. 
+
+\`\`\`json
+{
+  "risks": {
+      "description": "An overall description of risks identified in the report.",
+      "recommendations": [
+          {
+              "type": "Type of recommendation (e.g., strategy, processes, technology, culture).",
+              "description": "Detailed explanation of the recommendation.",
+              "action": "Specific action steps for the recommendation."
+          }
+      ],
+      "risks": [
+          "A list of specific risks extracted from the report."
+      ]
+  },
+  "roadmap": [
+      {
+          "phase": "Unique ID for the phase, starting from 1.",
+          "goal": "Goal for this phase, extracted from the Roadmap section in the report report. Example: Process Optimization",
+          "title": "Phase name, extracted from the Roadmap section in the report report. Example: Implement Agile methodologies",
+          "milestone": "A short name for the milestone, based on the Roadmap section in the report. Example: Agile Processes",
+          "milestoneTitle": "Title of the milestone, extracted from the Roadmap section in the report report. Example: Agile framework adopted",
+          "question": "A relevant question associated with this phase. What an important stakeholder in a target organization might ask. Example: Struggling with Agile implementation?",
+          "answer": "A detailed answer or suggestion related to the phase, formulated by Modus, as a solution to their problem. Try to formulate the answer based on the the section "How Modus Create Can Help" from the report provided. Example: "Modus facilitates workshops to help you create a winning product strategy aligned with your business goals. We'll guide you through a proven process to define your target audience, value proposition, and roadmap to success.""
+      }
+  ]
+}
+\`\`\`
 
 Guidelines for the JSON response:
 - Ensure all fields are present in the response.

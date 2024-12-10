@@ -39,17 +39,17 @@ const LoadingSpinner = () => {
   }, [messageIndex, messages.length, messageTimings]);
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
+    <div className="flex flex-col items-center justify-center h-screen bg-customBG">
       <div className="flex justify-center items-center space-x-2">
         {/* Spinning Loader */}
         <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-solid"></div>
       </div>
-      <div className="mt-6 text-xl font-semibold text-gray-700">
+      <div className="mt-6 text-xl font-semibold text-gray-200">
         {/* Rotating message */}
         {messages[messageIndex]}
       </div>
       {/* Static time duration message */}
-      <div className="mt-4 text-sm text-gray-600">
+      <div className="mt-4 text-sm text-gray-500">
         This process usually takes about 30 seconds to 1 minute to complete.
       </div>
     </div>

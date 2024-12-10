@@ -263,18 +263,18 @@
     display: none;
 }
 
-.planet-container {
+.planet-image {
     position: absolute;
     bottom: 0%;
     left: 50%;
     transform: translateX(-50%);
-    width: 100%;
     max-width: 1200px;
 }
 
-
-@media (max-width: 768px) {
-    .planet-container {
-        max-width: 100%;
-    }
+.content-container {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    padding: 2rem;
+    pointer-events: auto;
 }

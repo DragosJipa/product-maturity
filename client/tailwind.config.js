@@ -31,6 +31,7 @@ module.exports = {
       'mobile-l': '480px',
       'sm': '640px',
       'md': '768px',
+      'mini': '700px',
       'base': '800px',
       'lg': '1024px',
       'xl': '1280px',

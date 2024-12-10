@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './landingPage.css';
 import GoalCard from './GoalCard';
 
@@ -26,52 +26,29 @@ const interpolateColors = (color1, color2, steps) => {
 
 const gradientColors = interpolateColors('#624BED', '#CE5682', 100);
 
-const goalCards = [
-    {
-        phase: 1,
-        goal: "Strategy Alignment Goal",
-        title: "Define clear product strategy",
-        milestone: "Strategy Milestone",
-        milestoneTitle: "Strategy Workshop conducted",
-        question: "Need help defining your product strategy?",
-        answer: "Modus facilitates workshops to help you create a winning product strategy aligned with your business goals. We'll guide you through a proven process to define your target audience, value proposition, and roadmap to success."
-    },
-    {
-        phase: 2,
-        goal: "Process Optimization Goal",
-        title: "Implement Agile methodologies",
-        milestone: "Processes Milestone",
-        milestoneTitle: "Agile framework adopted",
-        question: "Struggling with Agile implementation?",
-        answer: "Modus facilitates workshops to help you create a winning product strategy aligned with your business goals. We'll guide you through a proven process to define your target audience, value proposition, and roadmap to success."
-    },
-    {
-        phase: 3,
-        goal: "Technology Upgrade Goal",
-        title: "Modernize tech stack and implement CI/CD",
-        milestone: "Technology Milestone",
-        milestoneTitle: "CI/CD fully integrated",
-        question: "Need to modernize your technology?",
-        answer: "Modus facilitates workshops to help you create a winning product strategy aligned with your business goals. We'll guide you through a proven process to define your target audience, value proposition, and roadmap to success."
-    },
-    {
-        phase: 4,
-        goal: "Cultural Transformation Goal",
-        title: "Foster ownership and empowerment",
-        milestone: "Culture Milestone",
-        milestoneTitle: "Innovation culture established",
-        question: "Ready to build a customer-centric culture?",
-        answer: "Modus facilitates workshops to help you create a winning product strategy aligned with your business goals. We'll guide you through a proven process to define your target audience, value proposition, and roadmap to success."
-    }
-];
-
-const Roadmapc = () => {
-    const [hoveredPhase, setHoveredPhase] = useState(null);
+const Roadmapc = ({ goalCards }) => {
     const totalLines = 100;
-    const lineWidth = 20;
-    const lineMargin = 10;
-    const containerWidth = totalLines * (lineWidth + lineMargin);
+    const lineMargin = 2;
+
     const scrollContainerRef = useRef(null);
+    const cardsContainerRef = useRef(null);
+    const singleCardRef = useRef(null);
+
+    const [hoveredPhase, setHoveredPhase] = useState(null);
+    const [containerWidth, setContainerWidth] = useState(0);
+    const [lineWidth, setLineWidth] = useState(0);
+    const [cardWidth, setCardWidth] = useState(0);
+    const [gapBetweenCards, setGapBetweenCards] = useState(32);
+
+    useEffect(() => {
+        if (cardsContainerRef.current && singleCardRef.current) {
+            const width = cardsContainerRef.current.scrollWidth;
+            setContainerWidth(width);
+            setLineWidth(Math.floor((width - (totalLines * 2)) / totalLines));
+            setCardWidth(singleCardRef.current.scrollWidth);
+            setGapBetweenCards((cardsContainerRef.current.scrollWidth - singleCardRef.current.scrollWidth * goalCards.length) / (goalCards.length - 1));
+        }
+    }, [cardsContainerRef]);
 
     const handleMouseDown = (e) => {
         const scrollContainer = scrollContainerRef.current;
@@ -150,37 +127,40 @@ const Roadmapc = () => {
                         </div>
 
                         {/* Phase markers */}
-                        {[1, 2, 3, 4].map((phase, index) => (
+                        {goalCards.map((card, index) => (
                             <div
-                                key={phase}
+                                key={card.phase}
                                 className="absolute top-5 text-white"
-                                style={{ left: `${(index * 25.5)}%` }}
-                                onMouseEnter={() => {
-                                    setHoveredPhase(phase)
+                                style={{
+                                    left: `${index * (cardWidth + gapBetweenCards)}px`
                                 }}
+                                onMouseEnter={() => setHoveredPhase(card.phase)}
                                 onMouseLeave={() => setHoveredPhase(null)}
                             >
-                                <div className={`items-center bg-black px-4 py-2 gradient-border-card-always rounded-full text-white text-sm my-2 font-ibm-plex-mono ${hoveredPhase === phase ? 'hover' : ''}`}>
-                                    Phase {phase}
+                                <div className={`items-center bg-black px-4 py-2 gradient-border-card-always rounded-full text-white text-sm my-2 font-ibm-plex-mono ${hoveredPhase === card.phase ? 'hover' : ''}`}>
+                                    Phase {card.phase}
                                 </div>
                             </div>
                         ))}
                     </div>
 
                     {/* Cards container */}
-                    <div className="grid grid-cols-4 gap-8">
+                    <div className="flex gap-8 items-stretch" ref={cardsContainerRef}>
                         {goalCards.map((card, index) => (
-                            <GoalCard
-                                key={index}
-                                goal={card.goal}
-                                title={card.title}
-                                milestone={card.milestone}
-                                milestoneTitle={card.milestoneTitle}
-                                question={card.question}
-                                answer={card.answer}
-                                hovered={hoveredPhase === card.phase}
-                                onMouseEnter={() => setHoveredPhase(card.phase)}
-                                onMouseLeave={() => setHoveredPhase(null)} />
+                            <div className="flex-1 min-w-[750px] items-stretch flex-shrink-0" key={index} ref={singleCardRef}>
+                                <GoalCard
+                                    key={index}
+                                    goal={card.goal}
+                                    title={card.title}
+                                    milestone={card.milestone}
+                                    milestoneTitle={card.milestoneTitle}
+                                    question={card.question}
+                                    answer={card.answer}
+                                    hovered={hoveredPhase === card.phase}
+                                    onMouseEnter={() => setHoveredPhase(card.phase)}
+                                    onMouseLeave={() => setHoveredPhase(null)}
+                                />
+                            </div>
                         ))}
                     </div>
                 </div>

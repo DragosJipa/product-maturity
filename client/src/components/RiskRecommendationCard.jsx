@@ -31,8 +31,8 @@ const RiskRecommendationCard = ({ title, icon, items }) => {
                 {items.map((item, index) => (
                     <li key={index}
                         className={`flex items-center space-x-3 bg-cardBG p-8 ${isRisk ? 'pl-5' : ''} ${expandedIndices.has(index)
-                                ? 'gradient-border-active'
-                                : 'gradient-border'
+                            ? 'gradient-border-active'
+                            : 'gradient-border'
                             }`}
                         style={{
                             borderRadius: expandedIndices.has(index) ? '16px 0 16px 0' : '0 16px 0 16px'
@@ -45,7 +45,7 @@ const RiskRecommendationCard = ({ title, icon, items }) => {
                             </>
                         ) : (
                             <div className="flex flex-col h-full w-full">
-                                <span className="font-ibm-plex-mono text-xl text-gray-300 mb-20 relative">
+                                <span className="font-ibm-plex-mono text-xl text-gray-300 mb-20 pb-5 flex-grow relative">
                                     <div className={`absolute top-0 left-0 transition-all duration-300 ${expandedIndices.has(index) ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}>
                                         {item.action}
                                     </div>
@@ -53,7 +53,7 @@ const RiskRecommendationCard = ({ title, icon, items }) => {
                                         {item.description}
                                     </div>
                                 </span>
-                                <div className="flex justify-between items-center mt-auto">
+                                <div className="flex justify-between items-center mt-auto pt-5">
                                     {expandedIndices.has(index) ? (
                                         <button
                                             className="flex items-center gap-2 text-gray-300 hover:text-white"

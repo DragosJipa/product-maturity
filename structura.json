@@ -66,5 +66,42 @@
             "Resistance to change and a lack of empowerment can stifle innovation and impact team morale."
         ]
     },
-    "roadmap": {}
+    "roadmap": [
+        {
+            "phase": 1,
+            "goal": "Strategy Alignment Goal",
+            "title": "Define clear product strategy",
+            "milestone": "Strategy Milestone",
+            "milestoneTitle": "Strategy Workshop conducted",
+            "question": "Need help defining your product strategy?",
+            "answer": "Modus facilitates workshops to help you create a winning product strategy aligned with your business goals. We'll guide you through a proven process to define your target audience, value proposition, and roadmap to success."
+        },
+        {
+            "phase": 2,
+            "goal": "Process Optimization Goal",
+            "title": "Implement Agile methodologies",
+            "milestone": "Processes Milestone",
+            "milestoneTitle": "Agile framework adopted",
+            "question": "Struggling with Agile implementation?",
+            "answer": "Modus facilitates workshops to help you create a winning product strategy aligned with your business goals. We'll guide you through a proven process to define your target audience, value proposition, and roadmap to success."
+        },
+        {
+            "phase": 3,
+            "goal": "Technology Upgrade Goal",
+            "title": "Modernize tech stack and implement CI/CD",
+            "milestone": "Technology Milestone",
+            "milestoneTitle": "CI/CD fully integrated",
+            "question": "Need to modernize your technology?",
+            "answer": "Modus facilitates workshops to help you create a winning product strategy aligned with your business goals. We'll guide you through a proven process to define your target audience, value proposition, and roadmap to success."
+        },
+        {
+            "phase": 4,
+            "goal": "Cultural Transformation Goal",
+            "title": "Foster ownership and empowerment",
+            "milestone": "Culture Milestone",
+            "milestoneTitle": "Innovation culture established",
+            "question": "Ready to build a customer-centric culture?",
+            "answer": "Modus facilitates workshops to help you create a winning product strategy aligned with your business goals. We'll guide you through a proven process to define your target audience, value proposition, and roadmap to success."
+        }
+    ]
 }

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import MaturityLevel from './MaturityLevel';
 import DetailedAnalysis from './DetailedAnalysis';
 import Risks from './Risks';
@@ -7,8 +8,40 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Roadmapc from './Roadmapc';
 import StarBackground from './StarBackground';
 import { moduscreate } from '../utils/icons';
+import { AssessmentContext } from '../context/assessmentContext'; // Import AssessmentContext
+
 const Dashboard = () => {
+    const navigate = useNavigate();
+    const { assessmentData } = useContext(AssessmentContext);
+    const [direction, setDirection] = useState(0);
     const [activeTab, setActiveTab] = useState('maturityLevel');
+    const [storedAssessmentData, setStoredAssessmentData] = useState(() => {
+        const savedData = sessionStorage.getItem('assessmentData');
+        return savedData ? JSON.parse(savedData) : null;
+    });
+
+    useEffect(() => {
+        if (assessmentData) {
+            sessionStorage.setItem('assessmentData', JSON.stringify(assessmentData));
+            setStoredAssessmentData(assessmentData);
+        }
+    }, [assessmentData]);
+
+    useEffect(() => {
+        if (!assessmentData && !storedAssessmentData) {
+            navigate('/');
+        }
+    }, [assessmentData, storedAssessmentData, navigate]);
+
+    const maturity_level = storedAssessmentData?.interpretation?.maturity_level || assessmentData?.interpretation?.maturity_level;
+    const detailed_analysis = storedAssessmentData?.interpretation?.detailed_analysis || assessmentData?.interpretation?.detailed_analysis;
+    const risks = storedAssessmentData?.interpretation?.risks || assessmentData?.interpretation?.risks;
+    const goalCards = storedAssessmentData?.interpretation?.roadmap || assessmentData?.interpretation?.roadmap;
+
+    if (!storedAssessmentData && !assessmentData) {
+        return null;
+    }
+
     const downloadIcon = (
         <svg width="18" height="19" viewBox="0 0 18 19" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M9.5625 4.06179C9.5625 3.75004 9.31172 3.49924 9 3.49924C8.68828 3.49924 8.4375 3.75004 8.4375 4.06179V10.3929L6.21094 8.16609C5.99062 7.94575 5.63437 7.94575 5.41641 8.16609C5.19844 8.38642 5.19609 8.7427 5.41641 8.96069L8.60156 12.1485C8.82188 12.3688 9.17812 12.3688 9.39609 12.1485L12.5859 8.96069C12.8062 8.74036 12.8062 8.38407 12.5859 8.16609C12.3656 7.9481 12.0094 7.94575 11.7914 8.16609L9.56484 10.3929V4.06179H9.5625ZM6.01875 10.6249H4.5C3.67266 10.6249 3 11.2976 3 12.1251V14.0002C3 14.8277 3.67266 15.5004 4.5 15.5004H13.5C14.3273 15.5004 15 14.8277 15 14.0002V12.1251C15 11.2976 14.3273 10.6249 13.5 10.6249H11.9813L10.8563 11.75H13.5C13.7063 11.75 13.875 11.9188 13.875 12.1251V14.0002C13.875 14.2065 13.7063 14.3753 13.5 14.3753H4.5C4.29375 14.3753 4.125 14.2065 4.125 14.0002V12.1251C4.125 11.9188 4.29375 11.75 4.5 11.75H7.14375L6.01875 10.6249ZM13.125 13.0626C13.125 12.9134 13.0657 12.7704 12.9602 12.6649C12.8548 12.5594 12.7117 12.5001 12.5625 12.5001C12.4133 12.5001 12.2702 12.5594 12.1648 12.6649C12.0593 12.7704 12 12.9134 12 13.0626C12 13.2118 12.0593 13.3549 12.1648 13.4604C12.2702 13.5659 12.4133 13.6252 12.5625 13.6252C12.7117 13.6252 12.8548 13.5659 12.9602 13.4604C13.0657 13.3549 13.125 13.2118 13.125 13.0626Z" fill="white" />
@@ -36,7 +69,6 @@ const Dashboard = () => {
         ease: "easeInOut"
     };
 
-    const [direction, setDirection] = useState(0);
 
     const handleTabChange = (newTab) => {
         const tabOrder = ['maturityLevel', 'detailedAnalysis', 'risksRecommendations', 'roadmap'];
@@ -107,10 +139,10 @@ const Dashboard = () => {
                             transition={pageTransition}
                             className="w-full space-y-28"
                         >
-                            {activeTab === "maturityLevel" && <MaturityLevel />}
-                            {activeTab === "detailedAnalysis" && <DetailedAnalysis />}
-                            {activeTab === "risksRecommendations" && <Risks />}
-                            {activeTab === "roadmap" && <Roadmapc />}
+                            {activeTab === "maturityLevel" && <MaturityLevel maturityLevel={maturity_level} />}
+                            {activeTab === "detailedAnalysis" && <DetailedAnalysis analysisData={detailed_analysis} />}
+                            {activeTab === "risksRecommendations" && <Risks risks={risks} />}
+                            {activeTab === "roadmap" && <Roadmapc goalCards={goalCards} />}
                         </motion.div>
                     </AnimatePresence>
                 </main>

@@ -3,7 +3,7 @@ import MaturityLevelCard from './MaturityLevelCard';
 import MetricCard from './MetricCard';
 import { featuredIcon } from '../utils/icons';
 
-const MaturityLevel = () => {
+const MaturityLevel = ({ maturityLevel }) => {
     return (
         <>
             <div className="text-left">
@@ -17,8 +17,9 @@ const MaturityLevel = () => {
             <div className="flex flex-wrap lg:flex-nowrap gap-12">
                 <div className="flex-1 flex justify-center">
                     <MaturityLevelCard
-                        level={2}
-                        description="Based on the responses gathered from the product maturity assessment, the organization shows signs of operating at a relatively early maturity level, characterized by partial definition and alignment in its product strategy, processes that are inconsistently followed with limited collaboration, a technology infrastructure that is partially modernized, and a culture that lacks empowerment and customer-centric focus."
+                        level={maturityLevel.level}
+                        description={maturityLevel.description}
+                        status={maturityLevel.status}
                     />
                 </div>
 
@@ -27,10 +28,10 @@ const MaturityLevel = () => {
                         <h3 className="text-2xl font-ibm-plex-mono flex items-center text-white/75">Maturity Levels</h3>
                     </div>
                     <section className="grid grid-cols-1 min-[1000px]:grid-cols-2 gap-6">
-                        <MetricCard title="Strategy" value="1" label="Repeatable" />
-                        <MetricCard title="Processes" value="3.8" label="Initial" />
-                        <MetricCard title="Technology" value="2" label="Repeatable" />
-                        <MetricCard title="Culture" value="4.5" label="Initial" />
+                        <MetricCard title="Strategy" value={maturityLevel.strategy.level} label={maturityLevel.strategy.label} />
+                        <MetricCard title="Processes" value={maturityLevel.processes.level} label={maturityLevel.processes.label} />
+                        <MetricCard title="Technology" value={maturityLevel.technology.level} label={maturityLevel.technology.label} />
+                        <MetricCard title="Culture" value={maturityLevel.culture.level} label={maturityLevel.culture.label} />
                     </section>
                     <div className="bg-cardBG rounded-2xl p-5 shadow-md mb-6 mt-6">
                         <div className="flex flex-col-2 items-center gap-4">

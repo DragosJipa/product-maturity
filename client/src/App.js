@@ -20,9 +20,9 @@ function App() {
             <Route path="/start" element={<StartPage />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/assessment" element={<ProductMaturityDesignForm />} />
-            <Route path="/summary" element={<SummaryResults />} />
+            {/* <Route path="/summary" element={<SummaryResults />} />
             <Route path="/report" element={<Report />} />
-            <Route path="/roadmap" element={<Roadmap />} />
+            <Route path="/roadmap" element={<Roadmap />} /> */}
             <Route path="*" element={<div>404 Not Found</div>} />
           </Routes>
         </Suspense>

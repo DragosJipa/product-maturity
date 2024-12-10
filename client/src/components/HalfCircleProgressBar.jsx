@@ -1,7 +1,7 @@
 import './landingPage.css';
 
-export default function HalfCircleProgressBar({ progress }) {
-    const radius = 100;
+export default function HalfCircleProgressBar({ progress, status }) {
+    const radius = 90;
     const strokeWidth = 10;
     const circumference = Math.PI * radius;
     const offset = circumference - (progress / 5) * circumference;
@@ -48,7 +48,7 @@ export default function HalfCircleProgressBar({ progress }) {
 
             <div className="absolute inset-0 flex flex-col items-center justify-end pb-4">
                 <div className="text-6xl font-bold gradient-color-text">Lv.{progress}</div>
-                <div className="text-xl font-medium text-white font-ibm-plex-mono">Defined</div>
+                <div className="text-xl font-medium text-white font-ibm-plex-mono">{status}</div>
             </div>
         </div>
     );

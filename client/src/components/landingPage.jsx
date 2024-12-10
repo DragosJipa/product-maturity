@@ -68,7 +68,7 @@ const LandingPage = () => {
     const navigate = useNavigate();
     return (
         <div className='bg-selectBG min-h-screen'>
-            <div className="text-white p-8 bg-selectBG min-h-screen z-10">
+            <div className="text-white mobile-s:p-4 mobile-l:p-8 mobile-s:pb-0 mobile-l:pb-0 bg-selectBG min-h-screen z-10">
                 <div className="absolute inset-0 z-0">
                     <StarBackground />
                 </div>
@@ -153,37 +153,39 @@ const LandingPage = () => {
                                 ))}
                             </div>
                         </div>
-                        <div className="mt-44 mb-20 text-center">
-                            <div className="flex justify-center">
-                                <p className='gradient-color-text font-ibm-plex-mono text-xl font-semibold'>
-                                    How Modus Can Help
-                                </p>
+                        <div className="mt-44 mini:mb-20 mb-10 text-center">
+                            <div className='content-container'>
+                                <div className="flex justify-center">
+                                    <p className='gradient-color-text font-ibm-plex-mono text-xl font-semibold'>
+                                        How Modus Can Help
+                                    </p>
+                                </div>
+                                <h2 className="mobile-s:text-3xl sm:text-4xl font-bold text-center mobile-l:mb-2 sm:mb-12 mt-6" style={{ lineHeight: '52.4px', letterSpacing: -0.75 }}>
+                                    Ready to Take Action?
+                                </h2>
+                                <div className="flex flex-col mini:flex-row justify-center gap-4 w-full">
+                                    <button
+                                        onClick={() => navigate('/start')}
+                                        className="md:inline-flex items-center gap-2 font-ibm-plex-mono text-white rounded-full px-6 py-2 mobile-s:text-sm mobile-m:text-base mobile-l:text-xl font-medium transition-all bg-gradient-to-r from-[#624BED] to-[#CE5682]">
+                                        Take the Free Assessment
+                                    </button>
+                                    <button
+                                        className="border border-white hover:border-white text-white px-6 py-3 mobile-s:text-sm mobile-m:text-base rounded-full transition duration-300"
+                                    >
+                                        Talk to an Expert
+                                    </button>
+                                </div>
                             </div>
-                            <h2 className="text-4xl font-bold text-center mb-12 mt-6" style={{ lineHeight: '62.4px', letterSpacing: -0.75 }}>
-                                Ready to Take Action?
-                            </h2>
-                            <div className="flex justify-center gap-4">
-
-                                <button
-                                    onClick={() => navigate('/start')}
-                                    className="inline-flex items-center gap-2 font-ibm-plex-mono text-white rounded-full px-6 py-2 text-xl font-medium transition-all bg-gradient-to-r from-[#624BED] to-[#CE5682]">
-                                    Take the Free Assessment
-                                </button>
-                                <button
-                                    className="border border-white hover:border-white text-white px-6 py-3 rounded-full transition duration-300"
-                                >
-                                    Talk to an Expert
-                                </button>
-                            </div>
+                            <img src="/planet.svg" alt="planet" className="planet-image"
+                            />
                         </div>
                     </div>
                 </main>
             </div>
-            <div className="relative">
+            {/* <div className="relative">
                 <div className="planet-container relative">
-                    <img src="/planet.svg" alt="planet" />
                 </div>
-            </div>
+            </div> */}
             <footer className="font-ibm-plex-mono relative z-10">
                 <div className="bg-[#161616] px-8 py-12">
                     <div className="max-w-7xl mx-auto grid grid-cols-2 large:grid-cols-5 gap-8">

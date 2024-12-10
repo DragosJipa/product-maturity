@@ -104,7 +104,7 @@ export const useCheckProcessingStatus = () => {
 
         // Redirect to summary after completion
         console.log('Task completed, redirecting to /summary');
-        navigate('/summary');
+        navigate('/dashboard');
       } else if (status === 'processing') {
         setTimeout(() => checkProcessingStatus(taskId), 5000); // Poll every 5 seconds
       } else {
