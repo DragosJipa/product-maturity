@@ -52,15 +52,15 @@ export default function MetricCard({ title, value, label }) {
                 <span className="-ml-1 mr-1">
                     {getIcon()}
                 </span>
-                <h3 className="text-lg text-white font-ibm-plex-mono font-medium">{title}</h3>
+                <h3 className="text-base 3xl:text-lg text-white font-ibm-plex-mono font-medium">{title}</h3>
             </div>
             <div className="flex mt-5">
                 <div className="mr-4">
-                    <span className="text-5xl font-bold text-white">{value}</span>
+                    <span className="text-4xl 3xl:text-5xl font-bold text-white">{value}</span>
                 </div>
 
-                <div className="flex flex-col space-y-2">
-                    <span className="text-gray-300 text-base">{label}</span>
+                <div className="flex flex-col space-y-1 3xl:space-y-2">
+                    <span className="text-gray-300 font-ibm-plex-mono text-sm 3xl:text-base">{label}</span>
                     <ProgressBar progress={Math.floor(value)} />
                 </div>
             </div>

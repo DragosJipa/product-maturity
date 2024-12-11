@@ -79,7 +79,7 @@ const Roadmapc = ({ goalCards }) => {
     return (
         <>
             <div className="flex items-center gap-4 pr-32 pl-32">
-                <span className='text-left block text-8xl font-bold gradient-color-text font-ibm-plex-mono'>
+                <span className='text-left block mobile-s:text-2xl md:text-4xl lg:text-6xl 3xl:text-8xl font-bold gradient-color-text font-ibm-plex-mono'>
                     Transformative Journey <br /> Roadmap
                 </span>
                 <div className="flex gap-2 place-self-end">
@@ -105,7 +105,7 @@ const Roadmapc = ({ goalCards }) => {
             >
                 <div className="relative" style={{ width: `${containerWidth}px` }}>
 
-                    <div className="relative h-[100px] mb-12">
+                    <div className="relative h-[70px] 3xl:h-[100px] mb-3 lg:mb-6 3xl:mb-12">
                         <div className="absolute top-0 left-0 right-0 h-full flex">
                             {[...Array(totalLines)].map((_, index) => {
                                 const color = gradientColors[index];
@@ -130,7 +130,7 @@ const Roadmapc = ({ goalCards }) => {
                         {goalCards.map((card, index) => (
                             <div
                                 key={card.phase}
-                                className="absolute top-5 text-white"
+                                className="absolute top-2 3xl:top-5 text-white"
                                 style={{
                                     left: `${index * (cardWidth + gapBetweenCards)}px`
                                 }}

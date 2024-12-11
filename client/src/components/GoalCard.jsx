@@ -36,24 +36,23 @@ const GoalCard = ({ goal, title, milestone, milestoneTitle, question, answer, ho
             onMouseLeave={onMouseLeave}
         >
             <div className="p-6 bg-cardBG" style={{ borderTopRightRadius: '16px' }}>
-                <div className="inline-block px-4 py-2 rounded-full border border-[#FFFFFF1A] text-white text-base mb-2 font-ibm-plex-mono">
+                <div className="inline-block px-4 py-2 rounded-full border border-[#FFFFFF1A] text-white text-xs lg:text-sm 3xl:text-base mb-2 font-ibm-plex-mono">
                     {goal}
                 </div>
-                <div className="text-2xl font-ibm-plex-mono">{title}</div>
+                <div className="text-sm sm:text-base lg:text-xl 3xl:text-2xl font-ibm-plex-mono">{title}</div>
             </div>
 
             {/* Milestone Section */}
-            <div className="mb-6 relative p-6">
+            <div className="relative 3xl:p-6 px-6 pt-3">
                 <div className="absolute inset-x-0 top-0 border-t border-lineBG"></div>
                 <div>
-                    <div className="text-gray-400 text-sm mb-2"></div>
-                    <div className="inline-block px-4 py-2 rounded-full border border-[#FFFFFF1A] text-white text-base mb-2 font-ibm-plex-mono">
+                    <div className="inline-block px-4 py-2 rounded-full border border-[#FFFFFF1A] text-white text-xs lg:text-sm 3xl:text-base mb-2 font-ibm-plex-mono">
                         {milestone}
                     </div>
 
-                    <div className="flex items-center gap-5 pt-2">
+                    <div className="flex items-center gap-5 3xl:pt-2">
                         <div className="flex items-center justify-center h-full text-white mb-2">{filter}</div>
-                        <div className="text-xl font-ibm-plex-mono">{milestoneTitle}</div>
+                        <div className="text-sm sm:text-base lg:text-lg 3xl:text-xl font-ibm-plex-mono">{milestoneTitle}</div>
                     </div>
                 </div>
             </div>
@@ -64,7 +63,7 @@ const GoalCard = ({ goal, title, milestone, milestoneTitle, question, answer, ho
                     <div className="p-[1px] rounded-lg group-hover:bg-gradient-to-r from-[#624BED] to-[#CE5682]">
                         <div className="bg-cardBG rounded-lg p-4 ">
                             <div className="flex justify-between items-center  mb-3">
-                                <div className="text-white font-ibm-plex-mono font-normal">{question}</div>
+                                <div className="text-white font-ibm-plex-mono font-normal text-xs lg:text-sm 3xl:text-base">{question}</div>
                                 <button onClick={() => setIsExpanded(!isExpanded)}>
                                     <AnimatePresence mode="wait">
                                         <motion.div
@@ -88,10 +87,10 @@ const GoalCard = ({ goal, title, milestone, milestoneTitle, question, answer, ho
                                         transition={{ duration: 0.3 }}
                                         className="overflow-hidden"
                                     >
-                                        <div className="bg-cardBG text-gray-300 px-4 py-2 rounded-md font-ibm-plex-mono font-thin text-xs">
+                                        <div className="bg-cardBG text-gray-300 px-4 py-2 rounded-md font-ibm-plex-mono font-thin text-[10px] lg:text-xs">
                                             {answer}
                                         </div>
-                                        <div className="inline-block px-4 py-2 rounded-full border border-[#FFFFFF] text-white text-sm my-2 font-ibm-plex-mono cursor-pointer">
+                                        <div className="inline-block px-4 py-2 rounded-full border border-[#FFFFFF] text-white text-[10px] lg:text-xs 3xl:text-sm my-2 font-ibm-plex-mono cursor-pointer">
                                             Define Your Strategy
                                         </div>
 

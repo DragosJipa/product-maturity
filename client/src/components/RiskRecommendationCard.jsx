@@ -26,7 +26,7 @@ const RiskRecommendationCard = ({ title, icon, items }) => {
     const isRisk = title === 'Risks';
     return (
         <div>
-            <h2 className="text-white text-2xl font-ibm-plex-mono mb-4">{title}</h2>
+            <h2 className="text-white text-lg lg:text-xl 3xl:text-2xl font-ibm-plex-mono mb-4">{title}</h2>
             <ul className="space-y-4">
                 {items.map((item, index) => (
                     <li key={index}
@@ -41,11 +41,11 @@ const RiskRecommendationCard = ({ title, icon, items }) => {
                         {isRisk ? (
                             <>
                                 <span className="bg-[#161616] rounded-full p-1 flex items-center justify-center">{icon}</span>
-                                <span className="font-ibm-plex-mono text-xl text-gray-300">{item}</span>
+                                <span className="font-ibm-plex-mono text-base lg:text-lg 3xl:text-xl text-gray-300">{item}</span>
                             </>
                         ) : (
                             <div className="flex flex-col h-full w-full">
-                                <span className="font-ibm-plex-mono text-xl text-gray-300 mb-20 pb-5 flex-grow relative">
+                                <span className="font-ibm-plex-mono text-base lg:text-lg 3xl:text-xl text-gray-300 mb-20 pb-5 flex-grow relative">
                                     <div className={`absolute top-0 left-0 transition-all duration-300 ${expandedIndices.has(index) ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}>
                                         {item.action}
                                     </div>
@@ -59,18 +59,18 @@ const RiskRecommendationCard = ({ title, icon, items }) => {
                                             className="flex items-center gap-2 text-gray-300 hover:text-white"
                                             onClick={() => toggleExpanded(index)}
                                         >
-                                            <span className="font-ibm-plex-mono">Close</span>
+                                            <span className="font-ibm-plex-mono text-xs lg:text-sm 3xl:text-base">Close</span>
                                             {closeIcon}
                                         </button>
                                     ) : (
                                         <>
-                                            <span className="bg-cardBG px-4 py-2 rounded-full text-sm font-ibm-plex-mono"
+                                            <span className="bg-cardBG px-4 py-2 rounded-full text-xs lg:text-sm font-ibm-plex-mono"
                                                 style={{ border: '1px solid #FFFFFF1A' }}
                                             >
                                                 {item.type.charAt(0).toUpperCase() + item.type.slice(1)}
                                             </span>
                                             <button
-                                                className="group relative font-ibm-plex-mono"
+                                                className="group relative font-ibm-plex-mono text-xs lg:text-sm 3xl:text-base"
                                                 onClick={() => toggleExpanded(index)}
                                             >
                                                 <span className="inline-flex items-center relative gap-1">
