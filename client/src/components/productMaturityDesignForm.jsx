@@ -47,7 +47,7 @@ const ProductMaturityAssessment = () => {
     }, [currentSection]);
 
 
-    const baseURL = process.env.NODE_ENV === 'development' ? 'http://localhost:3001' : '';
+    const baseURL = process.env.NODE_ENV === 'development' ? 'http://localhost:3001' : 'https://product-maturity.onrender.com';
 
     const getSectionTitle = (index) => {
         switch (index) {
