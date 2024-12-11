@@ -42,8 +42,8 @@ const StartPage = () => {
                         className="hidden large:flex flex items-center justify-start text-white font-ibm-plex-mono font-normal text-xl group pt-40"
                     >
                         Let's go!
-                        <span className="flex items-center justify-center w-10 h-10 lg:w-[64px] lg:h-[64px] border border-white rounded-lg ml-3 lg:ml-5 transform transition-transform duration-300 group-hover:translate-x-1">
-                            ➡️
+                        <span className="flex items-center justify-center w-10 h-10 ml-2">
+                            <img src={'./ArrowRightIcon.svg'} alt="Arrow Right" className="w-full h-full" />
                         </span>
                     </button>
                 </div>
@@ -56,7 +56,7 @@ const StartPage = () => {
                     className="flex items-center h-12 px-5 text-white font-ibm-plex-mono font-normal text-lg leading-snug tracking-wide hover:bg-white hover:text-gray-900 transition-colors duration-300 ease-in-out rounded-lg"
                 >
                     Let's go!
-                    <span className="flex items-center justify-center w-10 h-10 border border-white rounded-lg ml-2">
+                    <span className="flex items-center justify-center w-10 h-10 ml-2">
                         ➡️
                     </span>
                 </button>

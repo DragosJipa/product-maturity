@@ -6,7 +6,7 @@ import Step from './Step';
 import {
     handDrawnUnnderlines, step1, step2, step3, step4, step5, step6,
     handDrawnAccents, handDrownArrow,
-    github, youtube, x, linkedin, facebook, modus, moduscreate,
+    github, youtube, x, linkedin, facebook, modus,
 } from '../utils/icons';
 
 const stepsData = [
@@ -98,8 +98,10 @@ const LandingPage = () => {
                                     </button>
                                 </div>
                             </div>
-                            <div className='w-1/2'>
-                                <div className='w-100 h-80 bg-blackBox rounded-2xl'></div>
+                            <div className=''>
+                                <div className='w-[283px] h-[384px] bg-blackBox rounded-2xl'>
+                                    <img src='./book.svg' alt='book' className='w-full h-full' />
+                                </div>
                             </div>
                         </div>
                     </div>
