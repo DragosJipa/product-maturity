@@ -27,7 +27,7 @@ const MaturityLevel = ({ maturityLevel }) => {
                     <div className="bg-cardBG rounded-2xl p-5 shadow-md mb-6">
                         <h3 className="text-xl 3xl:text-2xl font-ibm-plex-mono flex items-center text-white/75">Maturity Levels</h3>
                     </div>
-                    <section className="grid grid-cols-1 min-[1000px]:grid-cols-2 gap-6">
+                    <section className="grid grid-cols-1 min-[1025px]:grid-cols-2 gap-6">
                         <MetricCard title="Strategy" value={maturityLevel.strategy.level} label={maturityLevel.strategy.label} />
                         <MetricCard title="Processes" value={maturityLevel.processes.level} label={maturityLevel.processes.label} />
                         <MetricCard title="Technology" value={maturityLevel.technology.level} label={maturityLevel.technology.label} />

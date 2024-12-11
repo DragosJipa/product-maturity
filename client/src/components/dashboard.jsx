@@ -7,7 +7,6 @@ import './landingPage.css';
 import { motion, AnimatePresence } from 'framer-motion';
 import Roadmapc from './Roadmapc';
 import StarBackground from './StarBackground';
-import { moduscreate } from '../utils/icons';
 import { AssessmentContext } from '../context/assessmentContext'; // Import AssessmentContext
 
 const Dashboard = () => {
@@ -86,43 +85,44 @@ const Dashboard = () => {
             <div className="relative z-10">
                 <header className="flex items-center justify-between px-6 py-4 bg-selectBG shadow-md border-b border-[#FFFFFF33]">
 
-                    {moduscreate}
+                    <img src='/moduscreate.svg' alt='Modus Create' className='w-32' />
 
                     <nav className="relative">
                         <ul className="flex">
                             <li
-                                className="cursor-pointer 2xl:text-base 3xl:text-lg font-ibm-plex-mono font-medium relative group px-3"
+                                className="cursor-pointer text-xs base:text-sm 2xl:text-base 3xl:text-lg font-ibm-plex-mono font-medium relative group px-3"
                                 onClick={() => handleTabChange('maturityLevel')}
                             >
                                 <span>Maturity Level</span>
-                                <div className={`absolute 3xl:bottom-[-19px] 2xl:bottom-[-22px] left-0 w-full h-[1px] bg-white transition-opacity ${activeTab === 'maturityLevel' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}></div>
+                                <div className={`absolute 3xl:bottom-[-19px] 2xl:bottom-[-22px] base:bottom-[-21px] bottom-[-21px] left-0 w-full h-[1px] bg-white transition-opacity ${activeTab === 'maturityLevel' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}></div>
                             </li>
                             <li
-                                className="cursor-pointer 2xl:text-base 3xl:text-lg font-ibm-plex-mono font-medium relative group px-3"
+                                className="cursor-pointer text-xs base:text-sm 2xl:text-base 3xl:text-lg font-ibm-plex-mono font-medium relative group px-3"
                                 onClick={() => handleTabChange('detailedAnalysis')}
                             >
                                 <span>Detailed Analysis</span>
-                                <div className={`absolute 3xl:bottom-[-19px] 2xl:bottom-[-22px] left-0 w-full h-[1px] bg-white transition-opacity ${activeTab === 'detailedAnalysis' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}></div>
+                                <div className={`absolute 3xl:bottom-[-19px] 2xl:bottom-[-22px] base:bottom-[-21px] bottom-[-21px] left-0 w-full h-[1px] bg-white transition-opacity ${activeTab === 'detailedAnalysis' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}></div>
                             </li>
                             <li
-                                className="cursor-pointer 2xl:text-base 3xl:text-lg font-ibm-plex-mono font-medium relative group px-3"
+                                className="cursor-pointer text-xs base:text-sm 2xl:text-base 3xl:text-lg font-ibm-plex-mono font-medium relative group px-3"
                                 onClick={() => handleTabChange('risksRecommendations')}
                             >
-                                <span>Risks & Recommendations</span>
-                                <div className={`absolute 3xl:bottom-[-19px] 2xl:bottom-[-22px] left-0 w-full h-[1px] bg-white transition-opacity ${activeTab === 'risksRecommendations' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}></div>
+                                <span>Risks <span className='inline min-[500px]:hidden min-[1000px]:inline'>& Recommendations</span></span>
+                                <div className={`absolute 3xl:bottom-[-19px] 2xl:bottom-[-22px] base:bottom-[-21px] bottom-[-21px] left-0 w-full h-[1px] bg-white transition-opacity ${activeTab === 'risksRecommendations' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}></div>
                             </li>
                             <li
-                                className="cursor-pointer 2xl:text-base 3xl:text-lg font-ibm-plex-mono font-medium relative group px-3"
+                                className="cursor-pointer text-xs base:text-sm 2xl:text-base 3xl:text-lg font-ibm-plex-mono font-medium relative group px-3"
                                 onClick={() => handleTabChange('roadmap')}
                             >
                                 <span>Roadmap</span>
-                                <div className={`absolute 3xl:bottom-[-19px] 2xl:bottom-[-22px] left-0 w-full h-[1px] bg-white transition-opacity ${activeTab === 'roadmap' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}></div>
+                                <div className={`absolute 3xl:bottom-[-19px] 2xl:bottom-[-22px] base:bottom-[-21px] bottom-[-21px] left-0 w-full h-[1px] bg-white transition-opacity ${activeTab === 'roadmap' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}></div>
                             </li>
                         </ul>
                     </nav>
 
-                    <button className="inline-flex gap-2 font-ibm-plex-mono text-white rounded-full px-6 py-2 text-sm font-medium transition-all bg-gradient-to-r from-[#624BED] to-[#CE5682]">
-                        {downloadIcon} Download Report
+                    <button className="inline-flex items-center justify-center font-ibm-plex-mono text-white rounded-full px-3 py-1 2xl:px-6 2xl:py-2 text-xs 2xl:text-sm font-medium transition-all bg-gradient-to-r from-[#624BED] to-[#CE5682]">
+                        <span className='mr-1'>{downloadIcon}</span>
+                        Download Report
                     </button>
 
                 </header>

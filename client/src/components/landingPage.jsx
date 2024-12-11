@@ -75,7 +75,7 @@ const LandingPage = () => {
 
                 <main className='relative overflow-hidden flex flex-col items-center justify-center 3xl:px-80 font-ibm-plex-mono text-gray-200'>
                     <span className='px-72 w-full flex justify-start py-20'>
-                        {moduscreate}
+                        <img src='/moduscreate.svg' alt='Modus Create' />
                     </span>
                     <div className='px-72'>
                         <span className='text-left xl:text-6xl 2xl:text-7xl 3xl:text-8xl font-bold gradient-color-text font-ibm-plex-mono'>
