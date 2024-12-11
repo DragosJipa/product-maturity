@@ -10,7 +10,7 @@ export default function MaturityLevelCard({ level, description, status }) {
             <HalfCircleProgressBar progress={level} status={status} />
 
 
-            <p className="text-left leading-7 tracking-wider font-ibm-plex-mono font-thin text-white mt-4 text-xl">{description}</p>
+            <p className="text-left leading-7 tracking-wider font-ibm-plex-mono font-thin text-white mt-4 text-lg 3xl:text-xl">{description}</p>
         </div>
     );
 }

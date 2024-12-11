@@ -91,32 +91,32 @@ const Dashboard = () => {
                     <nav className="relative">
                         <ul className="flex">
                             <li
-                                className="cursor-pointer text-lg font-ibm-plex-mono font-medium relative group px-3"
+                                className="cursor-pointer 2xl:text-base 3xl:text-lg font-ibm-plex-mono font-medium relative group px-3"
                                 onClick={() => handleTabChange('maturityLevel')}
                             >
                                 <span>Maturity Level</span>
-                                <div className={`absolute bottom-[-19px] left-0 w-full h-[1px] bg-white transition-opacity ${activeTab === 'maturityLevel' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}></div>
+                                <div className={`absolute 3xl:bottom-[-19px] 2xl:bottom-[-22px] left-0 w-full h-[1px] bg-white transition-opacity ${activeTab === 'maturityLevel' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}></div>
                             </li>
                             <li
-                                className="cursor-pointer text-lg font-ibm-plex-mono font-medium relative group px-3"
+                                className="cursor-pointer 2xl:text-base 3xl:text-lg font-ibm-plex-mono font-medium relative group px-3"
                                 onClick={() => handleTabChange('detailedAnalysis')}
                             >
                                 <span>Detailed Analysis</span>
-                                <div className={`absolute bottom-[-19px] left-0 w-full h-[1px] bg-white transition-opacity ${activeTab === 'detailedAnalysis' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}></div>
+                                <div className={`absolute 3xl:bottom-[-19px] 2xl:bottom-[-22px] left-0 w-full h-[1px] bg-white transition-opacity ${activeTab === 'detailedAnalysis' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}></div>
                             </li>
                             <li
-                                className="cursor-pointer text-lg font-ibm-plex-mono font-medium relative group px-3"
+                                className="cursor-pointer 2xl:text-base 3xl:text-lg font-ibm-plex-mono font-medium relative group px-3"
                                 onClick={() => handleTabChange('risksRecommendations')}
                             >
                                 <span>Risks & Recommendations</span>
-                                <div className={`absolute bottom-[-19px] left-0 w-full h-[1px] bg-white transition-opacity ${activeTab === 'risksRecommendations' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}></div>
+                                <div className={`absolute 3xl:bottom-[-19px] 2xl:bottom-[-22px] left-0 w-full h-[1px] bg-white transition-opacity ${activeTab === 'risksRecommendations' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}></div>
                             </li>
                             <li
-                                className="cursor-pointer text-lg font-ibm-plex-mono font-medium relative group px-3"
+                                className="cursor-pointer 2xl:text-base 3xl:text-lg font-ibm-plex-mono font-medium relative group px-3"
                                 onClick={() => handleTabChange('roadmap')}
                             >
                                 <span>Roadmap</span>
-                                <div className={`absolute bottom-[-19px] left-0 w-full h-[1px] bg-white transition-opacity ${activeTab === 'roadmap' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}></div>
+                                <div className={`absolute 3xl:bottom-[-19px] 2xl:bottom-[-22px] left-0 w-full h-[1px] bg-white transition-opacity ${activeTab === 'roadmap' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}></div>
                             </li>
                         </ul>
                     </nav>
@@ -127,7 +127,7 @@ const Dashboard = () => {
 
                 </header>
 
-                <main className={`mt-8 ${activeTab === "roadmap" ? "p-32 px-0" : "p-32"} relative overflow-hidden`}>
+                <main className={`mt-8 ${activeTab === "roadmap" ? "3xl:py-32 md:py-12 sm:py-8 py-2" : "3xl:p-32 lg:p-16 md:p-12 sm:p-8 p-2"} relative overflow-hidden`}>
                     <AnimatePresence initial={false} custom={direction} mode="wait">
                         <motion.div
                             key={activeTab}
@@ -137,7 +137,7 @@ const Dashboard = () => {
                             animate="center"
                             exit="exit"
                             transition={pageTransition}
-                            className="w-full space-y-28"
+                            className="w-full 3xl:space-y-28 lg:space-y-20 md:space-y-16 sm:space-y-12 space-y-8"
                         >
                             {activeTab === "maturityLevel" && <MaturityLevel maturityLevel={maturity_level} />}
                             {activeTab === "detailedAnalysis" && <DetailedAnalysis analysisData={detailed_analysis} />}
