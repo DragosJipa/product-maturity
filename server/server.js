@@ -1,4 +1,3 @@
-// server/server.js
 require('dotenv').config(); // Load environment variables
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -10,7 +9,7 @@ const submitRoutes = require('./routes/submitRoutes.background'); // Import subm
 const statusRoutes = require('./routes/statusRoutes'); // Import status routes
 
 const app = express();
-const PORT = process.env.PORT || 3001; // Use Vercel's port or 3001 locally
+const PORT = process.env.PORT || 3001; // Use Render's port or 3001 locally
 
 // CORS configuration for development
 app.use(cors({
@@ -47,17 +46,9 @@ const gracefulShutdown = () => {
   }, 10000); // Force shutdown after 10 seconds
 };
 
-// Listen for termination signals (e.g., SIGTERM or SIGINT) only in non-serverless environment
-if (process.env.NODE_ENV !== 'production') {
-  process.on('SIGTERM', gracefulShutdown);
-  process.on('SIGINT', gracefulShutdown);
-}
+// Start the server in all environments
+const server = app.listen(PORT, '0.0.0.0', () => {
+  logger.info(`Server is running on http://0.0.0.0:${PORT}`);
+});
 
-// Start the server (only if not on Vercel's serverless functions)
-if (process.env.NODE_ENV !== 'production') {
-  const server = app.listen(PORT, '0.0.0.0', () => {
-    logger.info(`Server is running on http://0.0.0.0:${PORT}`);
-  });
-}
-
-module.exports = app; // Export the app for Vercel
+module.exports = app; // Export the app for testing or serverless platforms
