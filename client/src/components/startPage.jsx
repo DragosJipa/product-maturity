@@ -43,14 +43,14 @@ const StartPage = () => {
                     </p>
                     <button
                         onClick={handleStart}
-                        className="hidden large:flex flex items-center justify-start text-white font-ibm-plex-mono font-normal text-xl group pt-40"
+                        className="hidden large:flex flex items-center justify-start text-white font-ibm-plex-mono font-normal text-xl group mt-10 w-max"
                     >
                         Let's go!
-                        <span className="flex items-center justify-center w-10 h-10 ml-2">
+                        <span className="flex items-center justify-center w-10 h-10 ml-2 transform transition-transform duration-300 group-hover:translate-x-1">
                             <img src={'./ArrowRightIcon.svg'} alt="Arrow Right" className="w-full h-full" />
                         </span>
                     </button>
-                    <button className='hidden large:flex mt-10 font-ibm-plex-mono text-sm' onClick={handleDisclaimer}>
+                    <button className='hidden large:flex mt-40 font-ibm-plex-mono text-sm w-max' onClick={handleDisclaimer}>
                         Disclaimer
                     </button>
                 </div>

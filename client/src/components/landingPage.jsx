@@ -68,37 +68,37 @@ const LandingPage = () => {
     const navigate = useNavigate();
     return (
         <div className='bg-selectBG min-h-screen'>
-            <div className="text-white mobile-s:p-4 mobile-l:p-8 mobile-s:pb-0 mobile-l:pb-0 bg-selectBG min-h-screen z-10">
+            <div className="text-white mobile-l:p-8 mobile-s:pb-0 mobile-l:pb-0 bg-selectBG min-h-screen z-10">
                 <div className="absolute inset-0 z-0">
                     <StarBackground />
                 </div>
 
                 <main className='relative overflow-hidden flex flex-col items-center justify-center 3xl:px-80 font-ibm-plex-mono text-gray-200'>
-                    <span className='px-72 w-full flex justify-start py-20'>
+                    <span className='mobile-s:px-5 mobile-s:py-5 md:px-40 2xl:px-60 3xl:px-72 w-full flex justify-start md:py-20'>
                         <img src='/moduscreate.svg' alt='Modus Create' />
                     </span>
-                    <div className='px-72'>
-                        <span className='text-left xl:text-6xl 2xl:text-7xl 3xl:text-8xl font-bold gradient-color-text font-ibm-plex-mono'>
+                    <div className='md:px-40 2xl:px-60 3xl:px-72 mobile-s:px-5'>
+                        <span className='text-left mobile-s:text-4xl xl:text-6xl 2xl:text-7xl 3xl:text-8xl font-bold gradient-color-text font-ibm-plex-mono'>
                             Accelerate Product Growth with AI-Powered Insights
                         </span>
-                        <p className='text-left text-xl xl:text-2xl 3xl:text-3xl font-ibm-plex-mono pt-14 pr-60'>
+                        <p className='mobile-s:text-justify md:text-left text-xl xl:text-2xl 3xl:text-3xl font-ibm-plex-mono mobile-s:pt-10 md:pt-14 md:pr-60'>
                             Feeling stuck in your product's journey? Unsure of the next steps to drive growth and innovation?
                         </p>
 
-                        <div className='flex justify-between pt-14'>
-                            <div className='w-1/2'>
-                                <p className='text-left lg:text-2xl 3xl:text-2xl font-ibm-plex-mono mb-10'>
+                        <div className='flex flex-col md:flex-row justify-between pt-14'>
+                            <div className='order-2 md:order-1 w-full md:w-1/2 mb-10 md:mb-0'>
+                                <p className='mobile-s:text-justify md:text-left text-xl lg:text-2xl 3xl:text-2xl font-ibm-plex-mono mb-10'>
                                     Our AI-powered product maturity assessment analyzes your product strategy, processes, technology, and culture to identify areas for improvement. Receive a customized roadmap with actionable recommendations to optimize your product development lifecycle.
                                 </p>
                                 <div className="flex justify-start">
                                     <button
                                         onClick={() => navigate('/start')}
-                                        className="inline-flex items-center gap-2 font-ibm-plex-mono text-white rounded-full px-6 py-2 3xl:text-2xl font-medium transition-all bg-gradient-to-r from-[#624BED] to-[#CE5682]">
+                                        className="inline-flex mobile-s:justify-center justify-normal items-center gap-2 font-ibm-plex-mono text-white rounded-full px-6 py-2 3xl:text-2xl font-medium transition-all bg-gradient-to-r from-[#624BED] to-[#CE5682] w-full md:w-auto">
                                         Take the Free Assessment
                                     </button>
                                 </div>
                             </div>
-                            <div className=''>
+                            <div className='order-1 md:order-2 w-full md:w-auto flex justify-center md:justify-start mobile-s:pb-10 md:pb-0'>
                                 <div className='w-[283px] h-[384px] bg-blackBox rounded-2xl'>
                                     <img src='./book.svg' alt='book' className='w-full h-full' />
                                 </div>
