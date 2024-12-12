@@ -1,5 +1,6 @@
 import './landingPage.css';
 import TextareaAutosize from 'react-textarea-autosize';
+import CustomDropdown from './CustomDropdown';
 
 const GenerateQuestions = ({ questions, formData, handleInputChange, errors }) => {
     const isDropdown = questions?.type === 'select';
@@ -67,7 +68,7 @@ const GenerateQuestions = ({ questions, formData, handleInputChange, errors }) =
 
     return (
         <div>
-            <div className={`w-full max-w-4xl ${isRadio ? 'pt-0 sm:pt-[20vh] xl:pt-[5vh] 3xl:pt-[20vh]' : 'mobile-s:pt-[10vh] 3xl:pt-[20vh]'}`}>
+            <div className={`w-full ${isRadio ? 'pt-0 sm:pt-[20vh] xl:pt-[5vh] 3xl:pt-[20vh]' : 'mobile-s:pt-[10vh] 3xl:pt-[20vh] max-w-4xl'}`}>
                 <p className="font-ibm-plex-mono text-5xl font-normal leading-[62.4px] tracking-[0.75px] text-left text-gray-100 mb-4">
                     <div>
                         {renderQuestionText(questions?.question, questions?.id)}
@@ -76,36 +77,11 @@ const GenerateQuestions = ({ questions, formData, handleInputChange, errors }) =
 
                 {isDropdown && (
                     <div className="relative w-full mb-6">
-                        <select
-                            className="w-full bg-selectBG text-white py-3 px-4 pr-8 rounded appearance-none focus:outline-none focus-gradient sm:text-2xl font-ibm-plex-mono font-light leading-[41.6px] tracking-[0.75px] text-left"
-                            defaultValue={questions?.options?.[0]?.value}
+                        <CustomDropdown
+                            options={questions?.options || []}
                             value={formData[questions?.id || '']}
-                            id={questions?.id}
-                            name={questions?.id}
-                            onChange={(e) => handleInputChange(questions?.id, e.target.value)}
-                        >
-                            {questions?.options?.map((option, index) => (
-                                <option key={index} value={option.value}>
-                                    {option.label}
-                                </option>
-                            ))}
-                        </select>
-                        <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                            <svg
-                                className="w-4 h-4 text-gray-400"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M19 9l-7 7-7-7"
-                                />
-                            </svg>
-                        </div>
+                            onChange={(value) => handleInputChange(questions?.id, value)}
+                        />
                     </div>
                 )}
 

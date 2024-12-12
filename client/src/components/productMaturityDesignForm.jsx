@@ -298,8 +298,8 @@ const ProductMaturityAssessment = () => {
                         className="flex items-center h-12 px-5 text-white font-mono font-normal text-lg leading-snug tracking-wide rounded-lg group"
                     >
                         {currentQuestionIndex === questions.length - 1 && insideCurrentQuestionIndex === questions[currentQuestionIndex].questions.length - 1 ? 'Submit' : 'Continue'}
-                        <span className="flex items-center justify-center w-10 h-10 border border-white rounded-lg ml-2 transform transition-transform duration-300 group-hover:translate-x-1">
-                            ➡️
+                        <span className="flex items-center justify-center w-10 h-10 ml-2 transform transition-transform duration-300 group-hover:translate-x-1">
+                            <img src={'./ArrowRightIcon.svg'} alt="Arrow Right" className="w-full h-full" />
                         </span>
                     </button>
                 </div>

@@ -47,7 +47,7 @@ export default function HalfCircleProgressBar({ progress, status }) {
             </svg>
 
             <div className="absolute inset-0 flex flex-col items-center justify-end pb-4">
-                <div className="text-6xl font-bold gradient-color-text">Lv.{progress}</div>
+                <div className="text-6xl font-bold gradient-color-text">Lv.{Math.floor(progress)}</div>
                 <div className="text-xl font-medium text-white font-ibm-plex-mono">{status}</div>
             </div>
         </div>

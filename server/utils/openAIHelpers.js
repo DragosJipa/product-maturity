@@ -379,7 +379,7 @@ Based on the following detailed report, produce a structured JSON output that in
 {
   "maturity_level": {
       "level": "The overall maturity level (1-5) extracted from the report. This is the numeric score value present in the report.",
-      "status": "Maturity status (e.g., Initial, Repeatable, Defined, etc.).",
+      "status": "Maturity status (e.g., Initial, Repeatable, Defined, etc.). (but only use one word).",
       "description": "A concise description of the maturity level based on the report.",
       "strategy": {
           "level": "Score for Strategy dimension (1-5) as it is present in the report.",
