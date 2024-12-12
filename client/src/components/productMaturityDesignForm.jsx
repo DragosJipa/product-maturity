@@ -203,7 +203,7 @@ const ProductMaturityAssessment = () => {
     return (
         <div className="flex flex-col items-start justify-start h-screen bg-customBG text-white p-4 sm:px-14 md:px-20 lg:px-32 overflow-hidden">
             {/* Top navigation */}
-            <div className="w-full max-w-lg mt-8 mb-8">
+            <div className="w-full mt-8 mb-8">
                 <div className="text-xs text-gray-400 flex items-center space-x-2">
                     <button className="w-[32px] h-[32px] flex items-center justify-center -mt-4" onClick={handlePrevious}>
                         <svg
@@ -235,8 +235,7 @@ const ProductMaturityAssessment = () => {
             <AnimatePresence mode="wait" initial={false} onExitComplete={() => {
                 setIsAnimating(false);
                 setVisibleSection(currentSection);  // Update content after exit animation
-            }}
-            >
+            }}>
                 <motion.div
                     key={animationKey}
                     initial={{
@@ -260,21 +259,23 @@ const ProductMaturityAssessment = () => {
                             ease: "easeOut"
                         }
                     }}
-                    className="w-full h-full"
+                    className="w-full flex flex-col h-full"
                     onAnimationStart={() => setIsAnimating(true)}
                 >
-                    <GenerateQuestions
-                        questions={visibleSection}
-                        formData={formData}
-                        handleInputChange={handleInputChange}
-                        errors={errors}
-                    />
+                    <div className="flex-grow overflow-y-auto h-[calc(100vh-16rem)]">
+                        <GenerateQuestions
+                            questions={visibleSection}
+                            formData={formData}
+                            handleInputChange={handleInputChange}
+                            errors={errors}
+                        />
+                    </div>
                 </motion.div>
 
             </AnimatePresence>
 
             {/* Bottom progress indicator */}
-            <div className="w-full max-w-5xl flex justify-between items-center pt-[clamp(2rem,10vh,6rem)]">
+            <div className="w-full max-w-5xl flex justify-between items-center mt-[clamp(2rem,10vh,6rem)] mobile-s:sticky lg:relative mobile-s:bottom-0 mobile-s:z-10 ">
                 {/* Dynamic Dots */}
                 <div className="flex space-x-2">
                     {[...Array(questions[currentQuestionIndex].questions.length)].map((_, index) => (
