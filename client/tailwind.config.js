@@ -9,6 +9,8 @@ module.exports = {
         'ibm-plex-mono': ['IBM Plex Mono', 'monospace'],
       },
       colors: {
+        disclaimerTextBG: '#9E9E9E',
+        startBG: '#1B1B1B',
         progressBarBG: '#121212',
         cardBG: "#202020",
         radioBG: '#404040',
