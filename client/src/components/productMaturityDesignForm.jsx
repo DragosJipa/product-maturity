@@ -262,7 +262,7 @@ const ProductMaturityAssessment = () => {
                     className="w-full flex flex-col h-full"
                     onAnimationStart={() => setIsAnimating(true)}
                 >
-                    <div className="flex-grow overflow-y-auto h-[calc(60vh)]">
+                    <div className="flex-grow overflow-y-auto h-[calc(60vh)] scrollbar-hide">
                         <GenerateQuestions
                             questions={visibleSection}
                             formData={formData}
