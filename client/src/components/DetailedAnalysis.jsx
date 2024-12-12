@@ -42,17 +42,17 @@ const DetailedAnalysis = ({ analysisData }) => {
 
     return (
         <>
-            <span className='text-left block mobile-s:text-2xl md:text-4xl lg:text-6xl 3xl:text-8xl font-bold gradient-color-text font-ibm-plex-mono'>
+            <span className='text-left block mobile-s:text-4xl md:text-5xl lg:text-6xl 3xl:text-8xl font-bold gradient-color-text font-ibm-plex-mono px-2'>
                 Detailed Analysis
             </span>
 
-            <p className="font-ibm-plex-mono font-light text-gray-300 text-2xl 2xl:w-3/5">
+            <p className="font-ibm-plex-mono font-light text-gray-300 2xl:w-3/5 px-2 mobile-s:text-sm sm:text-xl">
                 See where your organization stands on its product development journey. This
                 interactive review, based on your unique responses, highlights areas for
                 improvement and guides you towards greater product maturity.
             </p>
 
-            <div className="grid grid-cols-1 min-[1000px]:grid-cols-2 gap-12">
+            <div className="grid grid-cols-1 min-[1000px]:grid-cols-2 gap-12 px-2">
                 <SWOTCard
                     title="Strengths"
                     icon={strengthIcon}
@@ -65,12 +65,13 @@ const DetailedAnalysis = ({ analysisData }) => {
                 />
             </div>
 
-            <SWOTCard
-                title="Areas for Improvement"
-                icon={improvementIcon}
-                items={areas_for_improvement}
-            />
-
+            <div className='px-2'>
+                <SWOTCard
+                    title="Areas for Improvement"
+                    icon={improvementIcon}
+                    items={areas_for_improvement}
+                />
+            </div>
         </>
     );
 };

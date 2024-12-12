@@ -7,7 +7,8 @@ import './landingPage.css';
 import { motion, AnimatePresence } from 'framer-motion';
 import Roadmapc from './Roadmapc';
 import StarBackground from './StarBackground';
-import { AssessmentContext } from '../context/assessmentContext'; // Import AssessmentContext
+import { AssessmentContext } from '../context/assessmentContext';
+import CustomDropdown from './CustomDropdown';
 
 const Dashboard = () => {
     const navigate = useNavigate();
@@ -78,16 +79,29 @@ const Dashboard = () => {
     };
 
     return (
-        <div className="bg-selectBG text-gray-200 min-h-screen">
+        <div className="bg-startBG text-gray-200 min-h-screen">
             <div className="absolute inset-0 z-0">
                 <StarBackground />
             </div>
             <div className="relative z-10">
-                <header className="flex items-center justify-between px-6 py-4 bg-selectBG shadow-md border-b border-[#FFFFFF33]">
+                <header className="flex mobile-s:flex-col sm:flex-row items-center mobile-s:justify-center mobile-l:justify-between px-6 py-4 bg-startBG shadow-md border-b border-[#FFFFFF33]">
 
-                    <img src='/moduscreate.svg' alt='Modus Create' className='w-32' />
+                    <img src='/moduscreate.svg' alt='Modus Create' className='mobile-l:w-32' />
 
-                    <nav className="relative">
+                    <span className='sm:hidden w-full mt-4'>
+                        <CustomDropdown
+                            options={[
+                                { label: 'Maturity Level', value: 'maturityLevel' },
+                                { label: 'Detailed Analysis', value: 'detailedAnalysis' },
+                                { label: 'Risks & Recommendations', value: 'risksRecommendations' },
+                                { label: 'Roadmap', value: 'roadmap' },
+                            ]}
+                            value={activeTab}
+                            onChange={(value) => handleTabChange(value)}
+                            isDashboard={true}
+                        />
+                    </span>
+                    <nav className="relative hidden sm:block">
                         <ul className="flex">
                             <li
                                 className="cursor-pointer text-xs base:text-sm 2xl:text-base 3xl:text-lg font-ibm-plex-mono font-medium relative group px-3"
@@ -120,14 +134,14 @@ const Dashboard = () => {
                         </ul>
                     </nav>
 
-                    <button className="inline-flex items-center justify-center font-ibm-plex-mono text-white rounded-full px-3 py-1 2xl:px-6 2xl:py-2 text-xs 2xl:text-sm font-medium transition-all bg-gradient-to-r from-[#624BED] to-[#CE5682]">
+                    <button className="hidden sm:flex inline-flex items-center justify-center font-ibm-plex-mono text-white rounded-full px-3 py-1 2xl:px-6 2xl:py-2 text-xs 2xl:text-sm font-medium transition-all bg-gradient-to-r from-[#624BED] to-[#CE5682]">
                         <span className='mr-1'>{downloadIcon}</span>
                         Download Report
                     </button>
 
                 </header>
 
-                <main className={`mt-8 ${activeTab === "roadmap" ? "3xl:py-32 md:py-12 sm:py-8 py-2" : "3xl:p-32 lg:p-16 md:p-12 sm:p-8 p-2"} relative overflow-hidden`}>
+                <main className={`mt-8 ${activeTab === "roadmap" ? "3xl:py-32 md:py-12 sm:py-8 py-2" : "3xl:p-32 lg:p-16 md:p-12 sm:p-8 p-4"} relative overflow-hidden`}>
                     <AnimatePresence initial={false} custom={direction} mode="wait">
                         <motion.div
                             key={activeTab}

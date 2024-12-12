@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const CustomDropdown = ({ options, value, onChange }) => {
+const CustomDropdown = ({ options, value, onChange, isDashboard = false }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     const handleOptionClick = (optionValue) => {
@@ -11,7 +11,7 @@ const CustomDropdown = ({ options, value, onChange }) => {
     return (
         <div className="relative w-full">
             <div
-                className="w-full bg-selectBG text-white py-3 px-4 pr-8 rounded appearance-none focus:outline-none focus-gradient sm:text-2xl font-ibm-plex-mono font-light leading-[41.6px] tracking-[0.75px] text-left cursor-pointer"
+                className={`w-full ${isDashboard ? 'bg-blackBox' : 'bg-selectBG'} text-white py-3 px-4 pr-8 rounded appearance-none focus:outline-none focus-gradient sm:text-2xl font-ibm-plex-mono font-light leading-[41.6px] tracking-[0.75px] text-left cursor-pointer`}
                 onClick={() => setIsOpen(!isOpen)}
             >
                 {options.find(option => option.value === value)?.label || 'Select an option'}
@@ -33,7 +33,7 @@ const CustomDropdown = ({ options, value, onChange }) => {
                 </svg>
             </div>
             {isOpen && (
-                <div className="absolute w-full bg-selectBG text-white mt-1 rounded shadow-lg z-10">
+                <div className={`absolute w-full ${isDashboard ? 'bg-blackBox' : 'bg-selectBG'} text-white mt-1 rounded shadow-lg z-10 font-ibm-plex-mono`}>
                     {options.map((option, index) => (
                         <div
                             key={index}

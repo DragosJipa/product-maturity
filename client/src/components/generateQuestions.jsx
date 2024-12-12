@@ -77,6 +77,9 @@ const GenerateQuestions = ({ questions, formData, handleInputChange, errors }) =
 
                 {isDropdown && (
                     <div className="relative w-full mb-6">
+                        {console.log(questions?.options)}
+                        {console.log(formData[questions?.id])}
+                        {console.log(questions?.id)}
                         <CustomDropdown
                             options={questions?.options || []}
                             value={formData[questions?.id || '']}

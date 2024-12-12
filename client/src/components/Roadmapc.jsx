@@ -46,6 +46,8 @@ const Roadmapc = ({ goalCards }) => {
             setContainerWidth(width);
             setLineWidth(Math.floor((width - (totalLines * 2)) / totalLines));
             setCardWidth(singleCardRef.current.scrollWidth);
+            console.log(singleCardRef.current.scrollWidth);
+
             setGapBetweenCards((cardsContainerRef.current.scrollWidth - singleCardRef.current.scrollWidth * goalCards.length) / (goalCards.length - 1));
         }
     }, [cardsContainerRef]);
@@ -78,11 +80,14 @@ const Roadmapc = ({ goalCards }) => {
 
     return (
         <>
-            <div className="flex items-center gap-4 pr-32 pl-32">
-                <span className='text-left block mobile-s:text-2xl md:text-4xl lg:text-6xl 3xl:text-8xl font-bold gradient-color-text font-ibm-plex-mono'>
-                    Transformative Journey <br /> Roadmap
+            <div className="flex items-center gap-4 sm:px-32 mobile-s:px-4">
+                <span className='text-center sm:text-left block mobile-s:text-4xl md:text-5xl lg:text-6xl 3xl:text-8xl font-bold gradient-color-text font-ibm-plex-mono'>
+                    Transformative Journey
+                    <br className='sm:block mobile-s:hidden' />
+                    {' '}
+                    Roadmap
                 </span>
-                <div className="flex gap-2 place-self-end">
+                <div className="sm:flex mobile-s:hidden flex gap-2 place-self-end">
                     <button className="w-24 h-16 sm:w-16 sm:h-16 rounded-full bg-[#ffffff10] flex items-center justify-center">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
                             <path d="M15 18l-6-6 6-6" />
@@ -96,7 +101,7 @@ const Roadmapc = ({ goalCards }) => {
                 </div>
             </div>
 
-            <div className="overflow-x-auto scrollbar-hide pl-32"
+            <div className="overflow-x-auto scrollbar-hide sm:pl-32 mobile-s:pl-4"
                 ref={scrollContainerRef}
                 onMouseDown={handleMouseDown}
                 onMouseLeave={handleMouseLeave}
@@ -147,7 +152,7 @@ const Roadmapc = ({ goalCards }) => {
                     {/* Cards container */}
                     <div className="flex gap-8 items-stretch" ref={cardsContainerRef}>
                         {goalCards.map((card, index) => (
-                            <div className="flex-1 min-w-[750px] items-stretch flex-shrink-0" key={index} ref={singleCardRef}>
+                            <div className="flex-1 mobile-s:min-w-[360px] mobile-m:min-w-[400px] sm:min-w-[750px] items-stretch flex-shrink-0" key={index} ref={singleCardRef}>
                                 <GoalCard
                                     key={index}
                                     goal={card.goal}

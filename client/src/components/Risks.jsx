@@ -18,18 +18,21 @@ const Risks = ({ risks }) => {
 
     return (
         <>
-            <div className='text-left mobile-s:text-2xl md:text-4xl lg:text-6xl 3xl:text-8xl font-bold gradient-color-text font-ibm-plex-mono'>
-                Current State vs.
-            </div>
-            <span className='text-left mobile-s:text-2xl md:text-4xl lg:text-6xl 3xl:text-8xl font-bold gradient-color-text font-ibm-plex-mono'>
+            <div className='text-left mobile-s:text-4xl md:text-5xl lg:text-6xl 3xl:text-8xl font-bold gradient-color-text font-ibm-plex-mono px-2'>
+                Current State
+                {' '}
+                <br className='sm:hidden' />
+                vs.
+                <br className='hidden sm:block' />
+                {' '}
                 Desired Future State
-            </span>
+            </div>
 
-            <p className="font-ibm-plex-mono font-light text-gray-300 text-lg lg:text-xl 3xl:text-2xl 2xl:w-3/5">
+            <p className="font-ibm-plex-mono font-light text-gray-300 mobile-s:text-sm sm:text-xl 2xl:w-3/5 px-2">
                 {risks?.description}
             </p>
 
-            <div className="grid grid-cols-1 min-[1000px]:grid-cols-2 gap-12">
+            <div className="grid grid-cols-1 min-[1000px]:grid-cols-2 gap-12 px-2">
                 <RiskRecommendationCard
                     title="Recommendations"
                     items={recommendations}

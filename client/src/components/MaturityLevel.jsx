@@ -6,11 +6,11 @@ import { featuredIcon } from '../utils/icons';
 const MaturityLevel = ({ maturityLevel }) => {
     return (
         <>
-            <div className="text-left">
-                <span className='block mobile-s:text-2xl md:text-4xl lg:text-6xl 3xl:text-8xl font-bold gradient-color-text font-ibm-plex-mono'>
+            <div className="text-left px-2">
+                <span className='block mobile-s:text-4xl md:text-5xl lg:text-6xl 3xl:text-8xl font-bold gradient-color-text font-ibm-plex-mono'>
                     Understanding Your
-                </span>
-                <span className='block mobile-s:text-2xl md:text-4xl lg:text-6xl 3xl:text-8xl font-bold gradient-color-text font-ibm-plex-mono'>
+                    <br className='hidden sm:block' />
+                    {' '}
                     Product's Maturity
                 </span>
             </div>
