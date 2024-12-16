@@ -201,9 +201,11 @@ const ProductMaturityAssessment = () => {
     }
 
     return (
-        <div className="flex flex-col items-start justify-start h-screen bg-customBG text-white p-4 sm:px-14 md:px-20 lg:px-32 overflow-hidden">
+        // <div className="flex flex-col items-start justify-start h-screen bg-customBG text-white p-4 sm:px-14 md:px-20 lg:px-32 overflow-hidden">
+        <div className="flex flex-col min-h-[100dvh] bg-customBG text-white p-4 sm:px-14 md:px-20 lg:px-32">
+
             {/* Top navigation */}
-            <div className="w-full sm:mt-8 sm:mb-8">
+            <div className="w-full sm:my-8">
                 <div className="text-xs text-gray-400 flex items-center space-x-2">
                     <button className="w-[32px] h-[32px] flex items-center justify-center -mt-4" onClick={handlePrevious}>
                         <svg
