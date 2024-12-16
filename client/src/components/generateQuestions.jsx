@@ -55,7 +55,7 @@ const GenerateQuestions = ({ questions, formData, handleInputChange, errors }) =
 
                     {parts[1]}
                     {isEmail && (
-                        <div className="font-ibm-plex-mono mobile-s:text-xl text-2xl font-normal text-left text-white pt-[3vh]">
+                        <div className="font-ibm-plex-mono mobile-s:text-xl sm:text-2xl font-normal text-left text-white pt-[3vh]">
                             Enter your email below to start the free assessment and receive your customized report.
                         </div>
                     )}
@@ -77,9 +77,6 @@ const GenerateQuestions = ({ questions, formData, handleInputChange, errors }) =
 
                 {isDropdown && (
                     <div className="relative w-full mb-6">
-                        {console.log(questions?.options)}
-                        {console.log(formData[questions?.id])}
-                        {console.log(questions?.id)}
                         <CustomDropdown
                             options={questions?.options || []}
                             value={formData[questions?.id || '']}
@@ -149,7 +146,7 @@ const GenerateQuestions = ({ questions, formData, handleInputChange, errors }) =
                             name={questions?.id}
                             value={formData[questions?.id] || ''}
                             onChange={(e) => handleInputChange(questions?.id, e.target.value)}
-                            className={`w-full border ${errors[questions?.id] ? 'border-errorRed rounded-none' : 'border-borderTextAreaBG rounded-lg'} px-4 py-2 focus:outline-none focus-gradient bg-textAreaBG font-ibm-plex-mono text-base font-light text-left text-white`}
+                            className={`w-full border ${errors[questions?.id] ? 'border-errorRed rounded-none' : 'border-borderTextAreaBG rounded-lg'} px-4 py-4 focus:outline-none focus-gradient bg-textAreaBG font-ibm-plex-mono text-base font-light text-left text-white`}
                             placeholder="Email Address"
                             aria-describedby={`${questions?.id}-desc`}
                             required

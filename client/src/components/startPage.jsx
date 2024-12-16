@@ -14,7 +14,9 @@ const StartPage = () => {
     };
 
     return (
-        <div className="relative flex flex-col min-h-screen bg-startBG text-white px-4">
+        // <div className="relative flex flex-col min-h-screen bg-startBG text-white px-4">
+        <div className="relative flex flex-col min-h-[100dvh] bg-startBG text-white px-4">
+
             <div className="flex items-center justify-between w-full p-4 large:hidden">
                 <button className="text-white text-2xl font-bold">
                     <span className="border border-white rounded-xl pt-0.5 pl-2 pr-2 pb-2">☰</span>

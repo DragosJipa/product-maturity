@@ -33,7 +33,7 @@ const CustomDropdown = ({ options, value, onChange, isDashboard = false }) => {
                 </svg>
             </div>
             {isOpen && (
-                <div className={`absolute w-full ${isDashboard ? 'bg-blackBox' : 'bg-selectBG'} text-white mt-1 rounded shadow-lg z-10 font-ibm-plex-mono`}>
+                <div className={`absolute w-full ${isDashboard ? 'bg-blackBox' : 'bg-selectBG'} text-white mt-1 rounded shadow-lg z-10 font-ibm-plex-mono max-h-[40vh] overflow-y-auto scrollbar-hide`}>
                     {options.map((option, index) => (
                         <div
                             key={index}
