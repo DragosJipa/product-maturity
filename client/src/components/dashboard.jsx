@@ -9,6 +9,7 @@ import Roadmapc from './Roadmapc';
 import StarBackground from './StarBackground';
 import { AssessmentContext } from '../context/assessmentContext';
 import CustomDropdown from './CustomDropdown';
+import axios from 'axios';
 
 const Dashboard = () => {
     const navigate = useNavigate();
@@ -78,6 +79,17 @@ const Dashboard = () => {
         setActiveTab(newTab);
     };
 
+    const baseURL = process.env.NODE_ENV === 'development' ? 'http://localhost:3001' : 'https://product-maturity.onrender.com';
+
+    const handleDownload = async () => {
+        try {
+            await axios.post(`${baseURL}/api/mail`);
+            console.log('Email sent successfully');
+        } catch (error) {
+            console.error('Error sending email:', error);
+        }
+    };
+
     return (
         <div className="bg-startBG text-gray-200 min-h-screen">
             <div className="absolute inset-0 z-0">
@@ -86,7 +98,7 @@ const Dashboard = () => {
             <div className="relative z-10">
                 <header className="flex mobile-s:flex-col sm:flex-row items-center mobile-s:justify-center mobile-l:justify-between px-6 py-4 bg-startBG shadow-md border-b border-[#FFFFFF33]">
 
-                    <img src='/moduscreate.svg' alt='Modus Create' className='mobile-l:w-32' />
+                    <img src='/moduscreate.svg' alt='Modus Create' className='mobile-l:w-32 ' />
 
                     <span className='sm:hidden w-full mt-4'>
                         <CustomDropdown
@@ -134,14 +146,16 @@ const Dashboard = () => {
                         </ul>
                     </nav>
 
-                    <button className="hidden sm:flex inline-flex items-center justify-center font-ibm-plex-mono text-white rounded-full px-3 py-1 2xl:px-6 2xl:py-2 text-xs 2xl:text-sm font-medium transition-all bg-gradient-to-r from-[#624BED] to-[#CE5682]">
+                    <button className="hidden sm:flex inline-flex items-center justify-center font-ibm-plex-mono text-white rounded-full px-3 py-1 2xl:px-6 2xl:py-2 text-xs 2xl:text-sm font-medium transition-all bg-gradient-to-r from-[#624BED] to-[#CE5682]"
+                        onClick={handleDownload}
+                    >
                         <span className='mr-1'>{downloadIcon}</span>
                         Download Report
                     </button>
 
                 </header>
 
-                <main className={`mt-8 ${activeTab === "roadmap" ? "3xl:py-32 md:py-12 sm:py-8 py-2" : "3xl:p-32 lg:p-16 md:p-12 sm:p-8 p-4"} relative overflow-hidden`}>
+                <main className={`${activeTab === "roadmap" ? "3xl:py-32 md:py-12 sm:py-8 py-2" : "3xl:p-32 lg:px-16 md:p-12 sm:p-8 p-4"} relative overflow-hidden`}>
                     <AnimatePresence initial={false} custom={direction} mode="wait">
                         <motion.div
                             key={activeTab}
@@ -151,7 +165,7 @@ const Dashboard = () => {
                             animate="center"
                             exit="exit"
                             transition={pageTransition}
-                            className="w-full 3xl:space-y-28 lg:space-y-20 md:space-y-16 sm:space-y-12 space-y-8"
+                            className="w-full 3xl:space-y-28 lg:space-y-10 md:space-y-10 sm:space-y-10 space-y-8"
                         >
                             {activeTab === "maturityLevel" && <MaturityLevel maturityLevel={maturity_level} />}
                             {activeTab === "detailedAnalysis" && <DetailedAnalysis analysisData={detailed_analysis} />}

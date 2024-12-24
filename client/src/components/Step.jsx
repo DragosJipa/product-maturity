@@ -5,7 +5,7 @@ const Step = ({ title, icon, text }) => {
         <div className="text-center flex flex-col h-full">
             {title &&
                 <div className="flex justify-center mb-2">
-                    <div className="inline-block py-[8px] px-[12px] rounded-full border border-[#FFFFFF1A]">
+                    <div className="inline-block py-[8px] px-[12px]">
                         <h3>{title}</h3>
                     </div>
                 </div>
@@ -14,7 +14,7 @@ const Step = ({ title, icon, text }) => {
                 <div className="mb-4">
                     {icon}
                 </div>
-                <p className="text-left text-gray-200 text-sm font-ibm-plex-mono">{text}</p>
+                <p className="text-left text-gray-200 text-base font-ibm-plex-mono">{text}</p>
             </div>
         </div>
     );

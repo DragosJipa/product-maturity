@@ -81,7 +81,7 @@ const Roadmapc = ({ goalCards }) => {
     return (
         <>
             <div className="flex items-center gap-4 sm:px-32 mobile-s:px-4">
-                <span className='text-center sm:text-left block mobile-s:text-4xl md:text-5xl lg:text-6xl 3xl:text-8xl font-bold gradient-color-text font-ibm-plex-mono'>
+                <span className='text-center sm:text-left block mobile-s:text-4xl md:text-5xl 3xl:text-8xl font-bold gradient-color-text font-ibm-plex-mono'>
                     Transformative Journey
                     <br className='sm:block mobile-s:hidden' />
                     {' '}

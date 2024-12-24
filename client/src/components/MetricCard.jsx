@@ -52,7 +52,7 @@ export default function MetricCard({ title, value, label }) {
                 <span className="-ml-1 mr-1">
                     {getIcon()}
                 </span>
-                <h3 className="text-base 3xl:text-lg text-white font-ibm-plex-mono font-medium">{title}</h3>
+                <h3 className="text-base 3xl:text-lg text-white font-ibm-plex-mono font-bold">{title}</h3>
             </div>
             <div className="flex mt-5">
                 <div className="mr-4">

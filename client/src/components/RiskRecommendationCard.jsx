@@ -26,7 +26,7 @@ const RiskRecommendationCard = ({ title, icon, items }) => {
     const isRisk = title === 'Risks';
     return (
         <div>
-            <h2 className="text-white text-2xl font-ibm-plex-mono mb-4">{title}</h2>
+            <h2 className="text-white text-lg font-ibm-plex-mono mb-4">{title}</h2>
             <ul className="space-y-4">
                 {items.map((item, index) => (
                     <li key={index}
@@ -41,11 +41,11 @@ const RiskRecommendationCard = ({ title, icon, items }) => {
                         {isRisk ? (
                             <>
                                 <span className="bg-[#161616] rounded-full p-1 flex items-center justify-center">{icon}</span>
-                                <span className="font-ibm-plex-mono mobile-s:text-base sm:text-xl text-gray-300">{item}</span>
+                                <span className="font-ibm-plex-mono  text-gray-300">{item}</span>
                             </>
                         ) : (
                             <div className="flex flex-col h-full w-full">
-                                <span className="font-ibm-plex-mono mobile-s:text-base sm:text-xl text-gray-300 mb-20 pb-5 flex-grow relative">
+                                <span className="font-ibm-plex-mono text-gray-300 mb-20 pb-5 flex-grow relative">
                                     <div className={`absolute top-0 left-0 transition-all duration-300 ${expandedIndices.has(index) ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}>
                                         {item.action}
                                     </div>

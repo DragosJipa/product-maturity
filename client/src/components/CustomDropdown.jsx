@@ -11,7 +11,7 @@ const CustomDropdown = ({ options, value, onChange, isDashboard = false }) => {
     return (
         <div className="relative w-full">
             <div
-                className={`w-full ${isDashboard ? 'bg-blackBox' : 'bg-selectBG'} text-white py-3 px-4 pr-8 rounded appearance-none focus:outline-none focus-gradient sm:text-2xl font-ibm-plex-mono font-light leading-[41.6px] tracking-[0.75px] text-left cursor-pointer`}
+                className={`w-full ${isDashboard ? 'bg-blackBox' : 'bg-selectBG'} text-white py-3 px-4 pr-8 rounded appearance-none focus:outline-none focus-gradient sm:text-lg font-ibm-plex-mono font-light leading-[41.6px] tracking-[0.75px] text-left cursor-pointer`}
                 onClick={() => setIsOpen(!isOpen)}
             >
                 {options.find(option => option.value === value)?.label || 'Select an option'}

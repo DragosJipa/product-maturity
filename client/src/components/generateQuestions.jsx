@@ -47,10 +47,10 @@ const GenerateQuestions = ({ questions, formData, handleInputChange, errors }) =
         if (question?.includes(highlightText)) {
             const parts = question.split(highlightText);
             return (
-                <div className='mobile-s:text-2xl md:text-4xl base:text-4xl 3xl:text-6xl'>
+                <div className='mobile-s:text-2xl sm:text-3xl font-ibm-plex-mono'>
                     {parts[0]}
-                    {isEmail ? (<span className="gradient-text mobile-s:text-4xl lg:text-6xl">{highlightText}</span>
-                    ) : (<span className="gradient-text">{highlightText}</span>
+                    {isEmail ? (<span className="gradient-text mobile-s:text-4xl lg:text-5xl font-bold">{highlightText}</span>
+                    ) : (<span className="font-bold sm:text-3xl">{highlightText}</span>
                     )}
 
                     {parts[1]}
@@ -94,7 +94,7 @@ const GenerateQuestions = ({ questions, formData, handleInputChange, errors }) =
                                 className="flex flex-col items-start cursor-pointer space-x-3 gap-1 mt-4 
                                 hover:bg-[#333333] rounded-lg p-2 transition-colors duration-200"
                             >
-                                <span className="flex flex-row items-center space-x-2">
+                                <span className="flex flex-row items-center space-x-4">
                                     <input
                                         type="radio"
                                         name={questions?.id}
@@ -102,7 +102,7 @@ const GenerateQuestions = ({ questions, formData, handleInputChange, errors }) =
                                         checked={formData[questions?.id] === option.value}
                                         onChange={() => handleInputChange(questions?.id, option.value)}
                                         aria-checked={formData[questions?.id] === option.value}
-                                        className="relative appearance-none w-8 h-8 rounded-full border border-black bg-radioBG 
+                                        className="relative appearance-none w-8 h-8 rounded-full border border-[3px] border-radioBG bg-transparent 
                                         hover:bg-[#565656] checked:bg-none checked:border-none
                                         checked:before:content-[''] checked:before:absolute checked:before:inset-0
                                         checked:before:bg-gradient-to-tr checked:before:from-[#624BED] checked:before:to-[#CE5682] 
@@ -112,11 +112,11 @@ const GenerateQuestions = ({ questions, formData, handleInputChange, errors }) =
                                         checked:after:w-4 checked:after:h-4 checked:after:bg-white checked:after:rounded-full
                                         transition duration-200"
                                     />
-                                    <span className="mobile-s:text-base md:text-xl font-medium text-gray-100 -mt-0.5">
+                                    <span className="mobile-s:text-base md:text-lg font-ibm-plex-mono font-medium text-gray-100 -mt-0.5">
                                         {option.value.charAt(0).toUpperCase() + option.value.slice(1)}
                                     </span>
                                 </span>
-                                <div className="mobile-s:text-sm md:text-sm text-gray-400 pl-7 mrg-2">
+                                <div className="text-sm text-gray-400 pl-9 mrg-2 font-ibm-plex-mono">
                                     {option.label}
                                 </div>
                             </label>
@@ -130,7 +130,7 @@ const GenerateQuestions = ({ questions, formData, handleInputChange, errors }) =
                         name={questions?.id}
                         value={formData[questions?.id] || ''}
                         onChange={(e) => handleInputChange(questions?.id, e.target.value)}
-                        className="w-full border border-borderTextAreaBG rounded-lg px-4 py-2 focus:outline-none focus-gradient bg-textAreaBG font-ibm-plex-mono text-base font-light text-left text-white custom-textarea"
+                        className="w-full border border-borderTextAreaBG rounded-lg px-4 py-2 focus:outline-none focus-gradient bg-textAreaBG font-ibm-plex-mono text-lg font-light text-left text-white custom-textarea"
                         minRows={3}
                         maxRows={10}
                         placeholder="Enter your response here..."
@@ -146,7 +146,7 @@ const GenerateQuestions = ({ questions, formData, handleInputChange, errors }) =
                             name={questions?.id}
                             value={formData[questions?.id] || ''}
                             onChange={(e) => handleInputChange(questions?.id, e.target.value)}
-                            className={`w-full border ${errors[questions?.id] ? 'border-errorRed rounded-none' : 'border-borderTextAreaBG rounded-lg'} px-4 py-4 focus:outline-none focus-gradient bg-textAreaBG font-ibm-plex-mono text-base font-light text-left text-white`}
+                            className={`w-full border ${errors[questions?.id] ? 'border-errorRed rounded-none' : 'border-borderTextAreaBG rounded-lg'} px-4 py-4 focus:outline-none focus-gradient bg-textAreaBG font-ibm-plex-mono text-lg font-light text-left text-white`}
                             placeholder="Email Address"
                             aria-describedby={`${questions?.id}-desc`}
                             required

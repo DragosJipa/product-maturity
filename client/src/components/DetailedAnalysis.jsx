@@ -42,11 +42,11 @@ const DetailedAnalysis = ({ analysisData }) => {
 
     return (
         <>
-            <span className='text-left block mobile-s:text-4xl md:text-5xl lg:text-6xl 3xl:text-8xl font-bold gradient-color-text font-ibm-plex-mono px-2'>
+            <span className='text-left block mobile-s:text-4xl md:text-5xl 3xl:text-8xl font-bold gradient-color-text font-ibm-plex-mono px-2'>
                 Detailed Analysis
             </span>
 
-            <p className="font-ibm-plex-mono font-light text-gray-300 2xl:w-3/5 px-2 mobile-s:text-sm sm:text-xl">
+            <p className="font-ibm-plex-mono font-light text-gray-300 2xl:w-3/5 px-2 mobile-s:text-sm sm:text-2xl">
                 See where your organization stands on its product development journey. This
                 interactive review, based on your unique responses, highlights areas for
                 improvement and guides you towards greater product maturity.

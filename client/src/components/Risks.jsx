@@ -18,7 +18,7 @@ const Risks = ({ risks }) => {
 
     return (
         <>
-            <div className='text-left mobile-s:text-4xl md:text-5xl lg:text-6xl 3xl:text-8xl font-bold gradient-color-text font-ibm-plex-mono px-2'>
+            <div className='text-left mobile-s:text-4xl md:text-5xl 3xl:text-8xl font-bold gradient-color-text font-ibm-plex-mono px-2'>
                 Current State
                 {' '}
                 <br className='sm:hidden' />
@@ -28,7 +28,7 @@ const Risks = ({ risks }) => {
                 Desired Future State
             </div>
 
-            <p className="font-ibm-plex-mono font-light text-gray-300 mobile-s:text-sm sm:text-xl 2xl:w-3/5 px-2">
+            <p className="font-ibm-plex-mono font-light text-gray-300 mobile-s:text-sm sm:text-2xl 2xl:w-3/5 px-2">
                 {risks?.description}
             </p>
 

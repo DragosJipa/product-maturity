@@ -36,23 +36,23 @@ const GoalCard = ({ goal, title, milestone, milestoneTitle, question, answer, ho
             onMouseLeave={onMouseLeave}
         >
             <div className="mobile-s:text-center sm:text-left p-6 bg-cardBG" style={{ borderTopRightRadius: '16px' }}>
-                <div className="inline-block px-4 py-2 rounded-full border border-[#FFFFFF1A] text-white text-xs lg:text-sm 3xl:text-base mb-2 font-ibm-plex-mono">
+                <div className="inline-block px-4 py-2 rounded-full border border-[#FFFFFF1A] text-white text-base sm:text-lg mb-2 font-ibm-plex-mono">
                     {goal}
                 </div>
-                <div className="text-sm text-xl 3xl:text-2xl font-ibm-plex-mono">{title}</div>
+                <div className="text-sm sm:text-2xl font-ibm-plex-mono">{title}</div>
             </div>
 
             {/* Milestone Section */}
             <div className="mobile-s:text-center sm:text-left relative 3xl:p-6 px-6 pt-3">
                 <div className="absolute inset-x-0 top-0 border-t border-lineBG"></div>
                 <div>
-                    <div className="inline-block px-4 py-2 rounded-full border border-[#FFFFFF1A] text-white text-xs lg:text-sm 3xl:text-base mb-2 font-ibm-plex-mono">
+                    <div className="inline-block px-4 py-2 rounded-full border border-[#FFFFFF1A] text-white text-sm sm:text-base mb-2 font-ibm-plex-mono">
                         {milestone}
                     </div>
 
                     <div className="flex text-left items-center gap-5 3xl:pt-2">
                         <div className="flex items-center justify-center h-full text-white mb-2">{filter}</div>
-                        <div className="text-sm text-xl font-ibm-plex-mono">{milestoneTitle}</div>
+                        <div className="text-2xl font-ibm-plex-mono">{milestoneTitle}</div>
                     </div>
                 </div>
             </div>

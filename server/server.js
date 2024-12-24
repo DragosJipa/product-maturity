@@ -7,6 +7,7 @@ const logger = require('./config/logger'); // Import logger configuration
 const questionRoutes = require('./routes/questionRoutes'); // Import question routes
 const submitRoutes = require('./routes/submitRoutes.background'); // Import submit routes
 const statusRoutes = require('./routes/statusRoutes'); // Import status routes
+const mailRoutes = require('./routes/mailRoutes'); // Import mail routes
 
 const app = express();
 const PORT = process.env.PORT || 3001; // Use Render's port or 3001 locally
@@ -30,6 +31,7 @@ app.use(bodyParser.json());
 // Mount Routes
 app.use('/api/questions', questionRoutes);
 app.use('/api/submit', submitRoutes);
+app.use('/api/mail', mailRoutes);
 app.use('/api', statusRoutes); // Correctly mount the status routes under '/api'
 
 // Graceful shutdown function for local environment (optional for Vercel)

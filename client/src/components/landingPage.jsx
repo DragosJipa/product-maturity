@@ -39,13 +39,13 @@ const stepsData = [
     },
     {
         icon: (
-            step5
+            step6
         ),
         text: 'We provide guidance on strategy, process optimization, technology upgrades, and cultural transformation.'
     },
     {
         icon: (
-            step6
+            step4
         ),
         text: 'Our team can help you build a roadmap for success and achieve your product goals faster.'
     }
@@ -74,39 +74,39 @@ const LandingPage = () => {
                 </div>
 
                 <main className='relative overflow-hidden flex flex-col items-center justify-center 3xl:px-80 font-ibm-plex-mono text-gray-200'>
-                    <span className='mobile-s:px-5 mobile-s:py-5 md:px-40 2xl:px-60 3xl:px-72 w-full flex justify-start md:py-20'>
+                    <span className='mobile-s:px-5 mobile-s:py-5 md:px-40 2xl:px-60 3xl:px-72 w-full flex justify-start md:py-10'>
                         <img src='/moduscreate.svg' alt='Modus Create' />
                     </span>
                     <div className='md:px-40 2xl:px-60 3xl:px-72 mobile-s:px-5'>
-                        <span className='text-left mobile-s:text-4xl xl:text-6xl 2xl:text-7xl 3xl:text-8xl font-bold gradient-color-text font-ibm-plex-mono'>
+                        <span className='text-left mobile-s:text-4xl xl:text-6xl 2xl:text-6xl 3xl:text-8xl font-bold gradient-color-text font-ibm-plex-mono'>
                             Accelerate Product Growth with AI-Powered Insights
                         </span>
-                        <p className='mobile-s:text-justify md:text-left text-xl xl:text-2xl 3xl:text-3xl font-ibm-plex-mono mobile-s:pt-10 md:pt-14 md:pr-60'>
+                        <p className='mobile-s:text-justify md:text-left text-xl xl:text-2xl 3xl:text-3xl font-ibm-plex-mono mobile-s:pt-10 md:pt-10 md:pr-60'>
                             Feeling stuck in your product's journey? Unsure of the next steps to drive growth and innovation?
                         </p>
 
-                        <div className='flex flex-col md:flex-row justify-between pt-14'>
+                        <div className='flex flex-col md:flex-row justify-between pt-10'>
                             <div className='order-2 md:order-1 w-full md:w-1/2 mb-10 md:mb-0'>
-                                <p className='mobile-s:text-justify md:text-left text-xl lg:text-2xl 3xl:text-2xl font-ibm-plex-mono mb-10'>
+                                <p className='mobile-s:text-justify md:text-left text-lg lg:text-lg 3xl:text-2xl font-ibm-plex-mono mb-10'>
                                     Our AI-powered product maturity assessment analyzes your product strategy, processes, technology, and culture to identify areas for improvement. Receive a customized roadmap with actionable recommendations to optimize your product development lifecycle.
                                 </p>
                                 <div className="flex justify-start">
                                     <button
                                         onClick={() => navigate('/start')}
-                                        className="inline-flex mobile-s:justify-center justify-normal items-center gap-2 font-ibm-plex-mono text-white rounded-full px-6 py-2 3xl:text-2xl font-medium transition-all bg-gradient-to-r from-[#624BED] to-[#CE5682] w-full md:w-auto">
+                                        className="inline-flex mobile-s:justify-center justify-normal items-center gap-2 font-ibm-plex-mono text-white rounded-full px-6 py-2 text-lg font-bold 3xl:text-2xl font-medium transition-all bg-gradient-to-r from-[#624BED] to-[#CE5682] w-full md:w-auto">
                                         Take the Free Assessment
                                     </button>
                                 </div>
                             </div>
-                            <div className='order-1 md:order-2 w-full md:w-auto flex justify-center md:justify-start mobile-s:pb-10 md:pb-0'>
-                                <div className='w-[283px] h-[384px] bg-blackBox rounded-2xl'>
+                            {/* <div className='order-1 md:order-2 w-full md:w-auto flex justify-center md:justify-start mobile-s:pb-10 md:pb-0'>
+                                <div className='w-[250px] h-[340px] bg-blackBox rounded-2xl'>
                                     <img src='./book.svg' alt='book' className='w-full h-full' />
                                 </div>
-                            </div>
+                            </div> */}
                         </div>
                     </div>
                     <div className="max-w-3xl mx-auto">
-                        <div className="mt-16">
+                        <div className="mt-32">
                             <div className="flex justify-center">
                                 <p className='gradient-color-text font-ibm-plex-mono text-xl font-semibold'>
                                     How it works
@@ -121,7 +121,7 @@ const LandingPage = () => {
                                     </span>
                                 </div>
                             </h2>
-                            <div className="grid grid-cols-1 large:grid-cols-3 gap-8">
+                            <div className="grid grid-cols-1 large:grid-cols-3 gap-8 text-lg">
                                 {stepsData.slice(0, 3).map((step, index) => (
                                     <Step key={index} title={step.title} icon={step.icon} text={step.text} />
                                 ))}
@@ -159,7 +159,7 @@ const LandingPage = () => {
                             <div className='content-container'>
                                 <div className="flex justify-center">
                                     <p className='gradient-color-text font-ibm-plex-mono text-xl font-semibold'>
-                                        How Modus Can Help
+                                        What you can do
                                     </p>
                                 </div>
                                 <h2 className="mobile-s:text-3xl sm:text-4xl font-bold text-center mobile-l:mb-2 sm:mb-12 mt-6" style={{ lineHeight: '52.4px', letterSpacing: -0.75 }}>
@@ -168,11 +168,11 @@ const LandingPage = () => {
                                 <div className="flex flex-col mini:flex-row justify-center gap-4 w-full">
                                     <button
                                         onClick={() => navigate('/start')}
-                                        className="md:inline-flex items-center gap-2 font-ibm-plex-mono text-white rounded-full px-6 py-2 mobile-s:text-sm mobile-m:text-base mobile-l:text-xl font-medium transition-all bg-gradient-to-r from-[#624BED] to-[#CE5682]">
+                                        className="md:inline-flex items-center gap-2 font-ibm-plex-mono text-white rounded-full px-6 py-2 mobile-s:text-sm mobile-m:text-base mobile-l:text-lg font-medium transition-all bg-gradient-to-r from-[#624BED] to-[#CE5682]">
                                         Take the Free Assessment
                                     </button>
                                     <button
-                                        className="border border-white hover:border-white text-white px-6 py-3 mobile-s:text-sm mobile-m:text-base rounded-full transition duration-300"
+                                        className="border border-white hover:border-white text-white px-6 py-3 mobile-s:text-sm mobile-m:text-lg rounded-full transition duration-300"
                                     >
                                         Talk to an Expert
                                     </button>
@@ -240,7 +240,12 @@ const LandingPage = () => {
                                     placeholder="Email Address"
                                     className="w-full px-4 py-2 bg-[#232323] rounded-md text-white text-sm border border-gray-700 focus:outline-none focus-gradient"
                                 />
-                                <button className="px-6 py-2 bg-gradient-to-r from-[#624BED] to-[#CE5682] text-white rounded-full text-sm hover:opacity-90 transition duration-300">
+                                {/* <button className="px-6 py-2 bg-gradient-to-r from-[#624BED] to-[#CE5682] text-white rounded-full text-sm hover:opacity-90 transition duration-300">
+                                    Stay Informed
+                                </button> */}
+                                <button
+                                    className="border border-white hover:border-white text-white px-6 py-2 mobile-s:text-xs rounded-full transition duration-300"
+                                >
                                     Stay Informed
                                 </button>
                             </div>
@@ -251,9 +256,10 @@ const LandingPage = () => {
                 <div className="bg-[#121212] px-8 py-6">
                     <div className="max-w-7xl mx-auto flex flex-col large:flex-row justify-between items-center space-y-4 large:space-y-0">
                         <div className="flex items-center space-x-6">
-                            {modus}
+                            <img src='/moduscreate.svg' alt='Modus Create' />
 
-                            <span className="text-sm text-gray-400">© 2023 Modus Create, LLC</span>
+
+                            <span className="text-sm text-gray-400">© 2024 Modus Create, LLC</span>
                         </div>
 
                         <div className="flex items-center space-x-6 text-sm text-gray-400">

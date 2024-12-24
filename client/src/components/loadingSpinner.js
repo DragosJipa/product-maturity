@@ -39,7 +39,7 @@ const LoadingSpinner = () => {
   }, [messageIndex, messages.length, messageTimings]);
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-customBG">
+    <div className="flex flex-col items-center justify-center h-screen bg-customBG font-ibm-plex-mono">
       <div className="flex justify-center items-center space-x-2">
         {/* Spinning Loader */}
         <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-solid"></div>

@@ -203,33 +203,37 @@ const ProductMaturityAssessment = () => {
     return (
         // <div className="flex flex-col items-start justify-start h-screen bg-customBG text-white p-4 sm:px-14 md:px-20 lg:px-32 overflow-hidden">
         <div className="flex flex-col min-h-[100dvh] bg-customBG text-white p-4 sm:px-14 md:px-20 lg:px-32">
-
             {/* Top navigation */}
             <div className="w-full sm:my-8">
                 <div className="text-xs text-gray-400 flex items-center space-x-2">
-                    <button className="w-[32px] h-[32px] flex items-center justify-center -mt-4" onClick={handlePrevious}>
-                        <svg
-                            width="13.63"
-                            height="24"
-                            viewBox="0 0 13.63 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <path
-                                d="M12.63 24L1 12L12.63 0L13.63 1.04L3.09 12L13.63 22.96L12.63 24Z"
-                                fill="white"
-                            />
-                        </svg>
-                    </button>
-                    <div>
-                        <span className="font-ibm-plex-mono text-sm font-normal leading-[31.2px] tracking-[0.75px] text-left"
-                            onClick={handlePopulateDummyResponses}
-                        >
-                            Product Maturity Assessment
+                    <div className='flex flex-col'>
+                        <span className='inline-flex ml-8'>
+                            <img src='/moduscreate.svg' alt='Modus Create' className='mobile-s:w-24' />
+                            <span className="font-ibm-plex-mono text-[11px] sm:text-sm font-normal leading-[31.2px] tracking-[0.75px] text-left ml-4"
+                                onClick={handlePopulateDummyResponses}
+                            >
+                                Product Maturity Assessment
+                            </span>
                         </span>
-                        <h1 className="font-ibm-plex-mono mobile-s:text-lg sm:text-2xl font-semibold gradient-text mb-4 whitespace-normal break-words overflow-hidden text-ellipsis w-full">
-                            {getSectionTitle(currentQuestionIndex)}
-                        </h1>
+                        <div className='inline-flex'>
+                            <button className="w-[32px] h-[32px]" onClick={handlePrevious}>
+                                <svg
+                                    width="13.63"
+                                    height="24"
+                                    viewBox="0 0 13.63 24"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        d="M12.63 24L1 12L12.63 0L13.63 1.04L3.09 12L13.63 22.96L12.63 24Z"
+                                        fill="white"
+                                    />
+                                </svg>
+                            </button>
+                            <h1 className="font-ibm-plex-mono mobile-s:text-lg sm:text-2xl font-semibold gradient-text mb-4 whitespace-normal break-words overflow-hidden text-ellipsis w-full">
+                                {getSectionTitle(currentQuestionIndex)}
+                            </h1>
+                        </div>
                     </div>
                 </div>
             </div>
