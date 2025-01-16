@@ -79,7 +79,7 @@ const LandingPage = () => {
                     </span>
                     <div className='md:px-40 2xl:px-60 3xl:px-72 mobile-s:px-5'>
                         <span className='text-left mobile-s:text-4xl xl:text-6xl 2xl:text-6xl 3xl:text-8xl font-bold gradient-color-text font-ibm-plex-mono'>
-                            Accelerate Product Growth with AI-Powered Insights
+                            Accelerate Product Growth with Our Free Assessment
                         </span>
                         <p className='mobile-s:text-justify md:text-left text-xl xl:text-2xl 3xl:text-3xl font-ibm-plex-mono mobile-s:pt-10 md:pt-10 md:pr-60'>
                             Feeling stuck in your product's journey? Unsure of the next steps to drive growth and innovation?
@@ -154,6 +154,27 @@ const LandingPage = () => {
                                     <Step key={index} icon={step.icon} text={step.text} />
                                 ))}
                             </div>
+                            <div className="mt-5 bg-cardBG rounded-tr-[16px] rounded-bl-[16px] flex flex-col items-center gap-4 flex-grow">
+                                <div className="mb-4 mt-10 text-base">
+                                    Trusted by 4,000+ Companies Worldwide
+                                </div>
+                                <div className="mb-10 text-left text-gray-200 text-base font-ibm-plex-mono grid grid-cols-2 mobile-s:grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-5 justify-items-center max-w-6xl mx-4">
+                                    <img src='amazon.svg' alt='amazon' />
+                                    <img src='acer.svg' alt='acer' />
+                                    <img src='adidas.svg' alt='adidas' />
+                                    <img src='ford.svg' alt='ford' />
+                                    <img src='audi.svg' alt='audi' />
+                                    <img src='jeep.svg' alt='jeep' />
+                                    <img src='pbs.svg' alt='pbs' />
+                                    <img src='nasa.svg' alt='nasa' />
+                                    <img src='lg.svg' alt='lg' />
+                                    <img src='burgerking.svg' alt='burgerking' />
+                                    <img src='cisco.svg' alt='cisco' />
+                                    <img src='comcast.svg' alt='comcast' />
+                                    <img src='toyota.svg' alt='toyota' className="col-start-2 mobile-s:col-start-1 md:col-start-3" />
+                                    <img src='uniqlo.svg' alt='uniqlo' className="col-start-3 mobile-s:col-start-2 md:col-start-4" />
+                                </div>
+                            </div>
                         </div>
                         <div className="mt-44 mini:mb-20 mb-10 text-center">
                             <div className='content-container'>
@@ -205,8 +226,9 @@ const LandingPage = () => {
                             <h4 className="text-white font-semibold mb-4 gradient-color-text-2">Our Partners</h4>
                             <ul className="space-y-2 text-sm text-gray-400">
                                 <li>Atlassian</li>
+                                <li>Aha!</li>
                                 <li>AWS</li>
-                                <li>GitLab</li>
+                                <li>Github</li>
                                 <li>Ionic</li>
                                 <li>Other Partners</li>
                             </ul>
@@ -216,10 +238,19 @@ const LandingPage = () => {
                             <h4 className="text-white font-semibold mb-4 gradient-color-text-2">Who We Are</h4>
                             <ul className="space-y-2 text-sm text-gray-400">
                                 <li>Our Story</li>
-                                <li>Careers</li>
+                                <li>
+                                    <span>Careers</span>
+                                    <span
+                                        className="border border-white/10 text-white rounded-full px-2 py-1 text-xs ml-2 hover:opacity-90 transition duration-300"
+                                    >
+                                        We're hiring!
+                                    </span>
+                                </li>
                                 <li>Open Source</li>
-                                <li>Our Work</li>
-                                <li>Contact Us</li>
+                            </ul>
+                            <h4 className="text-white font-semibold mt-6 mb-4 gradient-color-text-2">Our Work</h4>
+                            <ul className="text-sm text-gray-400">
+                                <li>Case Studies</li>
                             </ul>
                         </div>
 
@@ -263,22 +294,22 @@ const LandingPage = () => {
                         </div>
 
                         <div className="flex items-center space-x-6 text-sm text-gray-400">
-                            <a href="#" className="hover:text-white">Privacy Policy</a>
-                            <a href="#" className="hover:text-white">Sitemap</a>
+                            <a href="https://moduscreate.com/privacy-policy/" className="hover:text-white">Privacy Policy</a>
+                            <a href="https://moduscreate.com/sitemap/" className="hover:text-white">Sitemap</a>
                             <div className="flex items-center space-x-4">
-                                <a href="#" className="hover:text-white">
+                                <a href="https://github.com/moduscreateorg" className="hover:text-white">
                                     {github}
                                 </a>
-                                <a href="#" className="hover:text-white">
+                                <a href="https://www.youtube.com/moduscreate" className="hover:text-white">
                                     {youtube}
                                 </a>
-                                <a href="#" className="hover:text-white">
+                                <a href="https://x.com/moduscreate" className="hover:text-white">
                                     {x}
                                 </a>
-                                <a href="#" className="hover:text-white">
+                                <a href="https://www.linkedin.com/company/modus-create" className="hover:text-white">
                                     {linkedin}
                                 </a>
-                                <a href="#" className="hover:text-white">
+                                <a href="https://www.facebook.com/moduscreate/" className="hover:text-white">
                                     {facebook}
                                 </a>
                             </div>

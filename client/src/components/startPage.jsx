@@ -51,12 +51,13 @@ const StartPage = () => {
                         Product Maturity Assessment
                     </h1>
                     <p className="font-ibm-plex-mono font-light text-3xl lg:text-4xl xl:text-[48px] leading-tight lg:leading-snug xl:leading-[62.4px] tracking-wide">
-                        Let’s embark on a journey to uncover your{' '}
+                        Let's embark on a journey to uncover your{' '}
                         <span className=" font-bold">
-                            product’s full potential!
+                            product's full potential!
                         </span>{' '}
                         🚀
                     </p>
+                    <p className='text-disclaimerTextBG text-lg lg:text-xl font-ibm-plex-mono'>Set aside 15-20 minutes to gain valuable insights into your product's maturity.</p>
                     <button
                         onClick={handleStart}
                         className="hidden large:flex flex items-center justify-start text-white font-ibm-plex-mono font-normal text-xl group mt-10 w-max"
@@ -66,7 +67,7 @@ const StartPage = () => {
                             <img src={'./ArrowRightIcon.svg'} alt="Arrow Right" className="w-full h-full" />
                         </span>
                     </button>
-                    <button className='hidden large:flex mt-40 border border-white hover:border-white text-white px-3 py-1 rounded-full font-ibm-plex-mono text-sm w-max' onClick={handleDisclaimer}>
+                    <button className='hidden large:flex mt-28 border border-white hover:border-white text-white px-3 py-1 rounded-full font-ibm-plex-mono text-sm w-max' onClick={handleDisclaimer}>
                         Disclaimer
                     </button>
                 </div>

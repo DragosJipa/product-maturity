@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MaturityLevel from './MaturityLevel';
 import DetailedAnalysis from './DetailedAnalysis';
@@ -10,6 +10,9 @@ import StarBackground from './StarBackground';
 import { AssessmentContext } from '../context/assessmentContext';
 import CustomDropdown from './CustomDropdown';
 import axios from 'axios';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+import * as html2pdf from 'html2pdf.js';
 
 const Dashboard = () => {
     const navigate = useNavigate();
@@ -20,6 +23,7 @@ const Dashboard = () => {
         const savedData = sessionStorage.getItem('assessmentData');
         return savedData ? JSON.parse(savedData) : null;
     });
+    const pdfRef = useRef(null);
 
     useEffect(() => {
         if (assessmentData) {
@@ -85,10 +89,121 @@ const Dashboard = () => {
         try {
             await axios.post(`${baseURL}/api/mail`);
             console.log('Email sent successfully');
+            downloadPDF12();
+            console.log('PDF downloaded successfully');
         } catch (error) {
             console.error('Error sending email:', error);
         }
     };
+
+    const downloadPDF = async () => {
+        // const element = pdfRef.current;
+        // if (!element) {
+        //     console.error("PDF content not found!");
+        //     return;
+        // }
+
+        // Generate the PDF
+        // const canvas = await html2canvas(element, { scale: 2 });
+
+        const element = document.getElementById('report-page');
+        const canvas = await html2canvas(element, { scale: 2 });
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const imgWidth = 210;
+        const pageHeight = 297;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+        let heightLeft = imgHeight;
+        let position = 0;
+
+        while (heightLeft > 0) {
+            pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+            position -= pageHeight;
+            if (heightLeft > 0) pdf.addPage();
+        }
+
+        pdf.save('report.pdf');
+    };
+
+    const downloadPDF12 = async () => {
+        const element = document.getElementById('report-page');
+
+        // Configure html2canvas options
+        const canvas = await html2canvas(element, {
+            scale: 1, // Reduce scale from 2 to 1
+            useCORS: true,
+            logging: false,
+            allowTaint: true,
+            backgroundColor: '#161616', // Match your background
+            imageTimeout: 0,
+            onclone: (clonedDoc) => {
+                // Ensure fonts are loaded in cloned document
+                const style = clonedDoc.createElement('style');
+                style.innerHTML = `
+                    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&display=swap');
+                    * { font-family: 'IBM Plex Mono', monospace; }
+                `;
+                clonedDoc.head.appendChild(style);
+            }
+        });
+
+        // Configure jsPDF options
+        const pdf = new jsPDF({
+            orientation: 'p',
+            unit: 'mm',
+            format: 'a4',
+            compress: true // Enable compression
+        });
+
+        const imgData = canvas.toDataURL('image/jpeg', 0.7); // Use JPEG with quality 0.7
+        const imgWidth = 210;
+        const pageHeight = 297;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+        let heightLeft = imgHeight;
+        let position = 0;
+
+        // Add pages with compression
+        while (heightLeft > 0) {
+            pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight, '', 'FAST');
+            heightLeft -= pageHeight;
+            position -= pageHeight;
+            if (heightLeft > 0) pdf.addPage();
+        }
+
+        pdf.save('product-maturity-report.pdf');
+    };
+
+    // const downloadPDF2 = () => {
+    //     const element = document.getElementById('report-page'); // Target your HTML element
+    //     const options = {
+    //         margin: 1,
+    //         filename: 'report.pdf',
+    //         html2canvas: { scale: 2 },
+    //         jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
+    //     };
+
+    //     html2pdf().set(options).from(element).save();
+    // };
+
+    // const downloadPDF3 = async () => {
+    //     const htmlContent = document.getElementById('report-page').outerHTML;
+
+    //     const response = await fetch('/generate-pdf', {
+    //         method: 'POST',
+    //         headers: { 'Content-Type': 'application/json' },
+    //         body: JSON.stringify({ htmlContent }),
+    //     });
+
+    //     const blob = await response.blob();
+    //     const url = window.URL.createObjectURL(blob);
+    //     const link = document.createElement('a');
+    //     link.href = url;
+    //     link.download = 'report.pdf';
+    //     link.click();
+    // };
 
     return (
         <div className="bg-startBG text-gray-200 min-h-screen">
@@ -166,6 +281,7 @@ const Dashboard = () => {
                             exit="exit"
                             transition={pageTransition}
                             className="w-full 3xl:space-y-28 lg:space-y-10 md:space-y-10 sm:space-y-10 space-y-8"
+
                         >
                             {activeTab === "maturityLevel" && <MaturityLevel maturityLevel={maturity_level} />}
                             {activeTab === "detailedAnalysis" && <DetailedAnalysis analysisData={detailed_analysis} />}
@@ -174,6 +290,19 @@ const Dashboard = () => {
                         </motion.div>
                     </AnimatePresence>
                 </main>
+
+
+                {/* Hidden container for generating PDF with all tabs */}
+                <div
+                    id='report-page'
+                    ref={pdfRef}
+                    style={{ position: "absolute", top: "-9999px", left: "-9999px" }}
+                >
+                    <MaturityLevel maturityLevel={maturity_level} />
+                    <DetailedAnalysis analysisData={detailed_analysis} />
+                    <Risks risks={risks} />
+                    <Roadmapc goalCards={goalCards} />
+                </div>
 
                 {/* {activeTab === 'maturityLevel' &&
                     <footer className="bg-customBG text-white py-14 px-72 relative" style={{ top: '20vh' }}>

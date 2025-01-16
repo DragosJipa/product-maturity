@@ -8,6 +8,7 @@ const questionRoutes = require('./routes/questionRoutes'); // Import question ro
 const submitRoutes = require('./routes/submitRoutes.background'); // Import submit routes
 const statusRoutes = require('./routes/statusRoutes'); // Import status routes
 const mailRoutes = require('./routes/mailRoutes'); // Import mail routes
+const pdfRoutes = require('./routes/pdfRoutes'); // Import PDF routes
 
 const app = express();
 const PORT = process.env.PORT || 3001; // Use Render's port or 3001 locally
@@ -29,6 +30,7 @@ app.use(morgan('combined', {
 app.use(bodyParser.json());
 
 // Mount Routes
+app.use('/api/generate-pdf', pdfRoutes);
 app.use('/api/questions', questionRoutes);
 app.use('/api/submit', submitRoutes);
 app.use('/api/mail', mailRoutes);

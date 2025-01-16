@@ -3,6 +3,8 @@ import TextareaAutosize from 'react-textarea-autosize';
 import CustomDropdown from './CustomDropdown';
 
 const GenerateQuestions = ({ questions, formData, handleInputChange, errors }) => {
+    console.log(questions);
+
     const isDropdown = questions?.type === 'select';
     const isRadio = questions?.type === 'radio';
     const isOpenEnded = questions?.type === 'open-ended';
@@ -69,11 +71,11 @@ const GenerateQuestions = ({ questions, formData, handleInputChange, errors }) =
     return (
         <div>
             <div className={`w-full ${isRadio ? 'pt-0 sm:pt-[20vh] xl:pt-[5vh] 3xl:pt-[20vh]' : 'mobile-s:pt-[10vh] 3xl:pt-[20vh] max-w-4xl'}`}>
-                <p className="font-ibm-plex-mono text-5xl font-normal leading-[62.4px] tracking-[0.75px] text-left text-gray-100 mb-4">
+                <div className="font-ibm-plex-mono text-5xl font-normal leading-[62.4px] tracking-[0.75px] text-left text-gray-100 mb-4">
                     <div>
                         {renderQuestionText(questions?.question, questions?.id)}
                     </div>
-                </p>
+                </div>
 
                 {isDropdown && (
                     <div className="relative w-full mb-6">
@@ -154,6 +156,7 @@ const GenerateQuestions = ({ questions, formData, handleInputChange, errors }) =
                         {errors[questions?.id] && (
                             <p className="text-errorRed text-xl mt-5 p-2 font-ibm-plex-mono bg-errorBG inline-block">{errors[questions?.id]}</p>
                         )}
+                        <span className='mt-10 text-disclaimerTextBG text-sm lg:base font-ibm-plex-mono'>By submitting this form, you acknowledge that the information you provide will be processed according to our <a href="https://moduscreate.com/privacy-policy/" className='inline-flex underline font-bold text-white/60'>Privacy Policy.</a></span>
                     </div>
                 )}
             </div>
