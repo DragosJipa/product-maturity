@@ -29,7 +29,7 @@ const ProductMaturityAssessment = () => {
     const { checkProcessingStatus } = useCheckProcessingStatus();
     const [animationKey, setAnimationKey] = useState(`${currentQuestionIndex}-${insideCurrentQuestionIndex}-${lastAction}`);
     const [visibleSection, setVisibleSection] = useState(null);
-
+    const [isEmail, setIsEmail] = useState(false);
     const [isAnimating, setIsAnimating] = useState(false);
 
     useEffect(() => {
@@ -47,7 +47,9 @@ const ProductMaturityAssessment = () => {
     }, [currentSection]);
 
 
-    const baseURL = process.env.NODE_ENV === 'development' ? 'http://localhost:3001' : 'https://product-maturity.onrender.com';
+    // const baseURL = process.env.NODE_ENV === 'development' ? 'http://localhost:3001' : 'https://product-maturity.onrender.com';
+    const baseURL = process.env.NODE_ENV === 'development' ? 'http://localhost:3001' : 'http://13.53.42.107';
+    console.log('baseURL:', baseURL, process.env.NODE_ENV, process.env.REACT_APP_HUBSPOT_OAUTH_TOKEN);
 
     const getSectionTitle = (index) => {
         switch (index) {
@@ -100,21 +102,26 @@ const ProductMaturityAssessment = () => {
             [questionId]: value,
         });
         if (questionId === 'email') {
+            setIsEmail(true);
             const newErrors = { ...errors };
             delete newErrors[questionId];
             setErrors(newErrors);
+            // window._hsq.push(['trackEmail', {
+            //     id: questionId,
+            //     value: value,
+            // }]);
         }
-        if (window._hsq) {
-            console.log('window._hsq:', window._hsq);
-            window._hsq.push(['trackEvent', {
-                id: questionId,
-                value: value,
-            }]);
-        }
+
+        // if (window._hsq) {
+        //     console.log('window._hsq:', window._hsq[window._hsq.length - 1][1].value);
+        // }
     };
     const handleDotClick = (index) => {
         setInsideCurrentQuestionIndex(index);
     }
+
+    console.log('each question formData:', formData);
+
 
     const handleNext = (e) => {
         e.preventDefault();
@@ -126,6 +133,26 @@ const ProductMaturityAssessment = () => {
             setLastAction('forward');
             const isLastInnerQuestion = questions[currentQuestionIndex].questions.length - 1 === insideCurrentQuestionIndex;
             const isLastMainQuestion = currentQuestionIndex >= questions.length - 1 && isLastInnerQuestion;
+
+            if (isEmail) {
+                console.log('formData:', formData.email);
+                if (formData?.email) {
+                    axios.post(`${baseURL}/api/hubspot`, { email: formData.email })
+                        .then(response => {
+                            setIsEmail(false);
+                            console.log('HubSpot response:', response.data);
+                            setFormData({
+                                ...formData,
+                                assessmentId: response?.data?.assessment?.id,
+                            });
+                            console.log('formData:', formData);
+
+                        })
+                        .catch(error => {
+                            console.error('HubSpot error:', error);
+                        });
+                }
+            }
 
             if (!isLastMainQuestion) {
                 if (isLastInnerQuestion) {
@@ -274,6 +301,7 @@ const ProductMaturityAssessment = () => {
                             formData={formData}
                             handleInputChange={handleInputChange}
                             errors={errors}
+                            isFirstSet={currentQuestionIndex === 0}
                         />
                     </div>
                 </motion.div>

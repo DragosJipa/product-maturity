@@ -7,7 +7,8 @@ import { useNavigate } from 'react-router-dom';
 
 
 // Determine the base URL dynamically
-const baseURL = process.env.NODE_ENV === 'development' ? 'http://localhost:3001' : 'https://product-maturity.onrender.com';
+// const baseURL = process.env.NODE_ENV === 'development' ? 'http://localhost:3001' : 'https://product-maturity.onrender.com';
+const baseURL = process.env.NODE_ENV === 'development' ? 'http://localhost:3001' : 'http://13.53.42.107';
 
 
 // Enhanced dummy responses for open-ended questions with more detailed and elaborated content

@@ -290,7 +290,7 @@ const LandingPage = () => {
                             <img src='/moduscreate.svg' alt='Modus Create' />
 
 
-                            <span className="text-sm text-gray-400">© 2024 Modus Create, LLC</span>
+                            <span className="text-sm text-gray-400">© 2025 Modus Create, LLC</span>
                         </div>
 
                         <div className="flex items-center space-x-6 text-sm text-gray-400">

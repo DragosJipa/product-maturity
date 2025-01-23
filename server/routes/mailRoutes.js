@@ -8,8 +8,11 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 router.post('/', async (req, res) => {
     try {
+        const { pdf, email } = req.body;
+        const cleanBase64 = pdf.replace(/^data:application\/pdf;base64,/, '');
+
         const msg = {
-            to: 'dragos.jipa@moduscreate.com',
+            to: email,
             from: {
                 email: 'dragos.jipa@moduscreate.com',
                 name: 'Product Maturity Assessment'
@@ -23,6 +26,14 @@ router.post('/', async (req, res) => {
                     <p>Best regards,<br>Product Maturity Assessment Team</p>
                 </div>
             `,
+            attachments: [
+                {
+                    content: cleanBase64,
+                    filename: 'product-maturity-assessment-report.pdf',
+                    type: 'application/pdf',
+                    disposition: 'attachment'
+                }
+            ]
         }
         await sgMail.send(msg);
         res.json({ status: 'success', message: 'Email sent successfully' });

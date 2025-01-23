@@ -12,7 +12,6 @@ import CustomDropdown from './CustomDropdown';
 import axios from 'axios';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import * as html2pdf from 'html2pdf.js';
 
 const Dashboard = () => {
     const navigate = useNavigate();
@@ -24,6 +23,8 @@ const Dashboard = () => {
         return savedData ? JSON.parse(savedData) : null;
     });
     const pdfRef = useRef(null);
+
+    console.log('assessmentData:', assessmentData);
 
     useEffect(() => {
         if (assessmentData) {
@@ -83,18 +84,66 @@ const Dashboard = () => {
         setActiveTab(newTab);
     };
 
-    const baseURL = process.env.NODE_ENV === 'development' ? 'http://localhost:3001' : 'https://product-maturity.onrender.com';
+    // const baseURL = process.env.NODE_ENV === 'development' ? 'http://localhost:3001' : 'https://product-maturity.onrender.com';
+    const baseURL = process.env.NODE_ENV === 'development' ? 'http://localhost:3001' : 'http://13.53.42.107';
 
     const handleDownload = async () => {
         try {
-            await axios.post(`${baseURL}/api/mail`);
-            console.log('Email sent successfully');
-            downloadPDF12();
+            if (!assessmentData?.interpretation?.pdf) {
+                throw new Error('No PDF data available');
+            }
+
+            let base64Data = assessmentData.interpretation.pdf;
+
+            // if (!base64Data.startsWith('data:application/pdf;base64,')) {
+            //     base64Data = `data:application/pdf;base64,${base64Data}`;
+            // }
+
+            const link = document.createElement('a');
+            link.href = base64Data;
+            link.download = 'product-maturity-report.pdf';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
             console.log('PDF downloaded successfully');
+
+            await axios.post(`${baseURL}/api/mail`, {
+                pdf: base64Data,
+                email: assessmentData?.responses?.email
+            });
+            console.log('Email sent successfully');
         } catch (error) {
-            console.error('Error sending email:', error);
+            console.error('Error handling download:', error);
         }
     };
+    // const handleDownload = async () => {
+    //     try {
+    //         // await axios.post(`${baseURL}/api/mail`);
+    //         console.log('Email sent successfully');
+
+    //         if (assessmentData?.interpretation?.pdf) {
+    //             const pdfBase64 = assessmentData.interpretation.pdf;
+    //             const pdfBlob = new Blob(
+    //                 [Uint8Array.from(atob(pdfBase64), c => c.charCodeAt(0))],
+    //                 { type: 'application/pdf' }
+    //             );
+    //             console.log('gets here?');
+    //             const link = document.createElement('a');
+    //             link.href = URL.createObjectURL(pdfBlob);
+    //             link.download = 'product-maturity-report.pdf';
+    //             link.click();
+
+    //             console.log('PDF downloaded successfully');
+
+    //         } else {
+    //             console.log('Error during download');
+    //         }
+    //         // downloadPDF12();
+    //     } catch (error) {
+    //         console.error('Error sending email:', error);
+    //     }
+    // };
 
     const downloadPDF = async () => {
         // const element = pdfRef.current;

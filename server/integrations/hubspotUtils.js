@@ -1,3 +1,4 @@
+const logger = require('../config/logger');
 const axiosInstance = require('./hubspotConfig');
 
 const isPersonalEmailDomain = (domain) => {
@@ -75,17 +76,46 @@ exports.createContact = async (contactData) => {
     try {
         const { firstname, lastname } = formatNameFromEmail(contactData.email);
 
-        const contactResponse = await axiosInstance.post('/crm/v3/objects/contacts', {
-            properties: {
-                email: contactData.email,
-                firstname: firstname,
-                lastname: lastname,
-                company: contactData.company,
-            }
+        // First search for existing contact
+        const searchResponse = await axiosInstance.post('/crm/v3/objects/contacts/search', {
+            filterGroups: [{
+                filters: [{
+                    propertyName: 'email',
+                    operator: 'EQ',
+                    value: contactData.email
+                }]
+            }]
         });
 
-        console.log('Contact created successfully:', contactResponse.data);
+        let contactResponse;
+        if (searchResponse.data.total > 0) {
+            // Update existing contact
+            const existingContact = searchResponse.data.results[0];
+            contactResponse = await axiosInstance.patch(
+                `/crm/v3/objects/contacts/${existingContact.id}`,
+                {
+                    properties: {
+                        firstname: firstname,
+                        lastname: lastname,
+                        company: contactData.company,
+                    }
+                }
+            );
+            console.log('Contact updated successfully:', contactResponse.data);
+        } else {
+            // Create new contact
+            contactResponse = await axiosInstance.post('/crm/v3/objects/contacts', {
+                properties: {
+                    email: contactData.email,
+                    firstname: firstname,
+                    lastname: lastname,
+                    company: contactData.company,
+                }
+            });
+            console.log('Contact created successfully:', contactResponse.data);
+        }
 
+        // Handle company association
         if (contactResponse.data.id && contactData.companyId) {
             try {
                 await axiosInstance.put(
@@ -96,8 +126,6 @@ exports.createContact = async (contactData) => {
             } catch (associationError) {
                 console.error('Error associating contact with company:', associationError.response?.data);
             }
-        } else {
-            console.log('Skipping company association - no company ID provided');
         }
 
         return contactResponse.data;
@@ -192,10 +220,11 @@ exports.createOrUpdateCompanyAndContact = async (formData) => {
     try {
         const domain = formData.email.split('@')[1].toLowerCase();
         let company = null;
+        const companyName = getCompanyNameFromDomain(domain);
 
         if (!isPersonalEmailDomain(domain)) {
             company = await exports.searchCompanyByNameAndDomain(
-                getCompanyNameFromDomain(domain),
+                companyName,
                 domain
             );
 
@@ -216,13 +245,13 @@ exports.createOrUpdateCompanyAndContact = async (formData) => {
 
         const contact = await exports.createContact({
             email: formData.email,
-            company: getCompanyNameFromDomain(domain),
-            companyId: company.id
+            company: companyName,
+            companyId: company?.id
         });
 
         try {
             const noteContent = `Product Maturity Assessment taken on ${new Date().toLocaleString()}\n` +
-                `Organization Type: ${getCompanyNameFromDomain(domain)}\n` +
+                `Organization Type: ${companyName}\n` +
                 `Email: ${formData.email}`;
 
             const noteResult = await exports.createNote(
@@ -238,10 +267,164 @@ exports.createOrUpdateCompanyAndContact = async (formData) => {
 
         return {
             company: company,
-            contact: contact
+            contact: contact,
+            assessment: assessment,
         };
     } catch (error) {
         console.error('Error in createOrUpdateCompanyAndContact:', error);
+        throw error;
+    }
+};
+
+exports.handleEmailSubmission = async (email) => {
+    try {
+        const domain = email.split('@')[1].toLowerCase();
+        let company = null;
+        const companyName = getCompanyNameFromDomain(domain);
+
+        if (!isPersonalEmailDomain(domain)) {
+            company = await exports.searchCompanyByNameAndDomain(
+                companyName,
+                domain
+            );
+
+            if (!company) {
+                company = await exports.createCompany({
+                    domain: domain,
+                });
+            }
+        } else {
+            console.log(`Skipping company creation for personal email domain: ${domain}`);
+        }
+
+        const contact = await exports.createContact({
+            email: email,
+            company: companyName,
+            companyId: company.id
+        });
+
+        const assessment = await createOrUpdateAssessment({
+            email: email,
+            companyId: company?.id,
+            contactId: contact.id,
+            isCompleted: false,
+        });
+
+        try {
+            const noteContent = `Product Maturity Assessment started on ${new Date().toLocaleString()}\n` +
+                `Organization Type: ${companyName}\n` +
+                `Email: ${email}`;
+
+            const noteResult = await exports.createNote(
+                company.id,
+                contact.id,
+                noteContent
+            );
+
+            console.log('Note creation result:', noteResult);
+        } catch (noteError) {
+            console.error('Error creating note:', noteError);
+        }
+
+        return {
+            company,
+            contact,
+            assessment,
+        };
+    } catch (error) {
+        console.error('Error handling email submission:', error);
+        return false;
+    }
+};
+
+
+const createOrUpdateAssessment = async (data) => {
+    try {
+        console.log('Creating or updating assessment:', data);
+
+        const searchResponse = await axiosInstance.post('/crm/v3/objects/assessments/search', {
+            filterGroups: [{
+                filters: [{
+                    propertyName: 'product_maturity_assessment',
+                    operator: 'EQ',
+                    value: data.email
+                }]
+            }]
+        });
+
+        const properties = {
+            product_maturity_assessment: data.email || 'Product Maturity Assessment',
+            assessment_status: data.isCompleted ? 'Completed' : 'Started',
+            strategy_score: data.scores?.strategy || 0,
+            technology_score: data.scores?.technology || 0,
+            process_score: data.scores?.process || 0,
+            culture_score: data.scores?.culture || 0,
+            total_score: data.scores?.total || 0
+        };
+
+        let assessmentResponse;
+        if (searchResponse.data.total > 0) {
+            // Update existing assessment
+            const existingAssessment = searchResponse.data.results[0];
+            assessmentResponse = await axiosInstance.patch(
+                `/crm/v3/objects/assessments/${existingAssessment.id}`,
+                { properties }
+            );
+        } else {
+            // Create new assessment
+            assessmentResponse = await axiosInstance.post(
+                '/crm/v3/objects/assessments',
+                { properties }
+            );
+        }
+
+        console.log('Assessment created/updated successfully:', assessmentResponse.data);
+
+
+        // Create associations if companyId and contactId exist
+        if (assessmentResponse.data.id) {
+            try {
+                if (data.companyId) {
+                    await axiosInstance.put(
+                        `/crm/v4/objects/assessments/${assessmentResponse.data.id}/associations/default/companies/${data.companyId}`
+                    );
+                    console.log('Company association created successfully');
+                }
+
+                if (data.contactId) {
+                    await axiosInstance.put(
+                        `/crm/v4/objects/assessments/${assessmentResponse.data.id}/associations/default/contacts/${data.contactId}`
+                    );
+                    console.log('Contact association created successfully');
+                }
+            } catch (associationError) {
+                console.error('Error creating associations:', associationError.response?.data);
+                throw associationError;
+            }
+        }
+
+        return assessmentResponse.data;
+    } catch (error) {
+        console.error('Error in assessment operation:', error.response?.data || error.message);
+        throw error;
+    }
+};
+
+exports.updateAssessmentScores = async (assessmentId, scores) => {
+    try {
+        console.log('Updating assessment scores:', scores, assessmentId);
+        return await axiosInstance.patch(`/crm/v3/objects/assessments/${assessmentId}`, {
+            properties: {
+                assessment_status: 'Completed',
+                strategy_score: scores.strategy,
+                technology_score: scores.technology,
+                process_score: scores.process,
+                culture_score: scores.culture,
+                total_score: scores.total
+            }
+        });
+    } catch (error) {
+        console.error('Error updating assessment scores:', error);
         throw error;
     }
 };
