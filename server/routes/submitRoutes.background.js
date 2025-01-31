@@ -1,13 +1,86 @@
 // server/routes/submitRoutes.background.js
 const express = require('express');
 const logger = require('../config/logger'); // Import logger
-const { generateDetailedReport, generateJsonFromReport } = require('../utils/openAIHelpers'); // Import OpenAI helpers
+const { generateDetailedReport, generateJsonFromReport, generateEmailContent } = require('../utils/openAIHelpers'); // Import OpenAI helpers
 const { validateFormData, saveFormData } = require('../utils/dataHelpers'); // Import data helpers
 const { setTaskStatus, getTaskStatus } = require('../utils/statusHelpers'); // Import status helpers
 const { createOrUpdateCompanyAndContact, updateAssessmentScores } = require('../integrations/hubspotUtils');
 const puppeteer = require('puppeteer');
+const markdownIt = require('markdown-it');
 
 const router = express.Router();
+
+const findLowestScoresWithPriority = (scores) => {
+  const priorityOrder = {
+    strategy: 1,
+    process: 2,
+    culture: 3,
+    technology: 4
+  };
+
+  const scoreEntries = Object.entries(scores)
+    .filter(([key]) => key !== 'total')
+    .sort(([keyA, valueA], [keyB, valueB]) => {
+      // If values are equal, use priority order
+      if (valueA === valueB) {
+        return priorityOrder[keyA] - priorityOrder[keyB];
+      }
+      // Otherwise sort by value
+      return valueA - valueB;
+    });
+
+  return {
+    lowestArea: scoreEntries[0]?.[0],
+    secondLowestArea: scoreEntries[1]?.[0]
+  };
+};
+
+const convertTextToHTML = (text) => {
+  // Initialize markdown-it
+  const md = new markdownIt();
+
+  // Convert Markdown to HTML
+  const html = md.render(text);
+
+  // Blog CSS styles (Manually extracted or linked from the blog's stylesheet)
+  const styles = `
+    <style>
+      body {
+        font-family: 'Roboto', sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background-color: #f4f4f4;
+      }
+      h1 {
+        color: #000000;  /* Keep main title (h1) blue */
+      }
+      h2 {
+        color: #4A4A4A;  /* Change sub-chapter titles (h2) to dark grey */
+      }
+      h3 {
+        color: #1f5ba3;  /* Keep subheadings (h3) in blue, if needed */
+      }
+      p {
+        font-size: 16px;
+        margin-bottom: 1rem;
+      }
+      a {
+        color: #0066cc;
+        text-decoration: none;
+      }
+      /* Additional styles based on the blog's layout */
+    </style>
+  `;
+
+  // Additional processing to replace specific elements
+  const cleanedHtml = html.replace(/<h3>/g, '<h2>').replace(/<\/h3>/g, '</h2>');
+
+  // Wrap the HTML content with styles
+  const finalHtml = `<html><head>${styles}</head><body>${cleanedHtml}</body></html>`;
+
+  return finalHtml;
+};
+
 
 // Generate an RTF document
 const generateRTF = (plainText) => {
@@ -32,7 +105,6 @@ const rtfToHTML = (rtf) => {
     .replace(/\\par/g, '<br>'); // Convert paragraphs
 };
 
-
 // Generate PDF from HTML with proper Puppeteer configuration
 const generatePDF = async (html) => {
   const browser = await puppeteer.launch({
@@ -48,7 +120,8 @@ const generatePDF = async (html) => {
 
   try {
     const page = await browser.newPage();
-    await page.setContent(`<html><body>${html}</body></html>`);
+    // await page.setContent(`<html><body>${html}</body></html>`);
+    await page.setContent(html);
     const pdfBuffer = await page.pdf({
       format: 'A4',
       printBackground: true,
@@ -116,8 +189,9 @@ router.post('/', async (req, res) => {
         throw new Error('Failed to generate detailed report.');
       }
       logger.info(`Generated Detailed Report: \n ${detailedReport}`);
-      const rtfContent = generateRTF(detailedReport);
-      const htmlContent = rtfToHTML(rtfContent);
+      // const rtfContent = generateRTF(detailedReport);
+      // const htmlContent = rtfToHTML(rtfContent);
+      const htmlContent = convertTextToHTML(detailedReport);
 
       const pdfBuffer = await generatePDF(htmlContent);
       // Convert to proper Base64
@@ -140,19 +214,30 @@ router.post('/', async (req, res) => {
         culture: jsonResponse?.maturity_level?.culture?.level || 0,
       }
 
+      let emailContent = '';
+      try {
+        emailContent = await generateEmailContent(detailedReport);
+        console.log('Generated email content:', emailContent);
+      } catch (error) {
+        logger.error(`Error generating email content: ${error.message}`);
+      }
+
+      const { lowestArea, secondLowestArea } = findLowestScoresWithPriority(scores);
+
       if (formData.assessmentId) {
         try {
-          const hubspotResult = await updateAssessmentScores(formData.assessmentId, scores);
+          const hubspotResult = await updateAssessmentScores(formData.assessmentId, scores, detailedReport, pdfBuffer, emailContent, lowestArea, secondLowestArea);
           console.log('HubSpot assessment updated:', hubspotResult);
         } catch (error) {
           logger.error(`Error updating HubSpot assessment: ${error.message}`);
         }
       }
 
+
       const finalResult = {
         ...jsonResponse,
         detailedReport: detailedReport,
-        pdf: pdfDataUri,
+        pdfDataUri,
       };
 
       // Update the status to 'completed' and store the result

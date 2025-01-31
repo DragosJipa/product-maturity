@@ -1,5 +1,8 @@
 const logger = require('../config/logger');
 const axiosInstance = require('./hubspotConfig');
+const FormData = require('form-data');
+const { Readable } = require('stream');
+const axios = require('axios');
 
 const isPersonalEmailDomain = (domain) => {
     const personalDomains = [
@@ -410,9 +413,49 @@ const createOrUpdateAssessment = async (data) => {
     }
 };
 
-exports.updateAssessmentScores = async (assessmentId, scores) => {
+const uploadFileToHubSpot = async (fileBuffer, fileName) => {
+    try {
+        // Ensure fileBuffer is Buffer
+        const buffer = Buffer.from(fileBuffer);
+
+        const form = new FormData();
+        form.append('file', buffer, {
+            filename: fileName,
+            contentType: 'application/pdf',
+            knownLength: buffer.length
+        });
+        form.append('folderPath', '/');
+        form.append('options', JSON.stringify({ access: 'PUBLIC_INDEXABLE', overwrite: true }));
+
+        const response = await axios({
+            method: 'post',
+            url: 'https://api.hubapi.com/filemanager/api/v3/files/upload',
+            headers: {
+                ...form.getHeaders(),
+                'Authorization': `Bearer ${process.env.HUBSPOT_OAUTH_TOKEN}`
+            },
+            data: form,
+            maxContentLength: Infinity,
+            maxBodyLength: Infinity
+        });
+
+        return response.data;
+    } catch (error) {
+        console.error('Error uploading pdf file to HubSpot:', error.response?.data || error.message);
+        throw error;
+    }
+};
+
+exports.updateAssessmentScores = async (assessmentId, scores, detailedReport, pdfBuffer, emailContent, focusArea1, focusArea2) => {
     try {
         console.log('Updating assessment scores:', scores, assessmentId);
+        console.log('Detailed Report, if available:', detailedReport);
+
+        // Upload PDF to HubSpot
+        const fileUploadResponse = await uploadFileToHubSpot(pdfBuffer, 'product-maturity-assessment-report.pdf');
+        console.log('PDF uploaded to HubSpot:', fileUploadResponse);
+        const fileUrl = fileUploadResponse.objects[0].url;
+
         return await axiosInstance.patch(`/crm/v3/objects/assessments/${assessmentId}`, {
             properties: {
                 assessment_status: 'Completed',
@@ -420,7 +463,12 @@ exports.updateAssessmentScores = async (assessmentId, scores) => {
                 technology_score: scores.technology,
                 process_score: scores.process,
                 culture_score: scores.culture,
-                total_score: scores.total
+                total_score: scores.total,
+                detailed_report: detailedReport,
+                pdf: fileUrl,
+                email_1_body: emailContent,
+                focus_area_1: focusArea1,
+                focus_area_2: focusArea2,
             }
         });
     } catch (error) {

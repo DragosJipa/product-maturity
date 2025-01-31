@@ -542,7 +542,51 @@ ${detailedReport}
 `;
 }
 
+async function generateEmailContent(detailedReport) {
+  try {
+    const prompt = `
+    Based on the detailed report below, identify:
+    - Current Stage 
+    - Strengths (Please limit to the maximum 2 strengths and present them in the same line as in the example below)
+    - Opportunities (Please limit to the maximum 2 strengths and present them in the same line as in the example below)
+  
+      
+    Please format the response based on the example provided below and provide only this piece of information in your response and not adding any other considerations:
+      - Current Stage: Defined (You’ve got the foundation, now let’s level up!)
+      - Strengths: A strong culture of ownership and a solid start on tech.
+      - Opportunities: Strategic alignment and streamlined processes.
+
+    /* Report starts here */ 
+    Assessment detailed report:
+    ${detailedReport}
+    /* Report ends here */ 
+`;
+
+    const response = await openai.chat.completions.create({
+      model: appConfig.LLM_MODEL,
+      messages: [
+        {
+          role: "system",
+          content: "You are a product management consultant writing personalized emails to clients."
+        },
+        {
+          role: "user",
+          content: prompt
+        }
+      ],
+      max_tokens: 1000,
+      temperature: 0.7,
+    });
+
+    return response.choices[0].message.content;
+  } catch (error) {
+    logger.error(`Failed to generate email content: ${error.message}`);
+    return null;
+  }
+}
+
 module.exports = {
   generateDetailedReport,
   generateJsonFromReport,
+  generateEmailContent,
 };
