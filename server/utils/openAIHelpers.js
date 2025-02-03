@@ -3,7 +3,7 @@
 const OpenAI = require('openai');
 const logger = require('../config/logger'); // Import logger
 const appConfig = require('../config/appConfig'); // Assuming you have a config setup
-const { getQuestionDetailsById, getAnswerTextById } = require('../utils/questionUtils'); // Import utility functions
+const { initializeCache, getAllQuestionsAndAnswers } = require('../utils/questionUtils');
 
 // Initialize OpenAI with your API key
 const openai = new OpenAI({
@@ -13,7 +13,8 @@ const openai = new OpenAI({
 // Step 1: Function to generate a detailed report
 async function generateDetailedReport(data) {
   try {
-    const prompt = generateDetailedReportPrompt(data);
+    const prompt = await generateDetailedReportPrompt(data);
+
     const response = await openai.chat.completions.create({
       model: appConfig.LLM_MODEL,
       messages: [
@@ -229,7 +230,7 @@ async function generateJsonFromReport(detailedReport, retries = 3) {
 }
 
 // Function to generate a prompt for the detailed report based on form data
-function generateDetailedReportPrompt(data) {
+async function generateDetailedReportPrompt(data) {
   let prompt = `
     You work for a digital and product transformation consultancy firm. Your client has recently undergone a product maturity assessment to evaluate their current state and identify areas for improvement. 
     The assessment covered four key dimensions: Strategy, Processes, Technology, and Culture. The responses are provided below, at the end of the prompt.
@@ -271,7 +272,7 @@ function generateDetailedReportPrompt(data) {
     
     1. **Summary**: A short overview of the product maturity based on the responses. Formulate it as an impersonal statement, considering that the recipient is exactly the client who has undergone the assessment.
     2. **Maturity Level**: An overall maturity level (1-5) calculated based on all the responses, both quantitative and qualitative ones. It's your interpretation of the current state of the organization.
-    3. **Dimension Scores**: Provide the numeric scores for each dimension (Strategy, Processes, Technology, Culture) on a scale of 1-5.
+    3. **Dimension Scores**: Provide the numeric scores for each dimension (Strategy, Processes, Technology, Culture) on a scale of 1-5. /* (Initial - level 1, Repeatable - level 2, Defined - level 3, Managed - level 4, and Optimizing - level 5) - no in betweens (just like you woud do math.floor on them) */
     4. **Detailed Analysis**: An in-depth analysis, discussing strengths, weaknesses, and areas for improvement.
     5. **Current State vs. Desired Future State**: A comparison between the current state of the organization and the desired future state in terms of product maturity.
     6. **Recommendations**: Actionable recommendations for improving the product maturity, focusing on each dimension. For each recommendation, provide an example of an actionable change - what the organization can do to implement the recommendation. Don't just list generic advice, be specific, focus on the how the needle can be moved.
@@ -350,11 +351,13 @@ function generateDetailedReportPrompt(data) {
     
     `;
 
+  await initializeCache();
+  const { questionDetailsMap, answerTextMap } = await getAllQuestionsAndAnswers();
+
   // Append user responses to the prompt
   for (const [questionId, answer] of Object.entries(data)) {
-    ;
-    const questionDetails = getQuestionDetailsById(questionId);
-    const answerText = getAnswerTextById(questionId, answer);
+    const questionDetails = questionDetailsMap.get(questionId);
+    const answerText = answerTextMap.get(questionId)?.get(answer) || "Unknown Answer";
 
     if (questionDetails) {
       prompt += `Dimension: ${questionDetails.dimension}\n`;
@@ -369,6 +372,8 @@ function generateDetailedReportPrompt(data) {
 
   return prompt;
 }
+
+
 
 // Function to generate a prompt for JSON output based on the detailed report
 function generateJsonPrompt(detailedReport) {
@@ -455,8 +460,8 @@ Based on the following detailed report, produce a structured JSON output that in
 \`\`\`json
 {
   "maturity_level": {
-      "level": "The overall maturity level (1-5) extracted from the report. This is the numeric score value present in the report.",
-      "status": "Maturity status (e.g., Initial, Repeatable, Defined, etc.).",
+      "level": "The overall maturity level (1-5) extracted from the report. This is the numeric score value present in the report.", /* (Initial - level 1, Repeatable - level 2, Defined - level 3, Managed - level 4, and Optimizing - level 5) - no in betweens (just like you woud do math.floor on them) */
+      "status": "Maturity status (e.g., Initial, Repeatable, Defined, etc.).", /* (Initial - level 1, Repeatable - level 2, Defined - level 3, Managed - level 4, and Optimizing - level 5) - no in betweens (just like you woud do math.floor on them) */
       "description": "A concise description of the maturity level based on the report.",
       "strategy": {
           "level": "Score for Strategy dimension (1-5) as it is present in the report.",
@@ -545,16 +550,23 @@ ${detailedReport}
 async function generateEmailContent(detailedReport) {
   try {
     const prompt = `
-    Based on the detailed report below, identify:
-    - Current Stage 
-    - Strengths (Please limit to the maximum 2 strengths and present them in the same line as in the example below)
-    - Opportunities (Please limit to the maximum 2 strengths and present them in the same line as in the example below)
-  
-      
+    Based on the detailed report below, generate a response in HTML format suitable for email display.
+    The response should follow this exact structure:
+
+    <ul>
+        <li><b>- Current Stage:</b> [stage] ([description])</li>
+        <li><b>- Strengths:</b> [one key strength identified]</li> (Please limit to the maximum 2 strengths and present them in the same line as in the example below)
+        <li><b>- Opportunities:</b> [one key opportunity]</li> (Please limit to the maximum 2 strengths and present them in the same line as in the example below)
+    </ul>
+    
     Please format the response based on the example provided below and provide only this piece of information in your response and not adding any other considerations:
-      - Current Stage: Defined (You’ve got the foundation, now let’s level up!)
-      - Strengths: A strong culture of ownership and a solid start on tech.
-      - Opportunities: Strategic alignment and streamlined processes.
+    <ul>
+    <li><b>Current Stage:</b> Repeatable (Some formal practices established but not consistently applied)</li>
+    <li><b>Strengths:</b> Strong performance in Technology, indicating a good foundation in tools and systems. Initial steps towards a data-driven approach in decision-making.</li>
+    <li><b>Opportunities:</b> Strategy dimension lacking clear direction and alignment with business goals. Processes show inconsistency and inefficiencies in collaboration.</li>
+    </ul>
+
+    Please maintain this exact formatting with dashes and new lines. Do not add any additional text or explanations.
 
     /* Report starts here */ 
     Assessment detailed report:

@@ -5,6 +5,9 @@ const { parse } = require('csv-parse/sync');
 const SHEET_ID = '1ykdTltqPXnjzWv2uwPpsaAkPON8n18fSxTIZ2i6ep_Q';
 const SHEET_NAME = 'PMA_Questions';
 const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${SHEET_NAME}`;
+let questionsCache = null;
+let questionDetailsMap = new Map();
+let answerTextMap = new Map();
 
 async function fetchQuestions() {
   try {
@@ -90,8 +93,45 @@ async function getAnswerTextById(questionId, answerValue) {
   return "No Answer Text"; // Default text if no match is found
 }
 
+async function initializeCache() {
+  if (questionsCache) return;
+
+  const questions = await fetchQuestions();
+  questionsCache = questions;
+
+  for (const section of questions) {
+    if (!section.questions) continue;
+
+    for (const question of section.questions) {
+      questionDetailsMap.set(question.id, {
+        text: question.question,
+        dimension: section.dimension || "General"
+      });
+
+      if (question.options) {
+        const answers = new Map();
+        question.options.forEach(opt => {
+          answers.set(opt.value, opt.label || "Unknown Answer");
+        });
+        answerTextMap.set(question.id, answers);
+      }
+    }
+  }
+}
+
+async function getAllQuestionsAndAnswers() {
+  await initializeCache();
+  return {
+    questionDetailsMap,
+    answerTextMap
+  };
+}
+
+
 module.exports = {
   getQuestionDetailsById,
   getAnswerTextById,
-  fetchQuestions
+  fetchQuestions,
+  initializeCache,
+  getAllQuestionsAndAnswers,
 };

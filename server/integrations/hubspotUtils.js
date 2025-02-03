@@ -271,7 +271,6 @@ exports.createOrUpdateCompanyAndContact = async (formData) => {
         return {
             company: company,
             contact: contact,
-            assessment: assessment,
         };
     } catch (error) {
         console.error('Error in createOrUpdateCompanyAndContact:', error);
@@ -344,11 +343,14 @@ exports.handleEmailSubmission = async (email) => {
 const createOrUpdateAssessment = async (data) => {
     try {
         console.log('Creating or updating assessment:', data);
+        const ASSESSMENT_PROPERTY = process.env.NODE_ENV === 'production'
+            ? 'assessment_name'
+            : 'product_maturity_assessment';
 
         const searchResponse = await axiosInstance.post('/crm/v3/objects/assessments/search', {
             filterGroups: [{
                 filters: [{
-                    propertyName: 'product_maturity_assessment',
+                    propertyName: ASSESSMENT_PROPERTY,
                     operator: 'EQ',
                     value: data.email
                 }]
@@ -356,13 +358,13 @@ const createOrUpdateAssessment = async (data) => {
         });
 
         const properties = {
-            product_maturity_assessment: data.email || 'Product Maturity Assessment',
+            [ASSESSMENT_PROPERTY]: data.email || 'Product Maturity Assessment',
             assessment_status: data.isCompleted ? 'Completed' : 'Started',
             strategy_score: data.scores?.strategy || 0,
             technology_score: data.scores?.technology || 0,
             process_score: data.scores?.process || 0,
             culture_score: data.scores?.culture || 0,
-            total_score: data.scores?.total || 0
+            total_score: data.scores?.total || 0,
         };
 
         let assessmentResponse;
