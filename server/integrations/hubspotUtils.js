@@ -390,15 +390,17 @@ const createOrUpdateAssessment = async (data) => {
         if (assessmentResponse.data.id) {
             try {
                 if (data.companyId) {
+                    const objectName = process.env.NODE_ENV === 'production' ? 'company' : 'companies';
                     await axiosInstance.put(
-                        `/crm/v4/objects/assessments/${assessmentResponse.data.id}/associations/default/companies/${data.companyId}`
+                        `/crm/v4/objects/assessments/${assessmentResponse.data.id}/associations/default/${objectName}/${data.companyId}`
                     );
                     console.log('Company association created successfully');
                 }
 
                 if (data.contactId) {
+                    const objectName = process.env.NODE_ENV === 'production' ? 'contact' : 'contacts';
                     await axiosInstance.put(
-                        `/crm/v4/objects/assessments/${assessmentResponse.data.id}/associations/default/contacts/${data.contactId}`
+                        `/crm/v4/objects/assessments/${assessmentResponse.data.id}/associations/default/${objectName}/${data.contactId}`
                     );
                     console.log('Contact association created successfully');
                 }
@@ -453,10 +455,21 @@ exports.updateAssessmentScores = async (assessmentId, scores, detailedReport, pd
         console.log('Updating assessment scores:', scores, assessmentId);
         console.log('Detailed Report, if available:', detailedReport);
 
+        const email_1__body = process.env.NODE_ENV === 'production'
+            ? 'email_1__body'
+            : 'email_1_body';
+
+        const report_pdf = process.env.NODE_ENV === 'production'
+            ? 'report_pdf'
+            : 'pdf';
+
         // Upload PDF to HubSpot
         const fileUploadResponse = await uploadFileToHubSpot(pdfBuffer, 'product-maturity-assessment-report.pdf');
         console.log('PDF uploaded to HubSpot:', fileUploadResponse);
         const fileUrl = fileUploadResponse.objects[0].url;
+
+        const correctedArea1 = findClosestFocusArea(focusArea1);
+        const correctedArea2 = findClosestFocusArea(focusArea2);
 
         return await axiosInstance.patch(`/crm/v3/objects/assessments/${assessmentId}`, {
             properties: {
@@ -467,10 +480,10 @@ exports.updateAssessmentScores = async (assessmentId, scores, detailedReport, pd
                 culture_score: scores.culture,
                 total_score: scores.total,
                 detailed_report: detailedReport,
-                pdf: fileUrl,
-                email_1_body: emailContent,
-                focus_area_1: focusArea1,
-                focus_area_2: focusArea2,
+                [report_pdf]: fileUrl,
+                [email_1__body]: emailContent,
+                focus_area_1: correctedArea1,
+                focus_area_2: correctedArea2,
             }
         });
     } catch (error) {
@@ -478,3 +491,43 @@ exports.updateAssessmentScores = async (assessmentId, scores, detailedReport, pd
         throw error;
     }
 };
+
+function levenshteinDistance(a, b) {
+    const matrix = [];
+    for (let i = 0; i <= b.length; i++) matrix[i] = [i];
+    for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+
+    for (let i = 1; i <= b.length; i++) {
+        for (let j = 1; j <= a.length; j++) {
+            const cost = a[j - 1] === b[i - 1] ? 0 : 1;
+            matrix[i][j] = Math.min(
+                matrix[i - 1][j] + 1,
+                matrix[i][j - 1] + 1,
+                matrix[i - 1][j - 1] + cost
+            );
+        }
+    }
+    return matrix[b.length][a.length];
+}
+
+function findClosestFocusArea(input) {
+    if (!input) return null;
+    const VALID_FOCUS_AREAS = ['Strategy', 'Technology', 'Process', 'Culture'];
+
+    const normalized = input.trim().charAt(0).toUpperCase() + input.slice(1).toLowerCase();
+    if (VALID_FOCUS_AREAS.includes(normalized)) return normalized;
+
+    let closestMatch = null;
+    let minDistance = Infinity;
+
+    for (const area of VALID_FOCUS_AREAS) {
+        const distance = levenshteinDistance(normalized, area);
+        if (distance < minDistance) {
+            minDistance = distance;
+            closestMatch = area;
+        }
+    }
+
+    // Only return match if reasonably close (distance <= 2)
+    return minDistance <= 2 ? closestMatch : null;
+}
