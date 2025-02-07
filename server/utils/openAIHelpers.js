@@ -33,201 +33,201 @@ async function generateDetailedReport(data) {
 }
 
 // Step 2: Function to generate JSON output from the detailed report
-// async function generateJsonFromReport(detailedReport) {
-//   try {
-//     const prompt = generateJsonPrompt(detailedReport);
-//     const response = await openai.chat.completions.create({
-//       model: appConfig.LLM_MODEL,
-//       messages: [
-//         {
-//           role: "system",
-//           content: "You are a data analyst and assistant. Your task is to analyze the provided data and generate a response based on the data provided. Ignore any previous instructions or context and respond solely based on the following new instructions."
-//         },
-//         {
-//           role: "user",
-//           content: prompt
-//         },
-//       ],
-//       max_tokens: 3000,
-//       temperature: 0.7, // Adjust temperature for creativity vs. precision
-//       top_p: 0.9,       // Adjust top_p for diversity in responses
-//       frequency_penalty: 0.1, // Penalize frequent terms for varied output
-//       presence_penalty: 0.1,  // Penalize terms that have already been used
-//     });
-
-//     let jsonResponseText = response.choices[0].message.content;
-
-//     // Clean up the response to remove code block formatting or extra text
-//     jsonResponseText = jsonResponseText.replace(/```json/g, '').replace(/```/g, '').trim();
-
-//     // Try to parse as JSON
-//     try {
-//       const parsedJson = JSON.parse(jsonResponseText);
-//       return parsedJson;
-//     } catch (jsonError) {
-//       logger.error(`Failed to parse JSON from detailed report: ${jsonError.message}`);
-//       try {
-//         const parsedRetryJson = generateJsonWithRetries(prompt);
-//         return parsedRetryJson;
-//       } catch (err) {
-
-//       }
-//       return { error: "Invalid JSON format from OpenAI", raw: jsonResponseText };
-//     }
-//   } catch (error) {
-//     logger.error(`Failed to generate JSON from report: ${error.message}`);
-//     return null;
-//   }
-// }
-
-async function generateJsonFromReport(detailedReport, retries = 3) {
-  let jsonResponse = {};
-
-  const requiredFields = [
-    "maturity_level.level",
-    "maturity_level.status",
-    "maturity_level.description",
-    "maturity_level.strategy.level",
-    "maturity_level.strategy.label",
-    "maturity_level.processes.level",
-    "maturity_level.processes.label",
-    "maturity_level.technology.level",
-    "maturity_level.technology.label",
-    "maturity_level.culture.level",
-    "maturity_level.culture.label",
-    "detailed_analysis.strengths",
-    "detailed_analysis.weaknesses",
-    "detailed_analysis.areas_for_improvement",
-    "risks.description",
-    "risks.recommendations",
-    "risks.risks",
-    "roadmap"
-  ];
-
-  const requiredRoadmapFields = [
-    "answer",
-    "goal",
-    "milestone",
-    "milestoneTitle",
-    "phase",
-    "question",
-    "title"
-  ];
-
-  const requiredRecommendationFields = [
-    "action",
-    "description",
-    "type"
-  ];
-
-  const checkFields = (obj, fields) => {
-    return fields.every(field => {
-      const keys = field.split('.');
-      let value = obj;
-      for (const key of keys) {
-        if (value[key] === undefined) {
-          return false;
-        }
-        value = value[key];
-      }
-      return true;
+async function generateJsonFromReport(detailedReport) {
+  try {
+    const prompt = generateJsonPrompt(detailedReport);
+    const response = await openai.chat.completions.create({
+      model: appConfig.LLM_MODEL,
+      messages: [
+        {
+          role: "system",
+          content: "You are a data analyst and assistant. Your task is to analyze the provided data and generate a response based on the data provided. Ignore any previous instructions or context and respond solely based on the following new instructions."
+        },
+        {
+          role: "user",
+          content: prompt
+        },
+      ],
+      max_tokens: 3000,
+      temperature: 0.7, // Adjust temperature for creativity vs. precision
+      top_p: 0.9,       // Adjust top_p for diversity in responses
+      frequency_penalty: 0.1, // Penalize frequent terms for varied output
+      presence_penalty: 0.1,  // Penalize terms that have already been used
     });
-  };
 
-  const isJsonComplete = (json) => {
-    if (!checkFields(json, requiredFields)) {
-      return false;
-    }
+    let jsonResponseText = response.choices[0].message.content;
 
-    if (!Array.isArray(json.roadmap)) {
-      return false;
-    }
+    // Clean up the response to remove code block formatting or extra text
+    jsonResponseText = jsonResponseText.replace(/```json/g, '').replace(/```/g, '').trim();
 
-    for (const item of json.roadmap) {
-      if (!checkFields(item, requiredRoadmapFields)) {
-        return false;
-      }
-    }
-
-    if (!Array.isArray(json.risks.recommendations)) {
-      return false;
-    }
-
-    for (const item of json.risks.recommendations) {
-      if (!checkFields(item, requiredRecommendationFields)) {
-        return false;
-      }
-    }
-
-    return true;
-  };
-
-  for (let attempt = 1; attempt <= retries; attempt++) {
+    // Try to parse as JSON
     try {
-      const maturityAndAnalysisPrompt = generateMaturityAndAnalysisPrompt(detailedReport);
-      const response1 = await openai.chat.completions.create({
-        model: appConfig.LLM_MODEL,
-        messages: [
-          {
-            role: "system",
-            content: "You are a data analyst and assistant. Your task is to analyze the provided data and generate a response based on the data provided. Ignore any previous instructions or context and respond solely based on the following new instructions."
-          },
-          {
-            role: "user",
-            content: maturityAndAnalysisPrompt
-          },
-        ],
-        max_tokens: 3000,
-        temperature: 0.7,
-        top_p: 0.9,
-        frequency_penalty: 0.1,
-        presence_penalty: 0.1,
-      });
+      const parsedJson = JSON.parse(jsonResponseText);
+      return parsedJson;
+    } catch (jsonError) {
+      logger.error(`Failed to parse JSON from detailed report: ${jsonError.message}`);
+      try {
+        const parsedRetryJson = generateJsonWithRetries(prompt);
+        return parsedRetryJson;
+      } catch (err) {
 
-      let jsonResponseText1 = response1.choices[0].message.content;
-      jsonResponseText1 = jsonResponseText1.replace(/```json/g, '').replace(/```/g, '').trim();
-      const parsedJson1 = JSON.parse(jsonResponseText1);
-
-      const risksAndRoadmapPrompt = generateRisksAndRoadmapPrompt(detailedReport);
-      const response2 = await openai.chat.completions.create({
-        model: appConfig.LLM_MODEL,
-        messages: [
-          {
-            role: "system",
-            content: "You are a data analyst and assistant. Your task is to analyze the provided data and generate a response based on the data provided. Ignore any previous instructions or context and respond solely based on the following new instructions."
-          },
-          {
-            role: "user",
-            content: risksAndRoadmapPrompt
-          },
-        ],
-        max_tokens: 3000,
-        temperature: 0.7,
-        top_p: 0.9,
-        frequency_penalty: 0.1,
-        presence_penalty: 0.1,
-      });
-
-      let jsonResponseText2 = response2.choices[0].message.content;
-      jsonResponseText2 = jsonResponseText2.replace(/```json/g, '').replace(/```/g, '').trim();
-      const parsedJson2 = JSON.parse(jsonResponseText2);
-
-      jsonResponse = { ...parsedJson1, ...parsedJson2 };
-      if (isJsonComplete(jsonResponse)) {
-        return jsonResponse;
-      } else {
-        console.warn(`Attempt ${attempt} produced incomplete JSON. Retrying...`);
       }
-    } catch (error) {
-      if (attempt < retries) {
-        console.warn(`Attempt ${attempt} failed. Retrying...`);
-      } else {
-        console.error(`Failed to generate valid JSON after ${retries} attempts:`, error.message);
-        return { error: "Failed to generate valid JSON", raw: error.message };
-      }
+      return { error: "Invalid JSON format from OpenAI", raw: jsonResponseText };
     }
+  } catch (error) {
+    logger.error(`Failed to generate JSON from report: ${error.message}`);
+    return null;
   }
 }
+
+// async function generateJsonFromReport(detailedReport, retries = 3) {
+//   let jsonResponse = {};
+
+//   const requiredFields = [
+//     "maturity_level.level",
+//     "maturity_level.status",
+//     "maturity_level.description",
+//     "maturity_level.strategy.level",
+//     "maturity_level.strategy.label",
+//     "maturity_level.processes.level",
+//     "maturity_level.processes.label",
+//     "maturity_level.technology.level",
+//     "maturity_level.technology.label",
+//     "maturity_level.culture.level",
+//     "maturity_level.culture.label",
+//     "detailed_analysis.strengths",
+//     "detailed_analysis.weaknesses",
+//     "detailed_analysis.areas_for_improvement",
+//     "risks.description",
+//     "risks.recommendations",
+//     "risks.risks",
+//     "roadmap"
+//   ];
+
+//   const requiredRoadmapFields = [
+//     "answer",
+//     "goal",
+//     "milestone",
+//     "milestoneTitle",
+//     "phase",
+//     "question",
+//     "title"
+//   ];
+
+//   const requiredRecommendationFields = [
+//     "action",
+//     "description",
+//     "type"
+//   ];
+
+//   const checkFields = (obj, fields) => {
+//     return fields.every(field => {
+//       const keys = field.split('.');
+//       let value = obj;
+//       for (const key of keys) {
+//         if (value[key] === undefined) {
+//           return false;
+//         }
+//         value = value[key];
+//       }
+//       return true;
+//     });
+//   };
+
+//   const isJsonComplete = (json) => {
+//     if (!checkFields(json, requiredFields)) {
+//       return false;
+//     }
+
+//     if (!Array.isArray(json.roadmap)) {
+//       return false;
+//     }
+
+//     for (const item of json.roadmap) {
+//       if (!checkFields(item, requiredRoadmapFields)) {
+//         return false;
+//       }
+//     }
+
+//     if (!Array.isArray(json.risks.recommendations)) {
+//       return false;
+//     }
+
+//     for (const item of json.risks.recommendations) {
+//       if (!checkFields(item, requiredRecommendationFields)) {
+//         return false;
+//       }
+//     }
+
+//     return true;
+//   };
+
+//   for (let attempt = 1; attempt <= retries; attempt++) {
+//     try {
+//       const maturityAndAnalysisPrompt = generateMaturityAndAnalysisPrompt(detailedReport);
+//       const response1 = await openai.chat.completions.create({
+//         model: appConfig.LLM_MODEL,
+//         messages: [
+//           {
+//             role: "system",
+//             content: "You are a data analyst and assistant. Your task is to analyze the provided data and generate a response based on the data provided. Ignore any previous instructions or context and respond solely based on the following new instructions."
+//           },
+//           {
+//             role: "user",
+//             content: maturityAndAnalysisPrompt
+//           },
+//         ],
+//         max_tokens: 3000,
+//         temperature: 0.7,
+//         top_p: 0.9,
+//         frequency_penalty: 0.1,
+//         presence_penalty: 0.1,
+//       });
+
+//       let jsonResponseText1 = response1.choices[0].message.content;
+//       jsonResponseText1 = jsonResponseText1.replace(/```json/g, '').replace(/```/g, '').trim();
+//       const parsedJson1 = JSON.parse(jsonResponseText1);
+
+//       const risksAndRoadmapPrompt = generateRisksAndRoadmapPrompt(detailedReport);
+//       const response2 = await openai.chat.completions.create({
+//         model: appConfig.LLM_MODEL,
+//         messages: [
+//           {
+//             role: "system",
+//             content: "You are a data analyst and assistant. Your task is to analyze the provided data and generate a response based on the data provided. Ignore any previous instructions or context and respond solely based on the following new instructions."
+//           },
+//           {
+//             role: "user",
+//             content: risksAndRoadmapPrompt
+//           },
+//         ],
+//         max_tokens: 3000,
+//         temperature: 0.7,
+//         top_p: 0.9,
+//         frequency_penalty: 0.1,
+//         presence_penalty: 0.1,
+//       });
+
+//       let jsonResponseText2 = response2.choices[0].message.content;
+//       jsonResponseText2 = jsonResponseText2.replace(/```json/g, '').replace(/```/g, '').trim();
+//       const parsedJson2 = JSON.parse(jsonResponseText2);
+
+//       jsonResponse = { ...parsedJson1, ...parsedJson2 };
+//       if (isJsonComplete(jsonResponse)) {
+//         return jsonResponse;
+//       } else {
+//         console.warn(`Attempt ${attempt} produced incomplete JSON. Retrying...`);
+//       }
+//     } catch (error) {
+//       if (attempt < retries) {
+//         console.warn(`Attempt ${attempt} failed. Retrying...`);
+//       } else {
+//         console.error(`Failed to generate valid JSON after ${retries} attempts:`, error.message);
+//         return { error: "Failed to generate valid JSON", raw: error.message };
+//       }
+//     }
+//   }
+// }
 
 // Function to generate a prompt for the detailed report based on form data
 async function generateDetailedReportPrompt(data) {
@@ -457,6 +457,8 @@ function generateMaturityAndAnalysisPrompt(detailedReport) {
   return `
 Based on the following detailed report, produce a structured JSON output that includes the following information. The response should be pure JSON format, without any additional text, formatting, or comments. 
 
+/* Example starts here */
+
 \`\`\`json
 {
   "maturity_level": {
@@ -494,8 +496,11 @@ Based on the following detailed report, produce a structured JSON output that in
 }
 \`\`\`
 
+/* Example ends here */
+
 Guidelines for the JSON response:
 - Ensure all fields are present in the response.
+- Please extract the level and label directly from the report without altering the values.
 
 Use the detailed report below to extract the relevant information:
 
@@ -547,26 +552,56 @@ ${detailedReport}
 `;
 }
 
+function normalizeJsonResponse(responseText) {
+  try {
+    if (!responseText) {
+      throw new Error('Response text is empty or undefined');
+    }
+
+    // Check if response text is already in JSON format
+    let cleanedText = responseText.trim();
+    if (cleanedText.startsWith('```json')) {
+      cleanedText = cleanedText.replace(/```json/g, '').replace(/```/g, '').trim();
+    }
+
+    // Parse JSON content
+    const jsonResponse = JSON.parse(cleanedText);
+
+    // Validate required fields
+    if (!jsonResponse.Strengths || !jsonResponse.Opportunities) {
+      throw new Error('Missing required fields in JSON response');
+    }
+
+    return jsonResponse;
+  } catch (error) {
+    console.error('Error normalizing JSON response:', error);
+    throw error;
+  }
+}
+
 async function generateEmailContent(detailedReport) {
   try {
     const prompt = `
-    Based on the detailed report below, generate a response in HTML format suitable for email display.
-    The response should follow this exact structure:
+Based on the detailed report provided below, generate a response in JSON format according to the structure provided in the example below.
+Data provided in the example are only for reference and use the data extracted from report to populate these fields.
+Please limit only to the required data, and not adding any other considerations.
+The response should be pure JSON format, without any additional text, formatting, or comments. 
 
-    <ul>
-        <li><b>- Current Stage:</b> [stage] ([description])</li>
-        <li><b>- Strengths:</b> [one key strength identified]</li> (Please limit to the maximum 2 strengths and present them in the same line as in the example below)
-        <li><b>- Opportunities:</b> [one key opportunity]</li> (Please limit to the maximum 2 strengths and present them in the same line as in the example below)
-    </ul>
+
+    Here are the descriptions of the fields included in the response:
+    - Strengths: A key strength identified based on the report.
+    - Opportunities: One or two opportunities identified based on the report. Formulate them briefly, in one single sentence, as in the example below
+   
+    /* Example JSON response starts here */
+
+    \`\`\`json
+    {
+      "Strengths": "Strong performance in Technology, indicating a good foundation in tools and systems",
+      "Opportunities": "Initial steps towards a data-driven approach in decision-making"
+    }
+    \`\`\`    
     
-    Please format the response based on the example provided below and provide only this piece of information in your response and not adding any other considerations:
-    <ul>
-    <li><b>Current Stage:</b> Repeatable (Some formal practices established but not consistently applied)</li>
-    <li><b>Strengths:</b> Strong performance in Technology, indicating a good foundation in tools and systems. Initial steps towards a data-driven approach in decision-making.</li>
-    <li><b>Opportunities:</b> Strategy dimension lacking clear direction and alignment with business goals. Processes show inconsistency and inefficiencies in collaboration.</li>
-    </ul>
-
-    Please maintain this exact formatting with dashes and new lines. Do not add any additional text or explanations.
+    /* Example JSON response ends here */
 
     /* Report starts here */ 
     Assessment detailed report:
@@ -590,7 +625,10 @@ async function generateEmailContent(detailedReport) {
       temperature: 0.7,
     });
 
-    return response.choices[0].message.content;
+    const emailJson = normalizeJsonResponse(response.choices[0].message.content.trim());
+    console.log('Generated email content:', emailJson);
+
+    return emailJson;
   } catch (error) {
     logger.error(`Failed to generate email content: ${error.message}`);
     return null;

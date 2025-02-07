@@ -4,6 +4,19 @@ const FormData = require('form-data');
 const { Readable } = require('stream');
 const axios = require('axios');
 
+const VALID_FOCUS_AREAS = {
+    'strategy': 'Strategy',
+    'technology': 'Technology',
+    'process': 'Process',
+    'culture': 'Culture'
+};
+
+function correctFocusArea(area) {
+    if (!area) return null;
+    const normalized = area.trim().toLowerCase();
+    return VALID_FOCUS_AREAS[normalized] || null;
+}
+
 const isPersonalEmailDomain = (domain) => {
     const personalDomains = [
         'gmail.com',
@@ -450,26 +463,34 @@ const uploadFileToHubSpot = async (fileBuffer, fileName) => {
     }
 };
 
-exports.updateAssessmentScores = async (assessmentId, scores, detailedReport, pdfBuffer, emailContent, focusArea1, focusArea2) => {
+exports.updateAssessmentScores = async (assessmentId, scores, detailedReport, pdfBuffer, focusArea1, focusArea2,
+    currentStage, currentStageDescription, currentStrengths, currentOpportunities) => {
     try {
-        console.log('Updating assessment scores:', scores, assessmentId);
-        console.log('Detailed Report, if available:', detailedReport);
+        const correctedArea1 = correctFocusArea(focusArea1);
+        const correctedArea2 = correctFocusArea(focusArea2);
+        console.log('Corrected focus areas:', correctedArea1, correctedArea2);
 
-        const email_1__body = process.env.NODE_ENV === 'production'
-            ? 'email_1__body'
-            : 'email_1_body';
+        console.log('mia ajuns aici', currentStrengths, currentOpportunities);
 
+        const current_stage = process.env.NODE_ENV === 'production'
+            ? 'product_maturity__current_stage'
+            : 'current_stage';
+        const current_stage_description = process.env.NODE_ENV === 'production'
+            ? 'product_maturity__current_stage_description'
+            : 'current_stage_description';
+        const strengths = process.env.NODE_ENV === 'production'
+            ? 'product_maturity__strengths'
+            : 'strengths';
+        const opportunities = process.env.NODE_ENV === 'production'
+            ? 'product_maturity__opportunities'
+            : 'opportunities';
         const report_pdf = process.env.NODE_ENV === 'production'
             ? 'report_pdf'
             : 'pdf';
 
-        // Upload PDF to HubSpot
         const fileUploadResponse = await uploadFileToHubSpot(pdfBuffer, 'product-maturity-assessment-report.pdf');
         console.log('PDF uploaded to HubSpot:', fileUploadResponse);
         const fileUrl = fileUploadResponse.objects[0].url;
-
-        const correctedArea1 = findClosestFocusArea(focusArea1);
-        const correctedArea2 = findClosestFocusArea(focusArea2);
 
         return await axiosInstance.patch(`/crm/v3/objects/assessments/${assessmentId}`, {
             properties: {
@@ -481,9 +502,12 @@ exports.updateAssessmentScores = async (assessmentId, scores, detailedReport, pd
                 total_score: scores.total,
                 detailed_report: detailedReport,
                 [report_pdf]: fileUrl,
-                [email_1__body]: emailContent,
                 focus_area_1: correctedArea1,
                 focus_area_2: correctedArea2,
+                [current_stage]: currentStage,
+                [current_stage_description]: currentStageDescription,
+                [strengths]: currentStrengths,
+                [opportunities]: currentOpportunities
             }
         });
     } catch (error) {
@@ -492,42 +516,3 @@ exports.updateAssessmentScores = async (assessmentId, scores, detailedReport, pd
     }
 };
 
-function levenshteinDistance(a, b) {
-    const matrix = [];
-    for (let i = 0; i <= b.length; i++) matrix[i] = [i];
-    for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
-
-    for (let i = 1; i <= b.length; i++) {
-        for (let j = 1; j <= a.length; j++) {
-            const cost = a[j - 1] === b[i - 1] ? 0 : 1;
-            matrix[i][j] = Math.min(
-                matrix[i - 1][j] + 1,
-                matrix[i][j - 1] + 1,
-                matrix[i - 1][j - 1] + cost
-            );
-        }
-    }
-    return matrix[b.length][a.length];
-}
-
-function findClosestFocusArea(input) {
-    if (!input) return null;
-    const VALID_FOCUS_AREAS = ['Strategy', 'Technology', 'Process', 'Culture'];
-
-    const normalized = input.trim().charAt(0).toUpperCase() + input.slice(1).toLowerCase();
-    if (VALID_FOCUS_AREAS.includes(normalized)) return normalized;
-
-    let closestMatch = null;
-    let minDistance = Infinity;
-
-    for (const area of VALID_FOCUS_AREAS) {
-        const distance = levenshteinDistance(normalized, area);
-        if (distance < minDistance) {
-            minDistance = distance;
-            closestMatch = area;
-        }
-    }
-
-    // Only return match if reasonably close (distance <= 2)
-    return minDistance <= 2 ? closestMatch : null;
-}

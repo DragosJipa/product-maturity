@@ -165,6 +165,10 @@ router.post('/', async (req, res) => {
       // Critical Path Processing
       const detailedReport = await generateDetailedReport(formData);
       const jsonResponse = await generateJsonFromReport(detailedReport);
+      // console.log('JSONRESPONSE:', jsonResponse);
+      // const generationalEmail = await generateEmailContent(detailedReport);
+      // console.log('generateEmailContent:', generationalEmail);
+
       const htmlContent = convertTextToHTML(detailedReport);
       const pdfBuffer = await generatePDF(htmlContent);
       const pdfDataUri = `data:application/pdf;base64,${Buffer.from(pdfBuffer).toString('base64')}`;
@@ -177,6 +181,10 @@ router.post('/', async (req, res) => {
         culture: jsonResponse?.maturity_level?.culture?.level || 0,
       };
 
+      const { status, description } = jsonResponse?.maturity_level
+      // console.log('JSONRESPONSE:', { status, description });
+      // console.log('PROMPTPROMPT', detailedReport);
+      // console.log('2ndPROMPT', jsonResponse);
       // Set status to completed - frontend can proceed
       const initialResult = {
         ...jsonResponse,
@@ -191,16 +199,19 @@ router.post('/', async (req, res) => {
           createOrUpdateCompanyAndContact(formData),
           generateEmailContent(detailedReport),
           Promise.resolve().then(() => findLowestScoresWithPriority(scores))
-        ]).then(([hubspotResult, emailContent, { lowestArea, secondLowestArea }]) => {
+        ]).then(([hubspotResult, emailJson, { lowestArea, secondLowestArea }]) => {
           if (formData.assessmentId) {
             return updateAssessmentScores(
               formData.assessmentId,
               scores,
               detailedReport,
               pdfBuffer,
-              emailContent,
               lowestArea,
-              secondLowestArea
+              secondLowestArea,
+              status,
+              description,
+              emailJson.Strengths,
+              emailJson.Opportunities,
             );
           }
         }).catch(error => {
