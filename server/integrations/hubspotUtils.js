@@ -114,6 +114,7 @@ exports.createContact = async (contactData) => {
                         firstname: firstname,
                         lastname: lastname,
                         company: contactData.company,
+                        lifecyclestage: 'lead',
                     }
                 }
             );
@@ -126,6 +127,7 @@ exports.createContact = async (contactData) => {
                     firstname: firstname,
                     lastname: lastname,
                     company: contactData.company,
+                    lifecyclestage: 'lead',
                 }
             });
             console.log('Contact created successfully:', contactResponse.data);
